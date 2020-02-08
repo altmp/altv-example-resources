@@ -7,6 +7,8 @@ Simple Freeroam Gamemode for alt:V by [MrNeta](https://github.com/MrNeta)
 - Each player can Spawn two Vehicles
 - Vehicles got removed on Disconnect
 - Different Spawn Points
+- Death Messages
+- Loaded Missing IPLs
 
 ## Commands
 
