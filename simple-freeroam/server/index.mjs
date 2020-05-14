@@ -130,9 +130,7 @@ chat.registerCmd("tp", function (player, args) {
     if(players.length === 0){
         chat.send(player, `{ff0000} Player {ff9500}${args.join(' ')} {ff0000}not found..`);
     }else{
-        player.pos.x = players[0].pos.x;
-        player.pos.y = players[0].pos.y;
-        player.pos.z = players[0].pos.z;
+        player.pos = players[0].pos;
     }
 });
 
