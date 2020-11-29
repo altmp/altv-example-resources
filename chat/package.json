@@ -1,0 +1,24 @@
+{
+  "type": "module",
+  "name": "chat",
+  "version": "1.0.0",
+  "description": "sample chat resource for alt:V Multiplayer",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/altmp/chat.git"
+  },
+  "keywords": [
+    "altv",
+    "chat"
+  ],
+  "author": "altMP Team",
+  "license": "Unlicense",
+  "bugs": {
+    "url": "https://github.com/altmp/chat/issues"
+  },
+  "homepage": "https://github.com/altmp/chat#readme"
+}
