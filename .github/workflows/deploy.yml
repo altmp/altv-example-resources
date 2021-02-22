@@ -7,7 +7,7 @@ on:
       - 'v*'
 
 jobs:
-    deploy-cdn:
+  deploy-cdn:
     name: Deploy to alt:V CDN
     runs-on: ubuntu-18.04
     steps:
