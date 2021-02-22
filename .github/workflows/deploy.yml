@@ -1,4 +1,4 @@
-name: Build & deploy
+name: Deploy
 on:
   push:
     branches-ignore: 
@@ -31,7 +31,7 @@ jobs:
         run: npm i @altmp/upload-tool@latest
 
       - name: Zip files
-      - uses: montudor/action-zip@v0.1.1
+        uses: montudor/action-zip@v0.1.1
         with:
           args: zip -qq -r resources.zip ./ -x "./.*"
 
