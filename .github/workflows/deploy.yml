@@ -11,6 +11,14 @@ jobs:
     name: Deploy to alt:V CDN
     runs-on: ubuntu-18.04
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        
+      - name: Zip files
+        uses: montudor/action-zip@v0.1.1
+        with:
+          args: 'zip -qq -r resources.zip ./ -x "./.*"'
+
       - name: Set up Node.js
         uses: actions/setup-node@v1
         with:
@@ -29,11 +37,6 @@ jobs:
 
       - name: Install upload tool
         run: npm i @altmp/upload-tool@latest
-
-      - name: Zip files
-        uses: montudor/action-zip@v0.1.1
-        with:
-          args: zip -qq -r resources.zip ./ -x "./.*"
 
       - name: Move to dist
         run: mkdir dist && mv resources.zip dist/
