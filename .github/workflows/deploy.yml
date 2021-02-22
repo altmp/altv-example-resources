@@ -21,19 +21,7 @@ jobs:
         with:
           path: '**/node_modules'
           key: ${{ runner.os }}
-          
-      - name: Download windows artifacts
-        uses: actions/download-artifact@v2
-        with:
-          name: js-module-windows
-          path: dist-windows
-          
-      - name: Download linux artifacts
-        uses: actions/download-artifact@v2
-        with:
-          name: js-module-linux
-          path: dist-linux
-
+         
       - name: Extract version
         id: version
         shell: bash
@@ -42,11 +30,16 @@ jobs:
       - name: Install upload tool
         run: npm i @altmp/upload-tool@latest
 
-      - name: Copy files to dist
-        run: mkdir .dist && cp -R * .dist
+      - name: Zip files
+      - uses: montudor/action-zip@v0.1.1
+        with:
+          args: zip -qq -r resources.zip ./ -x "./.*"
+
+      - name: Move to dist
+        run: mkdir dist && mv resources.zip dist/
 
       - name: Deploy to cdn
-        run: npx alt-upload .dist example-resources $VERSION
+        run: npx alt-upload dist example-resources $VERSION
         env:
           CI_UPLOAD_URL: ${{ secrets.CI_UPLOAD_URL }}
           CI_DEPLOY_TOKEN: ${{ secrets.CI_DEPLOY_TOKEN }}
