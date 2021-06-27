@@ -1,4 +1,4 @@
-import * as alt from 'alt';
+import * as alt from 'alt-server';
 import * as chat from 'chat';
 
 const spawns = [
