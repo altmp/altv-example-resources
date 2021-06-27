@@ -28,6 +28,7 @@ view.on('chatmessage', (text) => {
 
   opened = false;
   alt.toggleGameControls(true);
+  view.unfocus();
 })
 
 export function pushMessage(name, text) {
@@ -50,14 +51,17 @@ alt.on('keyup', (key) => {
       opened = true;
       view.emit('openChat', false);
       alt.toggleGameControls(false);
+      view.focus();
     } else if (!opened && key === 0xBF && alt.gameControlsEnabled()) {
       opened = true;
       view.emit('openChat', true);
       alt.toggleGameControls(false);
+      view.focus();
     } else if (opened && key == 0x1B) {
       opened = false;
       view.emit('closeChat');
       alt.toggleGameControls(true);
+      view.unfocus();
     }
   }
 });
