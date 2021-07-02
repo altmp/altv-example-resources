@@ -1,0 +1,38 @@
+.turf-progress-layer {
+  align-items: center;
+  flex-direction: column;
+}
+
+.turf-progress {
+  width: 30%;
+  height: 30px;
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 0.3);
+  margin-top: 20px;
+  display: flex;
+}
+
+.turf-progress-left {
+  flex: 1 1;
+  margin: 5px 0 5px 5px;
+  border-radius: 5px 0 0 5px;
+}
+
+.turf-progress-right {
+  flex: 1 1;
+  margin: 5px 5px 5px 0;
+  border-radius: 0 5px 5px 0;
+}
+
+.turf-team-progress {
+  margin-top: 10px;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.team-points {
+  margin-left: 5px;
+  font-size: 15px;
+}
