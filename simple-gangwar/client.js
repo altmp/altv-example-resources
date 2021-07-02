@@ -4,27 +4,6 @@ import chat from 'chat';
 
 let myTeam = null;
 
-alt.emitServer('authData', {
-  discord: alt.discordInfo(),
-  sc: alt.getLicenseHash()
-});
-
-const weapons = [
-  "WEAPON_KNIFE", "WEAPON_BAT", "WEAPON_BOTTLE", "WEAPON_WRENCH",
-  "WEAPON_PISTOL", "WEAPON_HEAVYPISTOL", "WEAPON_REVOLVER",
-  "WEAPON_MICROSMG", "WEAPON_SMG", "WEAPON_COMBATPDW",
-  "WEAPON_ASSAULTRIFLE", "WEAPON_CARBINERIFLE",
-  "WEAPON_PUMPSHOTGUN"
-];
-
-function giveWeapons() {
-  let ped = game.playerPedId()
-
-  for (const weapon of weapons) {
-    game.giveWeaponToPed(ped, game.getHashKey(weapon), 9999, false, false)
-  }
-}
-
 const clothes = {
   families: {
     1: {
@@ -178,9 +157,8 @@ const teamColors = {
 let mainView = null;
 let viewLoaded = false;
 
-function loadWebView()
-{
-  mainView = new alt.WebView('http://resources/ls-gangwar/client/html/index.html');
+function loadWebView() {
+  mainView = new alt.WebView('http://resource/client/html/index.html');
   mainView.on('viewLoaded', () => {
     alt.log('GangWar view loaded');
     alt.emitServer('viewLoaded');
@@ -189,9 +167,18 @@ function loadWebView()
 
   mainView.on('teamSelected', (teamId) => {
     alt.emitServer('teamSelected', teamId);
+    alt.toggleGameControls(true);
     alt.showCursor(false);
   });
 }
+
+alt.on("connectionComplete", () => {
+  loadIpls();
+  alt.emitServer('authData', {
+    discord: alt.Discord.currentUser,
+    sc: alt.getLicenseHash()
+  });
+});
 
 alt.onServer('youAreConnected', () => {
   chat.pushLine('Loading...');
@@ -228,10 +215,9 @@ const colors = {
 };
 
 alt.onServer('applyAppearance', (team) => {
-  game.setPedDefaultComponentVariation(game.playerPedId());
   const components = clothes[team];
   for (let c in components) {
-    game.setPedComponentVariation(game.playerPedId(), c, components[c].drawable, components[c].texture, 0);
+    game.setPedComponentVariation(alt.Player.local.scriptID, parseInt(c), components[c].drawable, components[c].texture, 0);
   }
 });
 
@@ -291,6 +277,7 @@ alt.onServer('showTeamSelect', (teamsPopulation) => {
   alt.log(JSON.stringify(teamsPopulation, null, 4));
   mainView.emit('showTeamSelect', teamsPopulation);
   mainView.focus();
+  alt.toggleGameControls(false);
   alt.showCursor(true);
 });
 
@@ -301,11 +288,7 @@ alt.on('keydown', (key) => {
 });
 
 alt.onServer('setintoveh', veh => {
-  game.setPedIntoVehicle(game.playerPedId(), veh.scriptID, -1);
-});
-
-alt.onServer('giveAllWeapons', () => {
-  giveWeapons();
+  game.setPedIntoVehicle(alt.Player.local.scriptID, veh.scriptID, -1);
 });
 
 let captureBlip = null;
@@ -362,7 +345,7 @@ alt.on('update', () => {
 
 alt.onServer('showInfo', (text) => {
   game.beginTextCommandDisplayHelp('STRING');
-  game.addTextComponentScaleform(text);
+  game.addTextComponentSubstringKeyboardDisplay(text);
   game.endTextCommandDisplayHelp(0, 0, 0, -1);
 });
 
@@ -372,126 +355,129 @@ alt.onServer('updatePlayersOnline', (players) => {
   mainView.emit('updatePlayersOnline', players);
 });
 
-game.requestIpl('chop_props');
-game.requestIpl('FIBlobby');
-game.removeIpl('FIBlobbyfake');
-game.requestIpl('FBI_colPLUG');
-game.requestIpl('FBI_repair');
-game.requestIpl('v_tunnel_hole');
-game.requestIpl('TrevorsMP');
-game.requestIpl('TrevorsTrailer');
-game.requestIpl('TrevorsTrailerTidy');
-game.removeIpl('farm_burnt');
-game.removeIpl('farm_burnt_lod');
-game.removeIpl('farm_burnt_props');
-game.removeIpl('farmint_cap');
-game.removeIpl('farmint_cap_lod');
-game.requestIpl('farm');
-game.requestIpl('farmint');
-game.requestIpl('farm_lod');
-game.requestIpl('farm_props');
-game.requestIpl('facelobby');
-game.removeIpl('CS1_02_cf_offmission');
-game.requestIpl('CS1_02_cf_onmission1');
-game.requestIpl('CS1_02_cf_onmission2');
-game.requestIpl('CS1_02_cf_onmission3');
-game.requestIpl('CS1_02_cf_onmission4');
-game.requestIpl('v_rockclub');
-game.requestIpl('v_janitor');
-game.removeIpl('hei_bi_hw1_13_door');
-game.requestIpl('bkr_bi_hw1_13_int');
-game.requestIpl('ufo');
-game.requestIpl('ufo_lod');
-game.requestIpl('ufo_eye');
-game.removeIpl('v_carshowroom');
-game.removeIpl('shutter_open');
-game.removeIpl('shutter_closed');
-game.removeIpl('shr_int');
-game.requestIpl('csr_afterMission');
-game.requestIpl('v_carshowroom');
-game.requestIpl('shr_int');
-game.requestIpl('shutter_closed');
-game.requestIpl('smboat');
-game.requestIpl('smboat_distantlights');
-game.requestIpl('smboat_lod');
-game.requestIpl('smboat_lodlights');
-game.requestIpl('cargoship');
-game.requestIpl('railing_start');
-game.removeIpl('sp1_10_fake_interior');
-game.removeIpl('sp1_10_fake_interior_lod');
-game.requestIpl('sp1_10_real_interior');
-game.requestIpl('sp1_10_real_interior_lod');
-game.removeIpl('id2_14_during_door');
-game.removeIpl('id2_14_during1');
-game.removeIpl('id2_14_during2');
-game.removeIpl('id2_14_on_fire');
-game.removeIpl('id2_14_post_no_int');
-game.removeIpl('id2_14_pre_no_int');
-game.removeIpl('id2_14_during_door');
-game.requestIpl('id2_14_during1');
-game.removeIpl('Coroner_Int_off');
-game.requestIpl('coronertrash');
-game.requestIpl('Coroner_Int_on');
-game.removeIpl('bh1_16_refurb');
-game.removeIpl('jewel2fake');
-game.removeIpl('bh1_16_doors_shut');
-game.requestIpl('refit_unload');
-game.requestIpl('post_hiest_unload');
-game.requestIpl('Carwash_with_spinners');
-game.requestIpl('KT_CarWash');
-game.requestIpl('ferris_finale_Anim');
-game.removeIpl('ch1_02_closed');
-game.requestIpl('ch1_02_open');
-game.requestIpl('AP1_04_TriAf01');
-game.requestIpl('CS2_06_TriAf02');
-game.requestIpl('CS4_04_TriAf03');
-game.removeIpl('scafstartimap');
-game.requestIpl('scafendimap');
-game.removeIpl('DT1_05_HC_REMOVE');
-game.requestIpl('DT1_05_HC_REQ');
-game.requestIpl('DT1_05_REQUEST');
-game.requestIpl('FINBANK');
-game.removeIpl('DT1_03_Shutter');
-game.removeIpl('DT1_03_Gr_Closed');
-game.requestIpl('golfflags');
-game.requestIpl('airfield');
-game.requestIpl('v_garages');
-game.requestIpl('v_foundry');
-game.requestIpl('hei_yacht_heist');
-game.requestIpl('hei_yacht_heist_Bar');
-game.requestIpl('hei_yacht_heist_Bedrm');
-game.requestIpl('hei_yacht_heist_Bridge');
-game.requestIpl('hei_yacht_heist_DistantLights');
-game.requestIpl('hei_yacht_heist_enginrm');
-game.requestIpl('hei_yacht_heist_LODLights');
-game.requestIpl('hei_yacht_heist_Lounge');
-game.requestIpl('hei_carrier');
-game.requestIpl('hei_Carrier_int1');
-game.requestIpl('hei_Carrier_int2');
-game.requestIpl('hei_Carrier_int3');
-game.requestIpl('hei_Carrier_int4');
-game.requestIpl('hei_Carrier_int5');
-game.requestIpl('hei_Carrier_int6');
-game.requestIpl('hei_carrier_LODLights');
-game.requestIpl('bkr_bi_id1_23_door');
-game.requestIpl('lr_cs6_08_grave_closed');
-game.requestIpl('hei_sm_16_interior_v_bahama_milo_');
-game.requestIpl('CS3_07_MPGates');
-game.requestIpl('cs5_4_trains');
-game.requestIpl('v_lesters');
-game.requestIpl('v_trevors');
-game.requestIpl('v_michael');
-game.requestIpl('v_comedy');
-game.requestIpl('v_cinema');
-game.requestIpl('V_Sweat');
-game.requestIpl('V_35_Fireman');
-game.requestIpl('redCarpet');
-game.requestIpl('triathlon2_VBprops');
-game.requestIpl('jetstegameurnel');
-game.requestIpl('Jetsteal_ipl_grp1');
-game.requestIpl('v_hospital');
-game.removeIpl('RC12B_Default');
-game.removeIpl('RC12B_Fixed');
-game.requestIpl('RC12B_Destroyed');
-game.requestIpl('RC12B_HospitalInterior');
-game.requestIpl('canyonriver01');
+function loadIpls() {
+  alt.requestIpl('chop_props');
+  alt.requestIpl('FIBlobby');
+  alt.removeIpl('FIBlobbyfake');
+  alt.requestIpl('FBI_colPLUG');
+  alt.requestIpl('FBI_repair');
+  alt.requestIpl('v_tunnel_hole');
+  alt.requestIpl('TrevorsMP');
+  alt.requestIpl('TrevorsTrailer');
+  alt.requestIpl('TrevorsTrailerTidy');
+  alt.removeIpl('farm_burnt');
+  alt.removeIpl('farm_burnt_lod');
+  alt.removeIpl('farm_burnt_props');
+  alt.removeIpl('farmint_cap');
+  alt.removeIpl('farmint_cap_lod');
+  alt.requestIpl('farm');
+  alt.requestIpl('farmint');
+  alt.requestIpl('farm_lod');
+  alt.requestIpl('farm_props');
+  alt.requestIpl('facelobby');
+  alt.removeIpl('CS1_02_cf_offmission');
+  alt.requestIpl('CS1_02_cf_onmission1');
+  alt.requestIpl('CS1_02_cf_onmission2');
+  alt.requestIpl('CS1_02_cf_onmission3');
+  alt.requestIpl('CS1_02_cf_onmission4');
+  alt.requestIpl('v_rockclub');
+  alt.requestIpl('v_janitor');
+  alt.removeIpl('hei_bi_hw1_13_door');
+  alt.requestIpl('bkr_bi_hw1_13_int');
+  alt.requestIpl('ufo');
+  alt.requestIpl('ufo_lod');
+  alt.requestIpl('ufo_eye');
+  alt.removeIpl('v_carshowroom');
+  alt.removeIpl('shutter_open');
+  alt.removeIpl('shutter_closed');
+  alt.removeIpl('shr_int');
+  alt.requestIpl('csr_afterMission');
+  alt.requestIpl('v_carshowroom');
+  alt.requestIpl('shr_int');
+  alt.requestIpl('shutter_closed');
+  alt.requestIpl('smboat');
+  alt.requestIpl('smboat_distantlights');
+  alt.requestIpl('smboat_lod');
+  alt.requestIpl('smboat_lodlights');
+  alt.requestIpl('cargoship');
+  alt.requestIpl('railing_start');
+  alt.removeIpl('sp1_10_fake_interior');
+  alt.removeIpl('sp1_10_fake_interior_lod');
+  alt.requestIpl('sp1_10_real_interior');
+  alt.requestIpl('sp1_10_real_interior_lod');
+  alt.removeIpl('id2_14_during_door');
+  alt.removeIpl('id2_14_during1');
+  alt.removeIpl('id2_14_during2');
+  alt.removeIpl('id2_14_on_fire');
+  alt.removeIpl('id2_14_post_no_int');
+  alt.removeIpl('id2_14_pre_no_int');
+  alt.removeIpl('id2_14_during_door');
+  alt.requestIpl('id2_14_during1');
+  alt.removeIpl('Coroner_Int_off');
+  alt.requestIpl('coronertrash');
+  alt.requestIpl('Coroner_Int_on');
+  alt.removeIpl('bh1_16_refurb');
+  alt.removeIpl('jewel2fake');
+  alt.removeIpl('bh1_16_doors_shut');
+  alt.requestIpl('refit_unload');
+  alt.requestIpl('post_hiest_unload');
+  alt.requestIpl('Carwash_with_spinners');
+  alt.requestIpl('KT_CarWash');
+  alt.requestIpl('ferris_finale_Anim');
+  alt.removeIpl('ch1_02_closed');
+  alt.requestIpl('ch1_02_open');
+  alt.requestIpl('AP1_04_TriAf01');
+  alt.requestIpl('CS2_06_TriAf02');
+  alt.requestIpl('CS4_04_TriAf03');
+  alt.removeIpl('scafstartimap');
+  alt.requestIpl('scafendimap');
+  alt.removeIpl('DT1_05_HC_REMOVE');
+  alt.requestIpl('DT1_05_HC_REQ');
+  alt.requestIpl('DT1_05_REQUEST');
+  alt.requestIpl('FINBANK');
+  alt.removeIpl('DT1_03_Shutter');
+  alt.removeIpl('DT1_03_Gr_Closed');
+  alt.requestIpl('golfflags');
+  alt.requestIpl('airfield');
+  alt.requestIpl('v_garages');
+  alt.requestIpl('v_foundry');
+  alt.requestIpl('hei_yacht_heist');
+  alt.requestIpl('hei_yacht_heist_Bar');
+  alt.requestIpl('hei_yacht_heist_Bedrm');
+  alt.requestIpl('hei_yacht_heist_Bridge');
+  alt.requestIpl('hei_yacht_heist_DistantLights');
+  alt.requestIpl('hei_yacht_heist_enginrm');
+  alt.requestIpl('hei_yacht_heist_LODLights');
+  alt.requestIpl('hei_yacht_heist_Lounge');
+  alt.requestIpl('hei_carrier');
+  alt.requestIpl('hei_Carrier_int1');
+  alt.requestIpl('hei_Carrier_int2');
+  alt.requestIpl('hei_Carrier_int3');
+  alt.requestIpl('hei_Carrier_int4');
+  alt.requestIpl('hei_Carrier_int5');
+  alt.requestIpl('hei_Carrier_int6');
+  alt.requestIpl('hei_carrier_LODLights');
+  alt.requestIpl('bkr_bi_id1_23_door');
+  alt.requestIpl('lr_cs6_08_grave_closed');
+  alt.requestIpl('hei_sm_16_interior_v_bahama_milo_');
+  alt.requestIpl('CS3_07_MPGates');
+  alt.requestIpl('cs5_4_trains');
+  alt.requestIpl('v_lesters');
+  alt.requestIpl('v_trevors');
+  alt.requestIpl('v_michael');
+  alt.requestIpl('v_comedy');
+  alt.requestIpl('v_cinema');
+  alt.requestIpl('V_Sweat');
+  alt.requestIpl('V_35_Fireman');
+  alt.requestIpl('redCarpet');
+  alt.requestIpl('triathlon2_VBprops');
+  alt.requestIpl('jetstealturnel');
+  alt.requestIpl('Jetsteal_ipl_grp1');
+  alt.requestIpl('v_hospital');
+  alt.removeIpl('RC12B_Default');
+  alt.removeIpl('RC12B_Fixed');
+  alt.requestIpl('RC12B_Destroyed');
+  alt.requestIpl('RC12B_HospitalInterior');
+  alt.requestIpl('canyonriver01');
+}
+
