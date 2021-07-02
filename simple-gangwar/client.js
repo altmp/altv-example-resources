@@ -190,22 +190,30 @@ let vehicleBlip = null;
 alt.onServer('updateTeam', (team) => {
   myTeam = team;
   if (weaponBlip) {
-    game.removeBlip(weaponBlip);
+    weaponBlip.destroy();
   }
-  weaponBlip = game.addBlipForCoord(positions[myTeam].weapon.x, positions[myTeam].weapon.y, positions[myTeam].weapon.z);
-  game.setBlipSprite(weaponBlip, 110);
-  game.beginTextCommandSetBlipName('STRING');
-  game.addTextComponentSubstringPlayerName('Weapon provider');
-  game.endTextCommandSetBlipName(weaponBlip);
+
+  weaponBlip = new alt.PointBlip(
+    positions[myTeam].weapon.x, positions[myTeam].weapon.y, positions[myTeam].weapon.z
+  );
+
+  weaponBlip.sprite = 110;
+  weaponBlip.name = 'Weapon provider';
+  weaponBlip.alpha = 200;
+  weaponBlip.shortRange = true;
 
   if (vehicleBlip) {
-    game.removeBlip(vehicleBlip);
+    vehicleBlip.destroy();
   }
-  vehicleBlip = game.addBlipForCoord(positions[myTeam].vehicle.x, positions[myTeam].vehicle.y, positions[myTeam].vehicle.z);
-  game.setBlipSprite(vehicleBlip, 227);
-  game.beginTextCommandSetBlipName('STRING');
-  game.addTextComponentSubstringPlayerName('Vehicle provider');
-  game.endTextCommandSetBlipName(vehicleBlip);
+
+  vehicleBlip = new alt.PointBlip(
+    positions[myTeam].vehicle.x, positions[myTeam].vehicle.y, positions[myTeam].vehicle.z
+  );
+
+  vehicleBlip.sprite = 227;
+  vehicleBlip.name = 'Vehicle provider';
+  vehicleBlip.alpha = 200;
+  vehicleBlip.shortRange = true;
 });
 
 const colors = {
@@ -223,8 +231,7 @@ alt.onServer('applyAppearance', (team) => {
 
 alt.onServer('updateTeamPoints', (info) => {
   let myTeamPoints = info[myTeam];
-  if(viewLoaded)
-    mainView.emit('setTeamPoints', myTeam, myTeamPoints);
+  if(viewLoaded) mainView.emit('setTeamPoints', myTeam, myTeamPoints);
 
   const teamsArray = [];
   for (let t in info) {
@@ -253,9 +260,7 @@ alt.onServer('updateTeamPoints', (info) => {
 });
 
 alt.onServer('captureStateChanged', (state) => {
-  if(!viewLoaded)
-    return;
-
+  if(!viewLoaded) return;
   if (state == false) {
     mainView.emit('hideProgress');
   } else {
@@ -264,17 +269,12 @@ alt.onServer('captureStateChanged', (state) => {
 });
 
 alt.onServer('playerKill', (data) => {
-  if(!viewLoaded)
-    return;
-
+  if(!viewLoaded) return;
   mainView.emit('registerKill', data);
 });
 
 alt.onServer('showTeamSelect', (teamsPopulation) => {
-  if(!viewLoaded)
-    return;
-
-  alt.log(JSON.stringify(teamsPopulation, null, 4));
+  if(!viewLoaded)return;
   mainView.emit('showTeamSelect', teamsPopulation);
   mainView.focus();
   alt.toggleGameControls(false);
@@ -287,57 +287,53 @@ alt.on('keydown', (key) => {
   }
 });
 
-alt.onServer('setintoveh', veh => {
-  game.setPedIntoVehicle(alt.Player.local.scriptID, veh.scriptID, -1);
-});
-
 let captureBlip = null;
 
 alt.onServer('startCapture', (info) => {
   const { x1, x2, y1, y2 } = info;
 
   if (captureBlip != null) {
-    game.removeBlip(captureBlip);
+    captureBlip.destroy();
     captureBlip = null;
   }
   
   leadingTeam = null;
   lastLeadingTeam = null;
-  captureBlip = game.addBlipForArea((x1 + x2) / 2, (y1 + y2) / 2, 0, 200, 200);
+  captureBlip = new alt.AreaBlip((x1 + x2) / 2, (y1 + y2) / 2, 0, 200, 200);
   // game.SetBlipSprite(captureBlip, 84);
-  game.setBlipColour(captureBlip, 39);
-  game.setBlipFlashTimer(captureBlip, 500);
-  game.setBlipFlashInterval(captureBlip, 500);
-  game.setBlipFlashes(captureBlip, true);
-  game.setBlipAlpha(captureBlip, 125);
-  game.setBlipRotation(captureBlip, 0)
-  game.beginTextCommandSetBlipName('STRING');
-  game.addTextComponentSubstringPlayerName('Turf War');
-  game.endTextCommandSetBlipName(captureBlip);
+  captureBlip.color = 39;
+  captureBlip.flashTimer = 500;
+  captureBlip.flashInterval = 500;
+  captureBlip.flashes = true;
+  captureBlip.alpha = 125;
+  captureBlip.heading = 0;
+  captureBlip.name = 'Turf War';
   
-  if(viewLoaded)
+  if(viewLoaded) {
     mainView.emit('setProgress', 0, 0, '#000000', '#000000');
+  }
 });
 
 alt.onServer('stopCapture', () => {
   leadingTeam = null;
   lastLeadingTeam = null;
   if (captureBlip) {
-    game.removeBlip(captureBlip);
+    captureBlip.destroy();
     captureBlip = null;
   }
 
-  if(viewLoaded)
+  if(viewLoaded) {
     mainView.emit('setProgress', 0, 0, '#000000', '#000000');
+  }
 });
 
-alt.on('update', () => {
+alt.everyTick(() => {
   if (captureBlip) {
     if (leadingTeam && leadingTeam != lastLeadingTeam && leadingTeam in teamColors) {
-      game.setBlipColour(captureBlip, teamColors[leadingTeam].blipColor);
+      captureBlip.color = teamColors[leadingTeam].blipColor;
       lastLeadingTeam = leadingTeam;
     } else if (!leadingTeam) {
-      game.setBlipColour(captureBlip, 39);
+      captureBlip.color = 39;
       lastLeadingTeam = leadingTeam;
     }
   }
