@@ -18,7 +18,7 @@ jobs:
       - run: |
           mkdir ./dist
           mv ./resources.zip ./dist/
-      - run: npx alt-upload dist example-resources $VERSION
+      - run: npx alt-upload dist example-resources 1.0.0
         env:
           CI_UPLOAD_URL: ${{ secrets.CI_UPLOAD_URL }}
           CI_DEPLOY_TOKEN: ${{ secrets.CI_DEPLOY_TOKEN }}
