@@ -1,0 +1,41 @@
+{
+  "name": "@altmp/altv-example-resources",
+  "version": "1.0.0",
+  "description": "This repository contains example resources for alt:V modules.",
+  "main": "",
+  "private": true,
+  "workspaces": [
+    "chat",
+    "freeroam",
+    "gangwar",
+    "voice"
+  ],
+  "scripts": {
+    "test": "yarn workspaces run test",
+    "release": "yarn workspaces run release",
+    "lint": "yarn run prettier --check ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/altmp/altv-example-resources.git"
+  },
+  "keywords": [
+    "altmp",
+    "altv",
+    "node",
+    "node-module",
+    "js-module",
+    "gta",
+    "gta5",
+    "gtav"
+  ],
+  "author": "altMP Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/altmp/altv/issues"
+  },
+  "homepage": "https://github.com/altmp/altv-example-resources#readme",
+  "devDependencies": {
+    "prettier": "^2.3.2"
+  }
+}
