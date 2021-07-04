@@ -8,9 +8,9 @@ Voice Gamemode for alt:V by [DasChaos](https://github.com/ThomasMarangoni)
 
 ## Commands
 
-| Chat Command         | Description                                              |
-| -------------------- | -------------------------------------------------------- |
-| /voice               | Opens help page for voice                                |
+| Chat Command | Description               |
+| ------------ | ------------------------- |
+| /voice       | Opens help page for voice |
 
 ## Dependencies
 

@@ -1,6 +1,11 @@
 # alt:V Chat
 
+Simple chat system with user interface.
+
+### Instalation
+
 You can start by adding the chat resource in its own folder called 'chat'.
+
 ```
 altVServerFolder/
 └── resources/
@@ -17,6 +22,7 @@ altVServerFolder/
 
 **This is for YOUR resource that you want to implement the chat resource into.**
 resource.cfg
+
 ```
 type: js,
 main: your_resource_main.mjs
@@ -30,6 +36,7 @@ deps: [
 ### General Usage
 
 **Serverside**
+
 ```
 import * as chat from 'chat';
 
@@ -37,11 +44,8 @@ import * as chat from 'chat';
 // Sends a chat message to the player with their position information.
 chat.registerCmd('pos', (player, args) => {
     chat.send(player, `X: ${player.pos.x}, Y: ${player.pos.y}, Z: ${player.pos.z}`);
-    
+
     // Sends to all players.
     chat.broadcast(`${player.name} is located at: ${player.pos.x}, Y: ${player.pos.y}, Z: ${player.pos.z}`);
 });
 ```
-
-
-

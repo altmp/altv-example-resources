@@ -1,0 +1,40 @@
+.kill-list {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.kill-list-layer {
+  justify-content: flex-end;
+}
+
+.kill-list-item {
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 20px;
+  margin-top: 10px;
+  font-size: 18px;
+  transition: all 0.2s ease;
+  max-height: 50px;
+  overflow-y: hidden;
+  background: rgba(0, 0, 0, 0.3);
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  text-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+.kill-list-item-delete {
+  max-height: 0px;
+}
+
+.kill-list-killer {
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.kill-list-victim {
+  margin-left: 10px;
+  font-weight: bold;
+}

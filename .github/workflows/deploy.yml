@@ -1,10 +1,10 @@
 name: Deploy
 on:
   push:
-    branches-ignore: 
-      - '**'
+    branches-ignore:
+      - "**"
     tags:
-      - 'v*'
+      - "v*"
 
 jobs:
   deploy-cdn:
@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-        
+
       - name: Zip files
         uses: montudor/action-zip@v0.1.1
         with:
@@ -27,9 +27,9 @@ jobs:
       - name: Cache node_modules
         uses: actions/cache@v2
         with:
-          path: '**/node_modules'
+          path: "**/node_modules"
           key: ${{ runner.os }}
-         
+
       - name: Extract version
         id: version
         shell: bash
