@@ -1,0 +1,33 @@
+on:
+  push:
+    branches:
+      - master
+jobs:
+  deploy-cdn:
+    runs-on: ubuntu-20.04
+    if: "contains(github.event.head_commit.message, 'Bump version') || contains(github.event.head_commit.message, 'Test workflow')"
+    steps:
+      - uses: actions/checkout@v2
+      - uses: montudor/action-zip@v1
+        with:
+          args: 'zip -qq -r ./resources.zip ./ -x ./.*'
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      # - uses: actions/cache@v2
+      #   with:
+      #     path: "**/node_modules"
+      #     key: ${{ runner.os }}
+      - run: npm i -D @altmp/upload-tool
+      - run: |
+          mkdir ./dist
+          mv ./resources.zip ./dist/
+      - uses: actions/upload-artifact@v2
+        with:
+          name: test
+          path: ./dist/
+      # - run: npx alt-upload dist example-resources $VERSION
+      #   env:
+      #     CI_UPLOAD_URL: ${{ secrets.CI_UPLOAD_URL }}
+      #     CI_DEPLOY_TOKEN: ${{ secrets.CI_DEPLOY_TOKEN }}
+      #     VERSION: ${{ steps.version.outputs.VERSION }}
