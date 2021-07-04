@@ -5,7 +5,7 @@ on:
 jobs:
   deploy-cdn:
     runs-on: ubuntu-20.04
-    if: "contains(github.event.head_commit.message, 'Bump version') || contains(github.event.head_commit.message, 'Test workflow')"
+    if: "contains(github.event.head_commit.message, 'Bump version')"
     steps:
       - uses: actions/checkout@v2
       - uses: montudor/action-zip@v1
@@ -18,12 +18,8 @@ jobs:
       - run: |
           mkdir ./dist
           mv ./resources.zip ./dist/
-      - uses: actions/upload-artifact@v2
-        with:
-          name: test
-          path: ./dist/
-      # - run: npx alt-upload dist example-resources $VERSION
-      #   env:
-      #     CI_UPLOAD_URL: ${{ secrets.CI_UPLOAD_URL }}
-      #     CI_DEPLOY_TOKEN: ${{ secrets.CI_DEPLOY_TOKEN }}
-      #     VERSION: ${{ steps.version.outputs.VERSION }}
+      - run: npx alt-upload dist example-resources $VERSION
+        env:
+          CI_UPLOAD_URL: ${{ secrets.CI_UPLOAD_URL }}
+          CI_DEPLOY_TOKEN: ${{ secrets.CI_DEPLOY_TOKEN }}
+          VERSION: ${{ steps.version.outputs.VERSION }}
