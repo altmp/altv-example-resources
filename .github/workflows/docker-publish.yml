@@ -3,7 +3,7 @@ on:
     branches:
       - master
 jobs:
-  deploy-docker:
+  deploy-release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -12,13 +12,8 @@ jobs:
         run: |
             sudo apt install jq -y
             mkdir -p data && mkdir -p modules && mkdir -p modules/js-module
-            wget --no-cache -q -O ./altv-server https://cdn.altv.mp/server/release/x64_linux/altv-server
-            wget --no-cache -q -O ./modules/js-module/libnode.so.72 https://cdn.altv.mp/js-module/release/x64_linux/modules/js-module/libnode.so.72
-            wget --no-cache -q -O ./modules/js-module/libjs-module.so https://cdn.altv.mp/js-module/release/x64_linux/modules/js-module/libjs-module.so
-            wget --no-cache -q -O ./modules/libcsharp-module.so https://cdn.altv.mp/coreclr-module/release/x64_linux/modules/libcsharp-module.so
-            wget --no-cache -q -O ./AltV.Net.Host.dll https://cdn.altv.mp/coreclr-module/release/x64_linux/AltV.Net.Host.dll
-            wget --no-cache -q -O ./AltV.Net.Host.runtimeconfig.json https://cdn.altv.mp/coreclr-module/release/x64_linux/AltV.Net.Host.runtimeconfig.json
-            chmod +x ./altv-server && chmod +x ./start_server.sh
+            chmod +x ./altv-server && chmod +x ./start_server.sh && chmod +x ./dl_server.sh
+            ./dl_server.sh release
             APP_VERSION=$(cat ../package.json | jq .version -r)
             cp -r ../chat ../freeroam ./resources/
       - name: Publish to Registry
@@ -28,4 +23,46 @@ jobs:
           username: ${{ secrets.REGISTRY_USER }}
           password: ${{ secrets.REGISTRY_PASS }}
           workdir: server
-          tags: "latest,${{ env.APP_VERSION }}"
+          tags: "release"
+  deploy-rc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Setup server
+        working-directory: server
+        run: |
+            sudo apt install jq -y
+            mkdir -p data && mkdir -p modules && mkdir -p modules/js-module
+            chmod +x ./altv-server && chmod +x ./start_server.sh && chmod +x ./dl_server.sh
+            ./dl_server.sh rc
+            APP_VERSION=$(cat ../package.json | jq .version -r)
+            cp -r ../chat ../freeroam ./resources/
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: ${{ secrets.REGISTRY_IMG }}
+          username: ${{ secrets.REGISTRY_USER }}
+          password: ${{ secrets.REGISTRY_PASS }}
+          workdir: server
+          tags: "rc"
+  deploy-dev:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Setup server
+        working-directory: server
+        run: |
+            sudo apt install jq -y
+            mkdir -p data && mkdir -p modules && mkdir -p modules/js-module
+            chmod +x ./altv-server && chmod +x ./start_server.sh && chmod +x ./dl_server.sh
+            ./dl_server.sh dev
+            APP_VERSION=$(cat ../package.json | jq .version -r)
+            cp -r ../chat ../freeroam ./resources/
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: ${{ secrets.REGISTRY_IMG }}
+          username: ${{ secrets.REGISTRY_USER }}
+          password: ${{ secrets.REGISTRY_PASS }}
+          workdir: server
+          tags: "dev"
