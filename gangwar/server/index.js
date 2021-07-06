@@ -1,5 +1,5 @@
 import * as alt from "alt-server";
-import chat from "chat";
+import * as chat from "chat";
 import fs from "fs";
 import { resolve, dirname } from "path";
 
