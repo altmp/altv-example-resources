@@ -10,12 +10,10 @@ jobs:
       - name: Setup server
         working-directory: server
         run: |
-            sudo apt install jq -y
             mkdir -p data && mkdir -p modules && mkdir -p modules/js-module
             chmod +x ./start_server.sh && chmod +x ./dl_server.sh
             ./dl_server.sh release
             chmod +x ./altv-server
-            APP_VERSION=$(cat ../package.json | jq .version -r)
             cp -r ../chat ../freeroam ./resources/
       - name: Publish to Registry
         uses: elgohr/Publish-Docker-Github-Action@master
@@ -32,12 +30,10 @@ jobs:
       - name: Setup server
         working-directory: server
         run: |
-            sudo apt install jq -y
             mkdir -p data && mkdir -p modules && mkdir -p modules/js-module
             chmod +x ./start_server.sh && chmod +x ./dl_server.sh
             ./dl_server.sh rc
             chmod +x ./altv-server
-            APP_VERSION=$(cat ../package.json | jq .version -r)
             cp -r ../chat ../freeroam ./resources/
       - name: Publish to Registry
         uses: elgohr/Publish-Docker-Github-Action@master
@@ -54,12 +50,10 @@ jobs:
       - name: Setup server
         working-directory: server
         run: |
-            sudo apt install jq -y
             mkdir -p data && mkdir -p modules && mkdir -p modules/js-module
             chmod +x ./start_server.sh && chmod +x ./dl_server.sh
             ./dl_server.sh dev
             chmod +x ./altv-server
-            APP_VERSION=$(cat ../package.json | jq .version -r)
             cp -r ../chat ../freeroam ./resources/
       - name: Publish to Registry
         uses: elgohr/Publish-Docker-Github-Action@master
