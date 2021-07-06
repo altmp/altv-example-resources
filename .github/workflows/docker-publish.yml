@@ -7,19 +7,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - run: sudo apt install jq -y
-      - run: cd server
-      - run: mkdir -p data && mkdir -p modules && mkdir -p modules/js-module
-      - run: wget --no-cache -q -O ./altv-server https://cdn.altv.mp/server/release/x64_linux/altv-server
-      # - run: wget --no-cache -q -O ./data/vehmodels.bin http://cdn.altv.mp/server/release/x64_linux/data/vehmodels.bin
-      # - run: wget --no-cache -q -O ./data/vehmods.bin http://cdn.altv.mp/server/release/x64_linux/data/vehmods.bin
-      - run: wget --no-cache -q -O ./modules/js-module/libnode.so.72 https://cdn.altv.mp/js-module/release/x64_linux/modules/js-module/libnode.so.72
-      - run: wget --no-cache -q -O ./modules/js-module/libjs-module.so https://cdn.altv.mp/js-module/release/x64_linux/modules/js-module/libjs-module.so
-      - run: wget --no-cache -q -O ./modules/libcsharp-module.so https://cdn.altv.mp/coreclr-module/release/x64_linux/modules/libcsharp-module.so
-      - run: wget --no-cache -q -O ./AltV.Net.Host.dll https://cdn.altv.mp/coreclr-module/release/x64_linux/AltV.Net.Host.dll
-      - run: wget --no-cache -q -O ./AltV.Net.Host.runtimeconfig.json https://cdn.altv.mp/coreclr-module/release/x64_linux/AltV.Net.Host.runtimeconfig.json
-      - run: chmod +x ./altv-server && chmod +x ./start_server.sh
-      - run: APP_VERSION=$(cat package.json | jq .version -r)
+      - name: Setup server
+        working-directory: server
+        run: |
+            sudo apt install jq -y
+            mkdir -p data && mkdir -p modules && mkdir -p modules/js-module
+            wget --no-cache -q -O ./altv-server https://cdn.altv.mp/server/release/x64_linux/altv-server
+            wget --no-cache -q -O ./modules/js-module/libnode.so.72 https://cdn.altv.mp/js-module/release/x64_linux/modules/js-module/libnode.so.72
+            wget --no-cache -q -O ./modules/js-module/libjs-module.so https://cdn.altv.mp/js-module/release/x64_linux/modules/js-module/libjs-module.so
+            wget --no-cache -q -O ./modules/libcsharp-module.so https://cdn.altv.mp/coreclr-module/release/x64_linux/modules/libcsharp-module.so
+            wget --no-cache -q -O ./AltV.Net.Host.dll https://cdn.altv.mp/coreclr-module/release/x64_linux/AltV.Net.Host.dll
+            wget --no-cache -q -O ./AltV.Net.Host.runtimeconfig.json https://cdn.altv.mp/coreclr-module/release/x64_linux/AltV.Net.Host.runtimeconfig.json
+            chmod +x ./altv-server && chmod +x ./start_server.sh
+            APP_VERSION=$(cat package.json | jq .version -r)
       - name: Publish to Registry
         uses: elgohr/Publish-Docker-Github-Action@master
         with:
