@@ -7,4 +7,8 @@ wget --no-cache -q -O ./AltV.Net.Host.dll https://cdn.altv.mp/coreclr-module/$1/
 wget --no-cache -q -O ./AltV.Net.Host.runtimeconfig.json https://cdn.altv.mp/coreclr-module/$1/x64_linux/AltV.Net.Host.runtimeconfig.json
 wget --no-cache -q -O ./data/vehmodels.bin http://cdn.altv.mp/server/$1/x64_linux/data/vehmodels.bin
 wget --no-cache -q -O ./data/vehmods.bin http://cdn.altv.mp/server/$1/x64_linux/data/vehmods.bin
-wget --no-cache -q -O ./data/clothes.bin http://cdn.altv.mp/server/$1/x64_linux/data/clothes.bin
+
+if [ $1 != "release" ]
+then
+	wget --no-cache -q -O ./data/clothes.bin http://cdn.altv.mp/server/$1/x64_linux/data/clothes.bin
+fi
