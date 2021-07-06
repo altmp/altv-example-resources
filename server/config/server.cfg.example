@@ -1,0 +1,18 @@
+name: 'Freeroam'
+host: 0.0.0.0
+port: 7777
+players: 1024
+announce: false
+modules: [ js-module, csharp-module ]
+resources: [
+    chat,
+    freeroam
+]
+#token: 
+debug: true
+streamingDistance: 300
+migrationDistance: 150
+useEarlyAuth: false
+earlyAuthUrl: ''
+useCdn: false
+cdnUrl: ''
