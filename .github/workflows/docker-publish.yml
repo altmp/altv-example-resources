@@ -6,7 +6,7 @@ jobs:
   deploy-docker:
     runs-on: ubuntu-latest
     steps:
-      - run: apt install jq -y
+      - run: sudo apt install jq -y
       - run: cd server
       - run: mkdir -p data && mkdir -p modules && mkdir -p modules/js-module
       - run: wget --no-cache -q -O ./altv-server https://cdn.altv.mp/server/release/x64_linux/altv-server
