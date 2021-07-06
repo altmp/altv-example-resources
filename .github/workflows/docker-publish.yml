@@ -19,7 +19,7 @@ jobs:
             wget --no-cache -q -O ./AltV.Net.Host.dll https://cdn.altv.mp/coreclr-module/release/x64_linux/AltV.Net.Host.dll
             wget --no-cache -q -O ./AltV.Net.Host.runtimeconfig.json https://cdn.altv.mp/coreclr-module/release/x64_linux/AltV.Net.Host.runtimeconfig.json
             chmod +x ./altv-server && chmod +x ./start_server.sh
-            APP_VERSION=$(cat package.json | jq .version -r)
+            APP_VERSION=$(cat ../package.json | jq .version -r)
       - name: Publish to Registry
         uses: elgohr/Publish-Docker-Github-Action@master
         with:
