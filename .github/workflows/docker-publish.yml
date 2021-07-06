@@ -1,0 +1,28 @@
+on:
+  push:
+    branches:
+      - master
+jobs:
+  deploy-docker:
+    runs-on: docker:dind
+    steps:
+      - run: apk add jq
+      - run: mkdir -p data && mkdir -p modules && mkdir -p modules/js-module
+      - run: wget --no-cache -q -O ./altv-server https://cdn.altv.mp/server/release/x64_linux/altv-server
+      # - run: wget --no-cache -q -O ./data/vehmodels.bin http://cdn.altv.mp/server/release/x64_linux/data/vehmodels.bin
+      # - run: wget --no-cache -q -O ./data/vehmods.bin http://cdn.altv.mp/server/release/x64_linux/data/vehmods.bin
+      - run: wget --no-cache -q -O ./modules/js-module/libnode.so.72 https://cdn.altv.mp/js-module/release/x64_linux/modules/js-module/libnode.so.72
+      - run: wget --no-cache -q -O ./modules/js-module/libjs-module.so https://cdn.altv.mp/js-module/release/x64_linux/modules/js-module/libjs-module.so
+      - run: wget --no-cache -q -O ./modules/libcsharp-module.so https://cdn.altv.mp/coreclr-module/release/x64_linux/modules/libcsharp-module.so
+      - run: wget --no-cache -q -O ./AltV.Net.Host.dll https://cdn.altv.mp/coreclr-module/release/x64_linux/AltV.Net.Host.dll
+      - run: wget --no-cache -q -O ./AltV.Net.Host.runtimeconfig.json https://cdn.altv.mp/coreclr-module/release/x64_linux/AltV.Net.Host.runtimeconfig.json
+      - run: chmod +x ./altv-server && chmod +x ./start_server.sh
+      - run: APP_VERSION=$(cat package.json | jq .version -r)
+      - docker login $REGISTRY_HOST -u $REGISTRY_USER -p $REGISTRY_PASS
+      - docker build -f ./server/Dockerfile -t $REGISTRY_HOST/$REGISTRY_IMG:$APP_VERSION .
+      - docker push $REGISTRY_HOST/$REGISTRY_IMG:$APP_VERSION
+        env:
+          REGISTRY_HOST: ${{ secrets.REGISTRY_HOST }}
+          REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
+          REGISTRY_PASS: ${{ secrets.REGISTRY_PASS }}
+          REGISTRY_IMG: ${{ secrets.REGISTRY_IMG }}
