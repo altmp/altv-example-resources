@@ -4,9 +4,10 @@ on:
       - master
 jobs:
   deploy-docker:
-    runs-on: docker:dind
+    runs-on: ubuntu-latest
     steps:
       - run: apk add jq
+      - run: cd server
       - run: mkdir -p data && mkdir -p modules && mkdir -p modules/js-module
       - run: wget --no-cache -q -O ./altv-server https://cdn.altv.mp/server/release/x64_linux/altv-server
       # - run: wget --no-cache -q -O ./data/vehmodels.bin http://cdn.altv.mp/server/release/x64_linux/data/vehmodels.bin
@@ -18,11 +19,11 @@ jobs:
       - run: wget --no-cache -q -O ./AltV.Net.Host.runtimeconfig.json https://cdn.altv.mp/coreclr-module/release/x64_linux/AltV.Net.Host.runtimeconfig.json
       - run: chmod +x ./altv-server && chmod +x ./start_server.sh
       - run: APP_VERSION=$(cat package.json | jq .version -r)
-      - run: docker login $REGISTRY_HOST -u $REGISTRY_USER -p $REGISTRY_PASS
-      - run: docker build -f ./server/Dockerfile -t $REGISTRY_HOST/$REGISTRY_IMG:$APP_VERSION .
-      - run: docker push $REGISTRY_HOST/$REGISTRY_IMG:$APP_VERSION
-        env:
-          REGISTRY_HOST: ${{ secrets.REGISTRY_HOST }}
-          REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
-          REGISTRY_PASS: ${{ secrets.REGISTRY_PASS }}
-          REGISTRY_IMG: ${{ secrets.REGISTRY_IMG }}
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: ${{ secrets.REGISTRY_IMG }}
+          username: ${{ secrets.REGISTRY_USER }}
+          password: ${{ secrets.REGISTRY_PASS }}
+          workdir: server
+          tags: "latest,${{ env.APP_VERSION }}"
