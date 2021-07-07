@@ -1,0 +1,65 @@
+on:
+  push:
+    branches:
+      - master
+jobs:
+  deploy-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Setup server
+        working-directory: server
+        run: |
+            mkdir -p data && mkdir -p modules && mkdir -p modules/js-module
+            chmod +x ./start_server.sh && chmod +x ./dl_server.sh
+            ./dl_server.sh release
+            chmod +x ./altv-server
+            cp -r ../chat ../freeroam ./resources/
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: ${{ secrets.REGISTRY_IMG }}
+          username: ${{ secrets.REGISTRY_USER }}
+          password: ${{ secrets.REGISTRY_PASS }}
+          workdir: server
+          tags: "release"
+  deploy-rc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Setup server
+        working-directory: server
+        run: |
+            mkdir -p data && mkdir -p modules && mkdir -p modules/js-module
+            chmod +x ./start_server.sh && chmod +x ./dl_server.sh
+            ./dl_server.sh rc
+            chmod +x ./altv-server
+            cp -r ../chat ../freeroam ./resources/
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: ${{ secrets.REGISTRY_IMG }}
+          username: ${{ secrets.REGISTRY_USER }}
+          password: ${{ secrets.REGISTRY_PASS }}
+          workdir: server
+          tags: "rc"
+  deploy-dev:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Setup server
+        working-directory: server
+        run: |
+            mkdir -p data && mkdir -p modules && mkdir -p modules/js-module
+            chmod +x ./start_server.sh && chmod +x ./dl_server.sh
+            ./dl_server.sh dev
+            chmod +x ./altv-server
+            cp -r ../chat ../freeroam ./resources/
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: ${{ secrets.REGISTRY_IMG }}
+          username: ${{ secrets.REGISTRY_USER }}
+          password: ${{ secrets.REGISTRY_PASS }}
+          workdir: server
+          tags: "dev"
