@@ -1,4 +1,8 @@
 @echo off
 
-set CSHARP_MODULE_DISABLE_COLLECTIBLE=true
-altv-server.exe --config "config/server.cfg" --logfile "logs/server.log"
+setlocal EnableDelayedExpansion
+set launcherCommand=altv-server.exe --config "config/server.cfg" --logfile "logs/server.log"
+for /d %%i in (resources-*) do (
+    set "launcherCommand=!launcherCommand! --extra-res-folder %%i"
+)
+%launcherCommand%
