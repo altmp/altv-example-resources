@@ -7,9 +7,21 @@ const rangeArray = [5, 10, 20];
 // index of default range
 const defaultRange = 1;
 
-let channelShort = new alt.VoiceChannel(true, rangeArray[0]);
-let channelMedium = new alt.VoiceChannel(true, rangeArray[1]);
-let channelLong = new alt.VoiceChannel(true, rangeArray[2]);
+let channelShort;
+let channelMedium;
+let channelLong;
+
+try {
+  channelShort = new alt.VoiceChannel(true, rangeArray[0]);
+  channelMedium = new alt.VoiceChannel(true, rangeArray[1]);
+  channelLong = new alt.VoiceChannel(true, rangeArray[2]);
+} catch (err) {
+  if(err.message === "Failed to create base object") {
+    alt.logWarning("The alt:V voice chat is not enabled and this resource will cease to work. To enable it, specify the \"voice\" entry in the server config.");
+  } else {
+    throw err;
+  }
+}
 
 function changeVoiceChannel(index, player) {
   channelShort.mutePlayer(player);
