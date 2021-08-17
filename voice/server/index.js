@@ -46,12 +46,6 @@ alt.on("playerConnect", (player) => {
   changeVoiceChannel(defaultRange, player);
 });
 
-alt.on("playerDisconnect", (player, reason) => {
-  channelShort.removePlayer(player);
-  channelMedium.removePlayer(player);
-  channelLong.removePlayer(player);
-});
-
 alt.onClient("voice:rangeChanged", (player, args) => {
   let index = player.getMeta("voice:rangeIndex");
   index++;
