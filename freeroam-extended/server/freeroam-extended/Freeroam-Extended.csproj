@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>Freeroam-Extended</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AltV.Net" Version="7.0.13-rc58" />
+    <PackageReference Include="AltV.Net.Resources.Chat.Api" Version="7.0.12-dev58" />
+  </ItemGroup>
+
+</Project>
