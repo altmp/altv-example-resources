@@ -3,13 +3,24 @@ using System.Threading.Tasks;
 using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
+using Freeroam_Extended.Factories;
 
 namespace Freeroam_Extended
 {
     public class EventHandler : IScript
     {
+        [AsyncScriptEvent(ScriptEventType.PlayerConnect)]
+        public async Task OnPlayerConnect(IAltPlayer player, string reason)
+        {
+            // create async context
+            await using (var asyncContext = AsyncContext.Create())
+            {
+                if (player.TryToAsync(asyncContext, out var asyncPlayer)) return;
+            }
+        }
+
         [AsyncScriptEvent(ScriptEventType.VehicleDestroy)]
-        public async Task OnVehicleDestroy(IVehicle target, IEntity attacker, uint bodyHealthDamage, uint additionalBodyHealthDamage, uint engineHealthDamage, uint petrolTankDamage, uint weaponHash)
+        public async Task OnVehicleDestroy(IAltVehicle target, IEntity attacker, uint bodyHealthDamage, uint additionalBodyHealthDamage, uint engineHealthDamage, uint petrolTankDamage, uint weaponHash)
         {
             // TODO: find owner of vehicle
             
