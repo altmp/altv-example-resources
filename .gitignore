@@ -115,3 +115,7 @@ out/
 *.iws
 *.iml
 *.ipr
+
+.vs/
+*.user
+obj/
