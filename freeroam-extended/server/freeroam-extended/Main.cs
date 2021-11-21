@@ -1,4 +1,6 @@
 ﻿using AltV.Net;
+using AltV.Net.Elements.Entities;
+using Freeroam_Extended.Factories;
 
 namespace Freeroam_Extended
 {
@@ -12,6 +14,16 @@ namespace Freeroam_Extended
         public override void OnStop()
         {
             Alt.Server.LogColored("~g~ Freeroam-Extended Stopped!");
+        }
+        
+        public override IEntityFactory<IPlayer> GetPlayerFactory()
+        {
+            return new AltPlayerFactory();
+        }
+        
+        public override IEntityFactory<IVehicle> GetVehicleFactory()
+        {
+            return new AltVehicleFactory();
         }
     }
 }
