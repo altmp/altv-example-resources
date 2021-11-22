@@ -62,7 +62,7 @@ namespace Freeroam_Extended
         }
 
         [AsyncScriptEvent(ScriptEventType.PlayerDead)]
-        public async Task OnPlayerDead(IAltPlayer player, string reason)
+        public async Task OnPlayerDead(IAltPlayer player, IEntity killer, uint weapon)
         {
             // create async context
             await using (var asyncContext = AsyncContext.Create())
