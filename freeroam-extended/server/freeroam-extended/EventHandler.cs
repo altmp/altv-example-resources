@@ -16,11 +16,15 @@ namespace Freeroam_Extended
         [AsyncScriptEvent(ScriptEventType.PlayerConnect)]
         public async Task OnPlayerConnect(IAltPlayer player, string reason)
         {
-            AltAsync.Log("Player Connect!");
             // create async context
             await using (var asyncContext = AsyncContext.Create())
             {
                 if (!player.TryToAsync(asyncContext, out var asyncPlayer)) return;
+                if (Misc.Misc.BannedPlayers.Contains(asyncPlayer.HardwareIdHash + asyncPlayer.HardwareIdExHash)) // Player banned
+                {
+                    asyncPlayer.Kick("You're banned from this server!");
+                    return;
+                }
                 // select random entry from SpawnPoints
                 var randomSpawnPoint = Misc.Misc.SpawnPositions.ElementAt(new Random().Next(0, Misc.Misc.SpawnPositions.Count));
                 asyncPlayer.Spawn(randomSpawnPoint, 0);

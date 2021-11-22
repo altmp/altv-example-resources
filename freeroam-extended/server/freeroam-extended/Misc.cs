@@ -22,5 +22,10 @@ namespace Freeroam_Extended.Misc
         {
             new Position (100f, 100f, 100f),
         };
+        
+        public static IList<ulong> BannedPlayers = new List<ulong>
+        {
+            // Add banned players here
+        };
     }
 }
