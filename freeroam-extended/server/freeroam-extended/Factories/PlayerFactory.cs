@@ -10,6 +10,7 @@ namespace Freeroam_Extended.Factories
     {
         public IList<AltVehicle> Vehicles { get; set; }
         public DateTime LastVehicleSpawn { get; set; }
+        public bool GhostMode { get; set; }
     } 
     
     [AsyncEntity(typeof(IAltPlayer))]
@@ -17,7 +18,7 @@ namespace Freeroam_Extended.Factories
     {
         public IList<AltVehicle> Vehicles { get; set; }
         public DateTime LastVehicleSpawn { get; set; }
-
+        public bool GhostMode { get; set; }
         public AltPlayer(IServer server, IntPtr nativePointer, ushort id) : base(server, nativePointer, id)
         {
             Vehicles = new List<AltVehicle>();

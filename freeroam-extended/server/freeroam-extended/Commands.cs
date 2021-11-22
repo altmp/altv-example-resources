@@ -60,13 +60,13 @@ namespace Freeroam_Extended
         public void Ghost(IAltPlayer player)
         {
             // Disable
-            if (player.HasMetaData("GHOST"))
+            if (player.GhostMode)
             {
-                player.DeleteMetaData("GHOST");
-                return;    
+                player.SendChatMessage("{00FF00} Ghost Mode disabled! You're no longer invincible.");
+                player.Invincible = false;
+                return;
             }
             // Enable
-            player.SetMetaData("GHOST", true);
             player.Invincible = true;
         }
         
@@ -78,6 +78,12 @@ namespace Freeroam_Extended
             {
                 player.GiveWeapon(weapon, 1000, false);
             }
+        }
+        
+        [Command("model")]
+        public void ChangeModel(IAltPlayer player, string modelName)
+        {
+            player.Model = Alt.Hash(modelName);
         }
         
     }
