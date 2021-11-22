@@ -1,4 +1,6 @@
-﻿using System.Threading;
+﻿using System;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AltV.Net;
 using AltV.Net.Async;
@@ -17,6 +19,10 @@ namespace Freeroam_Extended
             await using (var asyncContext = AsyncContext.Create())
             {
                 if (player.TryToAsync(asyncContext, out var asyncPlayer)) return;
+                
+                // select random entry from SpawnPoints
+                var randomSpawnPoint = Misc.Misc.SpawnPositions.ElementAt(new Random().Next(0, Misc.Misc.SpawnPositions.Count));
+                player.Spawn(randomSpawnPoint, 0);
             }
         }
 

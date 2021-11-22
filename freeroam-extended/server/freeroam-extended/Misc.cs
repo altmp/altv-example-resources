@@ -20,7 +20,7 @@ namespace Freeroam_Extended.Misc
 
         public static IList<Position> SpawnPositions = new List<Position>
         {
-            
+            new Position (100f, 100f, 100f),
         };
     }
 }
