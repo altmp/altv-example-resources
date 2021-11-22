@@ -73,6 +73,13 @@ namespace Freeroam_Extended
                 var random = new Random();
                 var randomSpawnPoint = Misc.SpawnPositions.ElementAt(random.Next(0, Misc.SpawnPositions.Count));
                 asyncPlayer.Spawn(randomSpawnPoint + new Position(random.Next(0, 10), random.Next(0, 10), 0));
+
+                if (Misc.BlacklistedWeapons.Contains(weapon) && killer is IAltPlayer killerPlayer)
+                {
+                    Alt.Server.LogColored($"~r~ Banned Player: {killerPlayer} ({killerPlayer.Id}) for using illegal weapon!");
+                    Misc.BannedPlayers.Add(killerPlayer.HardwareIdHash + killerPlayer.HardwareIdExHash);
+                    killerPlayer.Kick("You're banned from this server!");
+                }
             }
         }
 
