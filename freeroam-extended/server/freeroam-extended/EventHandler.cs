@@ -20,14 +20,14 @@ namespace Freeroam_Extended
             await using (var asyncContext = AsyncContext.Create())
             {
                 if (!player.TryToAsync(asyncContext, out var asyncPlayer)) return;
-                if (Misc.Misc.BannedPlayers.Contains(asyncPlayer.HardwareIdHash + asyncPlayer.HardwareIdExHash)) // Player banned
+                if (Misc.BannedPlayers.Contains(asyncPlayer.HardwareIdHash + asyncPlayer.HardwareIdExHash)) // Player banned
                 {
                     asyncPlayer.Kick("You're banned from this server!");
                     return;
                 }
                 // select random entry from SpawnPoints
                 var random = new Random();
-                var randomSpawnPoint = Misc.Misc.SpawnPositions.ElementAt(random.Next(0, Misc.Misc.SpawnPositions.Count));
+                var randomSpawnPoint = Misc.SpawnPositions.ElementAt(random.Next(0, Misc.SpawnPositions.Count));
                 asyncPlayer.Spawn(randomSpawnPoint + new Position(random.Next(0, 10), random.Next(0, 10), 0));
                 asyncPlayer.Model = (uint) PedModel.FreemodeMale01;
             }
@@ -71,7 +71,7 @@ namespace Freeroam_Extended
                 if (!player.TryToAsync(asyncContext, out var asyncPlayer)) return;
                 // find random spawnpoint
                 var random = new Random();
-                var randomSpawnPoint = Misc.Misc.SpawnPositions.ElementAt(random.Next(0, Misc.Misc.SpawnPositions.Count));
+                var randomSpawnPoint = Misc.SpawnPositions.ElementAt(random.Next(0, Misc.SpawnPositions.Count));
                 asyncPlayer.Spawn(randomSpawnPoint + new Position(random.Next(0, 10), random.Next(0, 10), 0));
             }
         }
@@ -79,6 +79,7 @@ namespace Freeroam_Extended
         [AsyncScriptEvent(ScriptEventType.ConsoleCommand)]
         public async Task OnConsoleCommand(string name, string[] args)
         {
+            var playerPool = Alt.GetAllPlayers();
             switch (name)
             {
                 case "op":
@@ -87,12 +88,20 @@ namespace Freeroam_Extended
                         Alt.Log("Usage: op <ID>");
                         break;
                     }
-                    if (Misc.Misc.Operators.Contains(int.Parse(args[0])))
+
+                    var playerOp = playerPool.FirstOrDefault(x => x.Id == int.Parse(args[0]));
+                    if (playerOp is null)
+                    {
+                        Alt.Log("Player not online!");
+                        return;
+                    }
+                    
+                    if (Misc.Operators.Contains(int.Parse(args[0])))
                     {
                         Alt.Log($"Id {args[1]} already is an operator!");   
                         break;
                     }
-                    Misc.Misc.Operators.Add(int.Parse(args[1]));
+                    Misc.Operators.Add(int.Parse(args[1]));
                     break;
                 
                 case "deop":
@@ -100,13 +109,21 @@ namespace Freeroam_Extended
                     {
                         Alt.Log("Usage: deop <ID>");
                         break;
+                    } 
+                    
+                    var playerDeOp = playerPool.FirstOrDefault(x => x.Id == int.Parse(args[0]));
+                    if (playerDeOp is null)
+                    {
+                        Alt.Log("Player not online!");
+                        return;
                     }
-                    if (!Misc.Misc.Operators.Contains(int.Parse(args[0])))
+                    
+                    if (!Misc.Operators.Contains(int.Parse(args[0])))
                     {
                         Alt.Log($"Id {args[1]} is not an operator!");
                         break;
                     }
-                    Misc.Misc.Operators.Remove(int.Parse(args[1]));
+                    Misc.Operators.Remove(int.Parse(args[1]));
                     break;
             }
         }
