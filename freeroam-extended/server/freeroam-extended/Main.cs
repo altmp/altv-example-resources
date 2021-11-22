@@ -1,10 +1,11 @@
 ﻿using AltV.Net;
+using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
 using Freeroam_Extended.Factories;
 
 namespace Freeroam_Extended
 {
-    public class Main : Resource
+    public class Main : AsyncResource
     {
         public override void OnStart()
         {
