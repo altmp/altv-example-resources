@@ -29,15 +29,15 @@ namespace Freeroam_Extended
         }
 
         [AsyncScriptEvent(ScriptEventType.VehicleDestroy)]
-        public async Task OnVehicleDestroy(IAltVehicle target, IEntity attacker, uint bodyHealthDamage, uint additionalBodyHealthDamage, uint engineHealthDamage, uint petrolTankDamage, uint weaponHash)
+        public async Task OnVehicleDestroy(IAltVehicle target)
         {
             await Task.Delay(5000);
-            target.Owner.SendChatMessage("{FF0000} Your vehicle got destroyed! We removed it for you.");
             
-            // create async context
             await using (var asyncContext = AsyncContext.Create())
             {
-                if (target.TryToAsync(asyncContext, out var asyncVehicle)) return;
+                if (!target.TryToAsync(asyncContext, out var asyncVehicle)) return;
+                if (!target.Owner.TryToAsync(asyncContext, out var asyncOwner)) return;
+                asyncOwner.SendChatMessage("Your Vehicle got destroyed. We removed it for you!");
                 asyncVehicle.Remove();
             }
         }
