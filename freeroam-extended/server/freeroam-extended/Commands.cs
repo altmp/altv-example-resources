@@ -66,7 +66,7 @@ namespace Freeroam_Extended
         public void GetWeapons(IAltPlayer player) 
         {
             // give all weapons from WeaponModel Enum to player
-            foreach (var weapon in Enum.GetValues(typeof(WeaponModel)).Cast<WeaponModel>().Where(w => !Misc.Misc.BlacklistedWeapons.Contains((uint)w)))
+            foreach (var weapon in Enum.GetValues(typeof(WeaponModel)).Cast<WeaponModel>().Where(w => !Misc.BlacklistedWeapons.Contains((uint)w)))
             {
                 player.GiveWeapon(weapon, 1000, false);
             }
@@ -81,11 +81,11 @@ namespace Freeroam_Extended
         [Command("tp")]
         public void Teleport(IAltPlayer player, int id)
         {
-            if (id > Misc.Misc.SpawnPositions.Count || id < 0)
+            if (id > Misc.SpawnPositions.Count || id < 0)
             {
-                player.SendChatMessage($"{{FF0000}}Invalid Spawnpoint! (Minimum 1, Maximum: {Misc.Misc.SpawnPositions.Count}");
+                player.SendChatMessage($"{{FF0000}}Invalid Spawnpoint! (Minimum 1, Maximum: {Misc.SpawnPositions.Count}");
             }
-            var spawnpoint = Misc.Misc.SpawnPositions.ElementAt(id);
+            var spawnpoint = Misc.SpawnPositions.ElementAt(id);
             var random = new Random();
             player.Position = spawnpoint + new Position(random.Next(0, 10), random.Next(0, 10), 0);
         }
@@ -99,7 +99,7 @@ namespace Freeroam_Extended
         [Command("ban")]
         public void Ban(IAltPlayer player, int id)
         {
-            if (!Misc.Misc.Operators.Contains(player.Id))
+            if (!Misc.Operators.Contains(player.Id))
             {
                 player.SendChatMessage("{FF0000} No permission!");
                 return;   
@@ -113,21 +113,21 @@ namespace Freeroam_Extended
             }
             
             // check if player is already banned
-            if (Misc.Misc.BannedPlayers.Contains(target.Id))
+            if (Misc.BannedPlayers.Contains(target.Id))
             {
                 player.SendChatMessage($"{{FF0000}}Player with {id} is already banned!");
                 return;
             }
             
             target.Kick("You've been banned from this server!");
-            Misc.Misc.BannedPlayers.Add(target.HardwareIdHash + player.HardwareIdExHash);
+            Misc.BannedPlayers.Add(target.HardwareIdHash + player.HardwareIdExHash);
             player.SendChatMessage($"{{00FF00}}Player with id {id} banned!");
         }
         
         [Command("unban")]
         public void Unban(IAltPlayer player, int id)
         {
-            if (!Misc.Misc.Operators.Contains(player.Id))
+            if (!Misc.Operators.Contains(player.Id))
             {
                 player.SendChatMessage("{FF0000} No permission!");
                 return;   
@@ -141,13 +141,13 @@ namespace Freeroam_Extended
             }
             
             // check if player is already banned
-            if (!Misc.Misc.BannedPlayers.Contains(target.Id))
+            if (!Misc.BannedPlayers.Contains(target.Id))
             {
                 player.SendChatMessage($"{{FF0000}}Player with {id} is not banned!");
                 return;
             }
             
-            Misc.Misc.BannedPlayers.Remove(target.HardwareIdHash + player.HardwareIdExHash);
+            Misc.BannedPlayers.Remove(target.HardwareIdHash + player.HardwareIdExHash);
             player.SendChatMessage($"{{00FF00}}Player with id {id} unbanned!");
         }
         

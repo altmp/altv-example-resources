@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using AltV.Net.Data;
 
-namespace Freeroam_Extended.Misc
+namespace Freeroam_Extended
 {
     public static class Misc
     {
