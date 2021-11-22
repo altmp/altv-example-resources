@@ -4,6 +4,7 @@ using System.Linq;
 using AltV.Net;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
+using AltV.Net.Enums;
 using AltV.Net.Resources.Chat.Api;
 using Freeroam_Extended.Factories;
 
@@ -12,7 +13,7 @@ namespace Freeroam_Extended
     public class Commands : IScript
     {
         [Command("veh")]
-        public void SpawnVeh(AltPlayer player, string vehicleName)
+        public void SpawnVeh(IAltPlayer player, string vehicleName)
         {
             if (player.IsInVehicle)
             {
@@ -44,7 +45,7 @@ namespace Freeroam_Extended
         }
         
         [Command("revive")]
-        public void Revive(IPlayer player)
+        public void Revive(IAltPlayer player)
         {
             if (player.Health >= 100)
             {
@@ -56,7 +57,7 @@ namespace Freeroam_Extended
         }
 
         [Command("ghost")]
-        public void Ghost(IPlayer player)
+        public void Ghost(IAltPlayer player)
         {
             // Disable
             if (player.HasMetaData("GHOST"))
@@ -67,6 +68,16 @@ namespace Freeroam_Extended
             // Enable
             player.SetMetaData("GHOST", true);
             player.Invincible = true;
+        }
+        
+        [Command("weapons")]
+        public void GetWeapons(IAltPlayer player) 
+        {
+            // give all weapons from WeaponModel Enum to player
+            foreach (var weapon in Enum.GetValues(typeof(WeaponModel)).Cast<WeaponModel>().Where(w => Misc.Misc.BlacklistedWeapons.Contains((uint)w)))
+            {
+                player.GiveWeapon(weapon, 1000, false);
+            }
         }
         
     }
