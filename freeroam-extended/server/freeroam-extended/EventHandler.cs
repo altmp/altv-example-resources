@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AltV.Net;
 using AltV.Net.Async;
+using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
 using AltV.Net.Enums;
 using AltV.Net.Resources.Chat.Api;
@@ -26,8 +27,9 @@ namespace Freeroam_Extended
                     return;
                 }
                 // select random entry from SpawnPoints
-                var randomSpawnPoint = Misc.Misc.SpawnPositions.ElementAt(new Random().Next(0, Misc.Misc.SpawnPositions.Count));
-                asyncPlayer.Spawn(randomSpawnPoint, 0);
+                var random = new Random();
+                var randomSpawnPoint = Misc.Misc.SpawnPositions.ElementAt(random.Next(0, Misc.Misc.SpawnPositions.Count));
+                asyncPlayer.Spawn(randomSpawnPoint + new Position(random.Next(0, 10), random.Next(0, 10), 0));
                 asyncPlayer.Model = (uint) PedModel.FreemodeMale01;
             }
         }
@@ -69,8 +71,9 @@ namespace Freeroam_Extended
             {
                 if (!player.TryToAsync(asyncContext, out var asyncPlayer)) return;
                 // find random spawnpoint
-                var randomSpawnPoint = Misc.Misc.SpawnPositions.ElementAt(new Random().Next(0, Misc.Misc.SpawnPositions.Count));
-                asyncPlayer.Spawn(randomSpawnPoint);
+                var random = new Random();
+                var randomSpawnPoint = Misc.Misc.SpawnPositions.ElementAt(random.Next(0, Misc.Misc.SpawnPositions.Count));
+                asyncPlayer.Spawn(randomSpawnPoint + new Position(random.Next(0, 10), random.Next(0, 10), 0));
             }
         }
 

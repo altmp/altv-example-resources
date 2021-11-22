@@ -86,7 +86,8 @@ namespace Freeroam_Extended
                 player.SendChatMessage($"{{FF0000}}Invalid Spawnpoint! (Minimum 1, Maximum: {Misc.Misc.SpawnPositions.Count}");
             }
             var spawnpoint = Misc.Misc.SpawnPositions.ElementAt(id);
-            player.Position = spawnpoint;
+            var random = new Random();
+            player.Position = spawnpoint + new Position(random.Next(0, 10), random.Next(0, 10), 0);
         }
         
         [Command("pos")]
