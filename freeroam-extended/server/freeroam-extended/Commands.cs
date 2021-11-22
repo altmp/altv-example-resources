@@ -35,13 +35,17 @@ namespace Freeroam_Extended
             
             if (player.Vehicles.Count >= 3)
             {
-                player.Vehicles.OrderBy(veh => veh.SpawnTime).First().Remove();
-                return;
+                var target = player.Vehicles.OrderBy(veh => veh.SpawnTime).First();
+                player.Vehicles.Remove(target);
+                target.Remove();
+                player.SendChatMessage("{FF0000} You can't have more than 3 vehicles. We removed your oldest one!");
             }
             
             var spawnedVeh = (AltVehicle)Alt.CreateVehicle(Alt.Hash(vehicleName), player.Position + new Position(1, 0,0), Rotation.Zero);
-            player.SetIntoVehicle(spawnedVeh, 0);
+            player.SetIntoVehicle(spawnedVeh, 1);
             player.LastVehicleSpawn = DateTime.Now;
+            player.Vehicles.Add(spawnedVeh);
+            spawnedVeh.Owner = player;
         }
         
         [Command("revive")]
