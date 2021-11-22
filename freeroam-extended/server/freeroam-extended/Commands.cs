@@ -89,5 +89,66 @@ namespace Freeroam_Extended
             player.Position = spawnpoint;
         }
         
+        [Command("pos")]
+        public void Position(IAltPlayer player)
+        {
+            Alt.Log($"new Position({player.Position.X}, {player.Position.Y}, {player.Position.Z}),");
+        }
+        
+        [Command("ban")]
+        public void Ban(IAltPlayer player, int id)
+        {
+            if (!Misc.Misc.Operators.Contains(player.Id))
+            {
+                player.SendChatMessage("{FF0000} No permission!");
+                return;   
+            }
+            
+            var target = Alt.GetAllPlayers().FirstOrDefault(p => p.Id == id);
+            if (target == null)
+            {
+                player.SendChatMessage($"{{FF0000}}Player with id {id} not found!");
+                return;
+            }
+            
+            // check if player is already banned
+            if (Misc.Misc.BannedPlayers.Contains(target.Id))
+            {
+                player.SendChatMessage($"{{FF0000}}Player with {id} is already banned!");
+                return;
+            }
+            
+            target.Kick("You've been banned from this server!");
+            Misc.Misc.BannedPlayers.Add(target.HardwareIdHash + player.HardwareIdExHash);
+            player.SendChatMessage($"{{00FF00}}Player with id {id} banned!");
+        }
+        
+        [Command("unban")]
+        public void Unban(IAltPlayer player, int id)
+        {
+            if (!Misc.Misc.Operators.Contains(player.Id))
+            {
+                player.SendChatMessage("{FF0000} No permission!");
+                return;   
+            }
+
+            var target = Alt.GetAllPlayers().FirstOrDefault(p => p.Id == id);
+            if (target == null)
+            {
+                player.SendChatMessage($"{{FF0000}}Player with id {id} not found!");
+                return;
+            }
+            
+            // check if player is already banned
+            if (!Misc.Misc.BannedPlayers.Contains(target.Id))
+            {
+                player.SendChatMessage($"{{FF0000}}Player with {id} is not banned!");
+                return;
+            }
+            
+            Misc.Misc.BannedPlayers.Remove(target.HardwareIdHash + player.HardwareIdExHash);
+            player.SendChatMessage($"{{00FF00}}Player with id {id} unbanned!");
+        }
+        
     }
 }
