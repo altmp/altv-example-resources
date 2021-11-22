@@ -41,5 +41,20 @@ namespace Freeroam_Extended
                 asyncVehicle.Remove();
             }
         }
+
+        [AsyncScriptEvent(ScriptEventType.PlayerDisconnect)]
+        public async Task OnPlayerDisconnect(IAltPlayer player, string reason)
+        {
+            var vehicles = Alt.GetAllVehicles().Cast<IAltVehicle>().Where(x => x.Owner == player);
+            await using (var asyncContext = AsyncContext.Create())
+            {
+                foreach (var veh in vehicles)
+                {
+                    if (!veh.TryToAsync(asyncContext, out var asyncVeh)) continue;
+                    if (veh.Owner.Id != player.Id) continue;
+                    veh.Remove();
+                }   
+            }
+        }
     }
 }
