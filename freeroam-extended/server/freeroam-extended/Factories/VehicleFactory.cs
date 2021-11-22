@@ -8,14 +8,14 @@ namespace Freeroam_Extended.Factories
 {
     public partial interface IAltVehicle : IVehicle
     {
-        public AltPlayer Owner { get; set; }
+        public IAltPlayer Owner { get; set; }
         public DateTime SpawnTime { get; set; }
     }
     
     [AsyncEntity(typeof(IAltVehicle))]
     public partial class AltVehicle : Vehicle, IAltVehicle
     {
-        public AltPlayer Owner { get; set; }
+        public IAltPlayer Owner { get; set; }
         public DateTime SpawnTime { get; set; }
         
         public AltVehicle(IServer server, uint model, Position position, Rotation rotation) : base(server, model, position, rotation)
