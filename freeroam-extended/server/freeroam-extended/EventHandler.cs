@@ -76,9 +76,10 @@ namespace Freeroam_Extended
 
                 if (Misc.BlacklistedWeapons.Contains(weapon) && killer is IAltPlayer killerPlayer)
                 {
-                    Alt.Server.LogColored($"~r~ Banned Player: {killerPlayer} ({killerPlayer.Id}) for using illegal weapon!");
-                    Misc.BannedPlayers.Add(killerPlayer.HardwareIdHash + killerPlayer.HardwareIdExHash);
-                    killerPlayer.Kick("You're banned from this server!");
+                    if (!killerPlayer.TryToAsync(asyncContext, out var asyncKiller)) return;
+                    Alt.Server.LogColored($"~r~ Banned Player: {asyncKiller.Name} ({killerPlayer.Id}) for using illegal weapon!");
+                    Misc.BannedPlayers.Add(asyncKiller.HardwareIdHash + asyncKiller.HardwareIdExHash);
+                    asyncKiller.Kick("You're banned from this server!");
                 }
             }
         }
@@ -132,6 +133,22 @@ namespace Freeroam_Extended
                     }
                     Misc.Operators.Remove(int.Parse(args[1]));
                     break;
+            }
+        }
+
+        [AsyncScriptEvent(ScriptEventType.WeaponDamage)]
+        public async Task OnWeaponDamage(IPlayer player, IEntity target, uint weapon, ushort damage,
+            Position shotOffset, BodyPart bodyPart)
+        {
+            await using (var asyncContext = AsyncContext.Create())
+            {
+                if (Misc.BlacklistedWeapons.Contains(weapon) && player is IAltPlayer damagePlayer)
+                {
+                    if (!damagePlayer.TryToAsync(asyncContext, out var asyncDamagePlayer)) return;
+                    Alt.Server.LogColored($"~r~ Banned Player: {asyncDamagePlayer.Name} ({asyncDamagePlayer.Id}) for using illegal weapon!");
+                    Misc.BannedPlayers.Add(asyncDamagePlayer.HardwareIdHash + asyncDamagePlayer.HardwareIdExHash);
+                    asyncDamagePlayer.Kick("You're banned from this server!");
+                }
             }
         }
     }
