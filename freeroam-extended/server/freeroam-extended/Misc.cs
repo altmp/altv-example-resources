@@ -27,5 +27,11 @@ namespace Freeroam_Extended.Misc
         {
             // Add banned players here
         };
+        
+        public static IList<int> Operators = new List<int>
+        {
+            // Add operators here
+        };
+        
     }
 }

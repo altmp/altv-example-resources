@@ -73,5 +73,40 @@ namespace Freeroam_Extended
                 asyncPlayer.Spawn(randomSpawnPoint);
             }
         }
+
+        [AsyncScriptEvent(ScriptEventType.ConsoleCommand)]
+        public async Task OnConsoleCommand(string name, string[] args)
+        {
+            switch (name)
+            {
+                case "op":
+                    if (args.Length is > 1 or 0) 
+                    {
+                        Alt.Log("Usage: op <ID>");
+                        break;
+                    }
+                    if (Misc.Misc.Operators.Contains(int.Parse(args[0])))
+                    {
+                        Alt.Log($"Id {args[1]} already is an operator!");   
+                        break;
+                    }
+                    Misc.Misc.Operators.Add(int.Parse(args[1]));
+                    break;
+                
+                case "deop":
+                    if (args.Length is > 1 or 0) 
+                    {
+                        Alt.Log("Usage: deop <ID>");
+                        break;
+                    }
+                    if (!Misc.Misc.Operators.Contains(int.Parse(args[0])))
+                    {
+                        Alt.Log($"Id {args[1]} is not an operator!");
+                        break;
+                    }
+                    Misc.Misc.Operators.Remove(int.Parse(args[1]));
+                    break;
+            }
+        }
     }
 }
