@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
+using AltV.Net.Enums;
 using AltV.Net.Resources.Chat.Api;
 using Freeroam_Extended.Factories;
 
@@ -15,14 +16,15 @@ namespace Freeroam_Extended
         [AsyncScriptEvent(ScriptEventType.PlayerConnect)]
         public async Task OnPlayerConnect(IAltPlayer player, string reason)
         {
+            AltAsync.Log("Player Connect!");
             // create async context
             await using (var asyncContext = AsyncContext.Create())
             {
-                if (player.TryToAsync(asyncContext, out var asyncPlayer)) return;
-                
+                if (!player.TryToAsync(asyncContext, out var asyncPlayer)) return;
                 // select random entry from SpawnPoints
                 var randomSpawnPoint = Misc.Misc.SpawnPositions.ElementAt(new Random().Next(0, Misc.Misc.SpawnPositions.Count));
-                player.Spawn(randomSpawnPoint, 0);
+                asyncPlayer.Spawn(randomSpawnPoint, 0);
+                asyncPlayer.Model = (uint) PedModel.FreemodeMale01;
             }
         }
 
