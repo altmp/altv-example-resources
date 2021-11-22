@@ -60,5 +60,18 @@ namespace Freeroam_Extended
                 }   
             }
         }
+
+        [AsyncScriptEvent(ScriptEventType.PlayerDead)]
+        public async Task OnPlayerDead(IAltPlayer player, string reason)
+        {
+            // create async context
+            await using (var asyncContext = AsyncContext.Create())
+            {
+                if (!player.TryToAsync(asyncContext, out var asyncPlayer)) return;
+                // find random spawnpoint
+                var randomSpawnPoint = Misc.Misc.SpawnPositions.ElementAt(new Random().Next(0, Misc.Misc.SpawnPositions.Count));
+                asyncPlayer.Spawn(randomSpawnPoint);
+            }
+        }
     }
 }

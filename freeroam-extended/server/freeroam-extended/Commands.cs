@@ -48,18 +48,6 @@ namespace Freeroam_Extended
             spawnedVeh.Owner = player;
         }
         
-        [Command("revive")]
-        public void Revive(IAltPlayer player)
-        {
-            if (player.Health >= 100)
-            {
-                player.SendChatMessage("{FF0000} You are already alive!");
-                return;
-            }
-            player.Spawn(player.Position);
-            player.SendChatMessage("{00FF00} You have been revived!");
-        }
-
         [Command("ghost")]
         public void Ghost(IAltPlayer player)
         {
