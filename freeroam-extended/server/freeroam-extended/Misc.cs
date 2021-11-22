@@ -5,7 +5,7 @@ namespace Freeroam_Extended.Misc
 {
     public static class Misc
     {
-        public static IList<uint> BlacklistedWeapons = new List<uint>
+        public static readonly IList<uint> BlacklistedWeapons = new List<uint>
         {
             125959754, // Compact Grenade Launcher
             2726580491, // Grenade Launcher
@@ -18,11 +18,11 @@ namespace Freeroam_Extended.Misc
             741814745, // Sticky Bomb
         };
 
-        public static IList<Position> SpawnPositions = new List<Position>
+        public static readonly IList<Position> SpawnPositions = new List<Position>
         {
-            new Position(-386.86154f, -1832.123f, 21.596313f), // Arena
-            new Position(-1204.8923f, -3090.844f, 14.182373f), // Airport runway
-            new Position(-1010.7165f, -2717.789f, 13.693726f), // Airport outside
+            new(-386.86154f, -1832.123f, 21.596313f), // Arena
+            new(-1204.8923f, -3090.844f, 14.182373f), // Airport runway
+            new(-1010.7165f, -2717.789f, 13.693726f) // Airport outside
         };
         
         public static IList<ulong> BannedPlayers = new List<ulong>
