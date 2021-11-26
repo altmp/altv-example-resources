@@ -157,19 +157,19 @@ namespace Freeroam_Extended
         }
 
         [Command("addcomponent")]
-        public void WeaponComponent(IAltPlayer player, uint componentId)
+        public void WeaponComponent(IAltPlayer player, string name)
         {
-            player.AddWeaponComponent(player.CurrentWeapon, componentId);
+            player.AddWeaponComponent(player.CurrentWeapon, Alt.Hash(name));
         }
         
         [Command("removecomponent")]
-        public void RemoveWeaponComponent(IAltPlayer player, uint componentId)
+        public void RemoveWeaponComponent(IAltPlayer player, string name)
         {
-            player.RemoveWeaponComponent(player.CurrentWeapon, componentId);
+            player.RemoveWeaponComponent(player.CurrentWeapon, Alt.Hash(name));
         }
 
         [Command("tune")]
-        public void Tune(IAltPlayer player, byte index, byte value)
+        public void Tune(IAltPlayer player, int index, int value)
         {
             if (!player.IsInVehicle)
             {
@@ -177,7 +177,7 @@ namespace Freeroam_Extended
                 return;
             }
             player.Vehicle.ModKit = 1;
-            player.Vehicle.SetMod(index, value);
+            player.Vehicle.SetMod((byte)index, (byte)value);
         }
     }
 }
