@@ -167,5 +167,17 @@ namespace Freeroam_Extended
         {
             player.RemoveWeaponComponent(player.CurrentWeapon, componentId);
         }
+
+        [Command("tune")]
+        public void Tune(IAltPlayer player, byte index, byte value)
+        {
+            if (!player.IsInVehicle)
+            {
+                player.SendChatMessage("{FF0000} You're not in a vehicle!");
+                return;
+            }
+            player.Vehicle.ModKit = 1;
+            player.Vehicle.SetMod(index, value);
+        }
     }
 }
