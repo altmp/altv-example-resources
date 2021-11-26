@@ -106,10 +106,10 @@ namespace Freeroam_Extended
                     
                     if (Misc.Operators.Contains(int.Parse(args[0])))
                     {
-                        Alt.Log($"Id {args[1]} already is an operator!");   
+                        Alt.Log($"Id {args[0]} already is an operator!");   
                         break;
                     }
-                    Misc.Operators.Add(int.Parse(args[1]));
+                    Misc.Operators.Add(int.Parse(args[0]));
                     break;
                 
                 case "deop":
@@ -128,10 +128,10 @@ namespace Freeroam_Extended
                     
                     if (!Misc.Operators.Contains(int.Parse(args[0])))
                     {
-                        Alt.Log($"Id {args[1]} is not an operator!");
+                        Alt.Log($"Id {args[0]} is not an operator!");
                         break;
                     }
-                    Misc.Operators.Remove(int.Parse(args[1]));
+                    Misc.Operators.Remove(int.Parse(args[0]));
                     break;
             }
         }
