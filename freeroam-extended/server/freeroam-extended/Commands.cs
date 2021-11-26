@@ -155,6 +155,17 @@ namespace Freeroam_Extended
             Misc.BannedPlayers.Remove(target.HardwareIdHash + player.HardwareIdExHash);
             player.SendChatMessage($"{{00FF00}}Player with id {id} unbanned!");
         }
+
+        [Command("addcomponent")]
+        public void WeaponComponent(IAltPlayer player, uint componentId)
+        {
+            player.AddWeaponComponent(player.CurrentWeapon, componentId);
+        }
         
+        [Command("removecomponent")]
+        public void RemoveWeaponComponent(IAltPlayer player, uint componentId)
+        {
+            player.RemoveWeaponComponent(player.CurrentWeapon, componentId);
+        }
     }
 }
