@@ -56,10 +56,15 @@ namespace Freeroam_Extended
             {
                 player.SendChatMessage("{00FF00} Ghost Mode disabled! You're no longer invincible.");
                 player.Invincible = false;
+                player.Emit("ghost_mode", false);
+                player.GhostMode = false;
                 return;
             }
             // Enable
             player.Invincible = true;
+            player.GhostMode = true;
+            player.Emit("ghost_mode", true);
+            player.SendChatMessage("{00FF00} Ghost Mode enabled! You're now invincible.");
         }
         
         [Command("weapons")]
