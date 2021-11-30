@@ -12,7 +12,7 @@ namespace Freeroam_Extended
         {
             Alt.Server.LogColored("~g~ Freeroam-Extended Started!");
             // colshape for weapon disabling everywhere but the airport
-            Alt.CreateColShapeSphere(new Position(-1202.4396f, -2803.978f, 14.249756f), 500);
+            Alt.CreateColShapeSphere(new Position(-1216.839599609375f, -2832.514404296875f, 13.9296875f), 800);
         }
 
         public override void OnStop()
