@@ -137,7 +137,7 @@ namespace Freeroam_Extended
         }
 
         [AsyncScriptEvent(ScriptEventType.WeaponDamage)]
-        public async Task OnWeaponDamage(IPlayer player, IEntity target, uint weapon, ushort damage,
+        public async Task OnWeaponDamage(IAltPlayer player, IEntity target, uint weapon, ushort damage,
             Position shotOffset, BodyPart bodyPart)
         {
             await using (var asyncContext = AsyncContext.Create())
@@ -151,5 +151,17 @@ namespace Freeroam_Extended
                 }
             }
         }
-    }
+
+        [AsyncScriptEvent(ScriptEventType.ColShape)]
+        public async Task OnColshapeEnter(IColShape colshape, IAltPlayer target, bool state)
+        {
+            // entity to async
+            await using (var asyncContext = AsyncContext.Create())
+            {
+                if (!target.TryToAsync(asyncContext, out var asyncPlayer)) return;
+                target.EnableWeaponUsage = state;
+                target.Emit("airport_state", state);
+            }
+        }
+    } 
 }
