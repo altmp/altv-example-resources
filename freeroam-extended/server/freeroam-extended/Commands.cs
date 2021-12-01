@@ -57,12 +57,14 @@ namespace Freeroam_Extended
                 player.SendChatMessage("{00FF00} Spectator Mode disabled! You're no longer invincible.");
                 player.Emit("ghost_mode", false);
                 player.GhostMode = false;
+                player.DeleteStreamSyncedMetaData("spectator");
                 return;
             }
             // Enable
             player.GhostMode = true;
             player.Emit("ghost_mode", true);
             player.SendChatMessage("{00FF00} Spectator Mode enabled! You're now invincible.");
+            player.SetStreamSyncedMetaData("spectator", true);
         }
         
         [Command("weapons")]
