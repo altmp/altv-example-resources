@@ -153,14 +153,16 @@ namespace Freeroam_Extended
         }
 
         [AsyncScriptEvent(ScriptEventType.ColShape)]
-        public async Task OnColshapeEnter(IColShape colshape, IAltPlayer target, bool state)
+        public async Task OnColshapeEnter(IColShape colshape, IEntity target, bool state)
         {
+            if (target is not IAltPlayer targetPlayer) return;
+
             // entity to async
             await using (var asyncContext = AsyncContext.Create())
             {
-                if (!target.TryToAsync(asyncContext, out var asyncPlayer)) return;
-                target.EnableWeaponUsage = state;
-                target.Emit("airport_state", state);
+                if (targetPlayer.TryToAsync(asyncContext, out var asyncPlayer)) return;
+                asyncPlayer.EnableWeaponUsage = state;
+                asyncPlayer.Emit("airport_state", state);
             }
         }
     } 
