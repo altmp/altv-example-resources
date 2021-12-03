@@ -13,6 +13,8 @@ namespace Freeroam_Extended
 {
     public class EventHandler : IScript
     {
+        private readonly Random _random = new Random();
+
         [ScriptEvent(ScriptEventType.PlayerConnect)]
         public Task OnPlayerConnect(IAltPlayer player, string reason)
         {
@@ -23,9 +25,8 @@ namespace Freeroam_Extended
                 return Task.CompletedTask;
             }
             // select random entry from SpawnPoints
-            var random = new Random();
-            var randomSpawnPoint = Misc.SpawnPositions.ElementAt(random.Next(0, Misc.SpawnPositions.Count));
-            player.Spawn(randomSpawnPoint + new Position(random.Next(0, 10), random.Next(0, 10), 0));
+            var randomSpawnPoint = Misc.SpawnPositions.ElementAt(_random.Next(0, Misc.SpawnPositions.Count));
+            player.Spawn(randomSpawnPoint + new Position(_random.Next(0, 10), _random.Next(0, 10), 0));
             player.Model = (uint) PedModel.FreemodeMale01;
             
             return Task.CompletedTask;
@@ -62,9 +63,8 @@ namespace Freeroam_Extended
         [AsyncScriptEvent(ScriptEventType.PlayerDead)]
         public Task OnPlayerDead(IAltPlayer player, IEntity killer, uint weapon)
         {
-            var random = new Random();
-            var randomSpawnPoint = Misc.SpawnPositions.ElementAt(random.Next(0, Misc.SpawnPositions.Count));
-            player.Spawn(randomSpawnPoint + new Position(random.Next(0, 10), random.Next(0, 10), 0));
+            var randomSpawnPoint = Misc.SpawnPositions.ElementAt(_random.Next(0, Misc.SpawnPositions.Count));
+            player.Spawn(randomSpawnPoint + new Position(_random.Next(0, 10), _random.Next(0, 10), 0));
 
             if (!Misc.BlacklistedWeapons.Contains(weapon) || killer is not IAltPlayer killerPlayer) return Task.CompletedTask;
             Alt.Server.LogColored($"~r~ Banned Player: {killerPlayer.Name} ({killerPlayer.Id}) for using illegal weapon!");
