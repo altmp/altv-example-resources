@@ -47,24 +47,24 @@ namespace Freeroam_Extended
             spawnedVeh.Owner = player;
         }
         
-        [Command("spectate")]
-        public void Spectate(IAltPlayer player)
-        {
-            // Disable
-            if (player.GhostMode)
-            {
-                player.SendChatMessage("{00FF00} Spectator Mode disabled! You're no longer invincible.");
-                player.Emit("ghost_mode", false);
-                player.GhostMode = false;
-                player.DeleteStreamSyncedMetaData("spectator");
-                return;
-            }
-            // Enable
-            player.GhostMode = true;
-            player.Emit("ghost_mode", true);
-            player.SendChatMessage("{00FF00} Spectator Mode enabled! You're now invincible.");
-            player.SetStreamSyncedMetaData("spectator", true);
-        }
+        // [Command("spectate")]
+        // public void Spectate(IAltPlayer player)
+        // {
+        //     // Disable
+        //     if (player.GhostMode)
+        //     {
+        //         player.SendChatMessage("{00FF00} Spectator Mode disabled! You're no longer invincible.");
+        //         player.Emit("ghost_mode", false);
+        //         player.GhostMode = false;
+        //         player.DeleteStreamSyncedMetaData("spectator");
+        //         return;
+        //     }
+        //     // Enable
+        //     player.GhostMode = true;
+        //     player.Emit("ghost_mode", true);
+        //     player.SendChatMessage("{00FF00} Spectator Mode enabled! You're now invincible.");
+        //     player.SetStreamSyncedMetaData("spectator", true);
+        // }
         
         [Command("weapons")]
         public void GetWeapons(IAltPlayer player) 
