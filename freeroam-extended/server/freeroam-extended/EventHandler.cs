@@ -64,7 +64,9 @@ namespace Freeroam_Extended
         [AsyncScriptEvent(ScriptEventType.PlayerDead)]
         public Task OnPlayerDead(IAltPlayer player, IEntity killer, uint weapon)
         {
-            var randomSpawnPoint = Misc.SpawnPositions.ElementAt(_random.Next(0, Misc.SpawnPositions.Length));
+            var spawnPointPool = player.DmMode ? Misc.AirportSpawnPositions : Misc.SpawnPositions;
+            
+            var randomSpawnPoint = spawnPointPool.ElementAt(_random.Next(0, Misc.SpawnPositions.Length));
             player.Spawn(randomSpawnPoint + new Position(_random.Next(0, 10), _random.Next(0, 10), 0));
 
             if (!Misc.BlacklistedWeapons.Contains(weapon) || killer is not IAltPlayer killerPlayer) return Task.CompletedTask;
