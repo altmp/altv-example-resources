@@ -306,5 +306,29 @@ namespace Freeroam_Extended
             player.Position = targetPlayer.Position;
             player.SendChatMessage("{00FF00} You were teleported to " + player.Name + "!");
         }
+
+        [Command("clearallvehicles")]
+        public void ClearAllVehicles(IAltPlayer player, int distance = 0)
+        {
+            if (!Misc.Operators.Contains(player.Id))
+            {
+                player.SendChatMessage("{FF0000} No permission!");
+                return;
+            }
+
+            if (distance == 0)
+            {
+                foreach (var veh in Alt.GetAllVehicles())
+                {
+                    veh.Remove();
+                }
+                return;
+            }
+            foreach (var veh in Alt.GetAllVehicles())
+            {
+                if (veh.Position.Distance(player.Position) > distance) continue;
+                veh.Remove();
+            }
+        }
     }
 }
