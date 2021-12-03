@@ -4,14 +4,14 @@ import * as native from 'natives';
 import * as alt from 'alt-client';
 
 import './events';
+import './chat';
 
 alt.setConfigFlag('DISABLE_AUTO_WEAPON_SWAP', true);
 alt.setConfigFlag('DISABLE_IDLE_CAMERA', true);
 alt.setStat('STAMINA', 100);
 
 alt.everyTick(() => {
-    native.drawSphere(-1216.839599609375, -2832.514404296875, 13.9296875, 800, 0, 0, 255, 100);
-
+    // native.drawSphere(-1216.839599609375, -2832.514404296875, 13.9296875, 800, 0, 0, 255, 100);
     if (playerData.areNametagsVisible) {
         processNametags();
     }
