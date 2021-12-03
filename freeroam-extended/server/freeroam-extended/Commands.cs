@@ -188,5 +188,13 @@ namespace Freeroam_Extended
             player.Vehicle.SetMod((byte)index, (byte)value);
             player.Emit("set_last_command");
         }
+
+        [Command("dm")]
+        public void Dm(IAltPlayer player)
+        {
+            player.SendChatMessage(player.DmMode ? "{00FF00} DM mode disabled!" : "{00FF00}DM mode enabled!");
+            player.DmMode = !player.DmMode;
+            player.Emit("set_last_command");
+        }
     }
 }
