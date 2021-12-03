@@ -6,7 +6,10 @@ export const EMPTY_WEAPON_HASH = 0xA2719263;
 
 export const playerData = {
     areWeaponsDisabled: true,
-    areNametagsVisible: true
+    areNametagsVisible: true,
+    lastCommandTimestamp: Date.now() - 10000,
+    lastMessageTimestamp: Date.now() - 10000,
+    chatState: false
 }
 
 export function distance(vector1, vector2) {
