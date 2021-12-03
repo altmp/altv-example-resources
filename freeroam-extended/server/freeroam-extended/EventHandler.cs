@@ -20,7 +20,7 @@ namespace Freeroam_Extended
             await using (var asyncContext = AsyncContext.Create())
             {
                 if (!player.TryToAsync(asyncContext, out var asyncPlayer)) return;
-                if (Misc.BannedPlayers.Contains(asyncPlayer.HardwareIdHash + asyncPlayer.HardwareIdExHash)) // Player banned
+                if (Misc.BannedPlayers.Any(tuple => tuple.Item1 == asyncPlayer.HardwareIdHash && tuple.Item2 == asyncPlayer.HardwareIdExHash))
                 {
                     asyncPlayer.Kick("You're banned from this server!");
                     return;
@@ -78,14 +78,14 @@ namespace Freeroam_Extended
                 {
                     if (!killerPlayer.TryToAsync(asyncContext, out var asyncKiller)) return;
                     Alt.Server.LogColored($"~r~ Banned Player: {asyncKiller.Name} ({killerPlayer.Id}) for using illegal weapon!");
-                    Misc.BannedPlayers.Add(asyncKiller.HardwareIdHash + asyncKiller.HardwareIdExHash);
+                    Misc.BannedPlayers.Add(new Tuple<ulong, ulong>(asyncKiller.HardwareIdHash, asyncKiller.HardwareIdExHash));
                     asyncKiller.Kick("You're banned from this server!");
                 }
             }
         }
 
-        [AsyncScriptEvent(ScriptEventType.ConsoleCommand)]
-        public async Task OnConsoleCommand(string name, string[] args)
+        [ScriptEvent(ScriptEventType.ConsoleCommand)]
+        public Task OnConsoleCommand(string name, string[] args)
         {
             var playerPool = Alt.GetAllPlayers();
             switch (name)
@@ -101,7 +101,7 @@ namespace Freeroam_Extended
                     if (playerOp is null)
                     {
                         Alt.Log("Player not online!");
-                        return;
+                        return Task.CompletedTask;
                     }
                     
                     if (Misc.Operators.Contains(int.Parse(args[0])))
@@ -123,7 +123,7 @@ namespace Freeroam_Extended
                     if (playerDeOp is null)
                     {
                         Alt.Log("Player not online!");
-                        return;
+                        return Task.CompletedTask;
                     }
                     
                     if (!Misc.Operators.Contains(int.Parse(args[0])))
@@ -134,6 +134,7 @@ namespace Freeroam_Extended
                     Misc.Operators.Remove(int.Parse(args[0]));
                     break;
             }
+            return Task.CompletedTask;
         }
 
         [AsyncScriptEvent(ScriptEventType.WeaponDamage)]
@@ -142,11 +143,11 @@ namespace Freeroam_Extended
         {
             await using (var asyncContext = AsyncContext.Create())
             {
-                if (Misc.BlacklistedWeapons.Contains(weapon) && player is IAltPlayer damagePlayer)
+                if (Misc.BlacklistedWeapons.Contains(weapon) && player is { } damagePlayer)
                 {
                     if (!damagePlayer.TryToAsync(asyncContext, out var asyncDamagePlayer)) return;
                     Alt.Server.LogColored($"~r~ Banned Player: {asyncDamagePlayer.Name} ({asyncDamagePlayer.Id}) for using illegal weapon!");
-                    Misc.BannedPlayers.Add(asyncDamagePlayer.HardwareIdHash + asyncDamagePlayer.HardwareIdExHash);
+                    Misc.BannedPlayers.Add(new Tuple<ulong, ulong>(asyncDamagePlayer.HardwareIdHash, asyncDamagePlayer.HardwareIdExHash));
                     asyncDamagePlayer.Kick("You're banned from this server!");
                 }
             }
@@ -160,7 +161,7 @@ namespace Freeroam_Extended
             // entity to async
             await using (var asyncContext = AsyncContext.Create())
             {
-                if (targetPlayer.TryToAsync(asyncContext, out var asyncPlayer)) return;
+                if (!targetPlayer.TryToAsync(asyncContext, out var asyncPlayer)) return;
                 asyncPlayer.EnableWeaponUsage = state;
                 asyncPlayer.Emit("airport_state", state);
             }

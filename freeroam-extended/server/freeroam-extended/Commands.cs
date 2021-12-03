@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using AltV.Net;
 using AltV.Net.Data;
@@ -118,14 +117,14 @@ namespace Freeroam_Extended
             }
             
             // check if player is already banned
-            if (Misc.BannedPlayers.Contains(target.Id))
+            if (Misc.BannedPlayers.Any(tuple => tuple.Item1 == target.HardwareIdHash && tuple.Item2 == target.HardwareIdExHash))
             {
                 player.SendChatMessage($"{{FF0000}}Player with {id} is already banned!");
                 return;
             }
             
             target.Kick("You've been banned from this server!");
-            Misc.BannedPlayers.Add(target.HardwareIdHash + player.HardwareIdExHash);
+            Misc.BannedPlayers.Add(new Tuple<ulong, ulong>(target.HardwareIdHash, target.HardwareIdExHash));
             player.SendChatMessage($"{{00FF00}}Player with id {id} banned!");
         }
         
@@ -146,13 +145,14 @@ namespace Freeroam_Extended
             }
             
             // check if player is already banned
-            if (!Misc.BannedPlayers.Contains(target.Id))
+            if (!Misc.BannedPlayers.Any(tuple => tuple.Item1 == target.HardwareIdHash && tuple.Item2 == target.HardwareIdExHash))
             {
                 player.SendChatMessage($"{{FF0000}}Player with {id} is not banned!");
                 return;
             }
             
-            Misc.BannedPlayers.Remove(target.HardwareIdHash + player.HardwareIdExHash);
+            // remove banned player from list
+            Misc.BannedPlayers.RemoveWhere(p => p.Item1 == target.HardwareIdHash && p.Item2 == target.HardwareIdExHash);
             player.SendChatMessage($"{{00FF00}}Player with id {id} unbanned!");
         }
 
