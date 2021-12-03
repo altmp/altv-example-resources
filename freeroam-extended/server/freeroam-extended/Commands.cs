@@ -365,7 +365,7 @@ namespace Freeroam_Extended
                 player.SendChatMessage("{FF0000} No permission!");
                 return;
             }
-            if (weather > 13)
+            if (weather > 14)
             {
                 player.SendChatMessage("{FF0000} Invalid weather!");
                 return;
