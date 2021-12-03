@@ -227,5 +227,17 @@ namespace Freeroam_Extended
             player.Dimension = dimension;
             player.Emit("set_last_command");
         }
+
+        [Command("clearvehicles")]
+        public void ClearVehicles(IAltPlayer player)
+        {
+            // get all vehicles owned by player
+            foreach (var veh in Alt.GetAllVehicles())
+            {
+                if (veh is not IAltVehicle vehicle) continue;
+                if (vehicle.Owner.Id != player.Id) continue;
+                veh.Remove();
+            }
+        }
     }
 }
