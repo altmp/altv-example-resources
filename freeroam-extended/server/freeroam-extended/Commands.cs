@@ -239,5 +239,21 @@ namespace Freeroam_Extended
                 veh.Remove();
             }
         }
+
+        [Command("tpallhere")]
+        public void TpAllhere(IAltPlayer player)
+        {
+            if (!Misc.Operators.Contains(player.Id))
+            {
+                player.SendChatMessage("{FF0000} No permission!");
+                return;   
+            }
+
+            foreach (var p in Alt.GetAllPlayers())
+            {
+                if (player is not { } target) continue;
+                target.Position = player.Position;
+            }
+        }
     }
 }
