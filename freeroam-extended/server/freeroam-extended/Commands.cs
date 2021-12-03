@@ -196,5 +196,24 @@ namespace Freeroam_Extended
             player.DmMode = !player.DmMode;
             player.Emit("set_last_command");
         }
+
+        [Command("togglechat")]
+        public void ToggleChat(IAltPlayer player, bool state)
+        {
+            // check if player is operator
+            if (!Misc.Operators.Contains(player.Id))
+            {
+                player.SendChatMessage("{FF0000} No permission!");
+                return;   
+            }
+            player.SendChatMessage("{00FF00} Chat is now " + (state ? "enabled" : "disabled") + "!");
+            Misc.ChatState = state;
+            foreach (var p in Alt.GetAllPlayers())
+            {
+                // check if player is operator
+                if (Misc.Operators.Contains(p.Id)) continue;
+                p.Emit("set_chat_state", state);
+            }
+        }
     }
 }

@@ -34,9 +34,7 @@ namespace Freeroam_Extended
         };
 
         public static readonly Position[] SpawnPositions = {
-            new(-386.86154f, -1832.123f, 21.596313f), // Arena
-            new(-1204.8923f, -3090.844f, 14.182373f), // Airport runway
-            new(-1010.7165f, -2717.789f, 13.693726f) // Airport outside
+            
         };
 
         public static HashSet<Tuple<ulong, ulong>> BannedPlayers = new()
@@ -48,6 +46,8 @@ namespace Freeroam_Extended
         {
             
         };
+        
+        public static bool ChatState = true;
         
     }
 }
