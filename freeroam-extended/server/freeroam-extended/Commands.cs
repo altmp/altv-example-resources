@@ -215,5 +215,17 @@ namespace Freeroam_Extended
                 p.Emit("set_chat_state", state);
             }
         }
+        
+        [Command("dimension")]
+        public void Dimension(IAltPlayer player, int dimension = 0)
+        {
+            if (!Misc.Operators.Contains(player.Id))
+            {
+                player.SendChatMessage("{FF0000} No permission!");
+                return;   
+            }
+            player.Dimension = dimension;
+            player.Emit("set_last_command");
+        }
     }
 }
