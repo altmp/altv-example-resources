@@ -26,11 +26,9 @@ view.on("chatloaded", () => {
 
 view.on("chatmessage", (text) => {
     if (text.startsWith('/') && (Date.now() - playerData.lastCommandTimestamp) / 1000 > 10) {
-        console.log('commands :D');
         alt.emitServer("chat:message", text);
     }
     else if (playerData.chatState && ((Date.now() - playerData.lastMessageTimestamp) / 1000 > 10)) {
-        console.log('message :D');
         alt.emitServer("chat:message", text);
         playerData.lastMessageTimestamp = Date.now();
     }
@@ -73,7 +71,6 @@ alt.on('keyup', (key) => {
         case 0xD:     // Enter
         case 0x54: { // T
             if (!opened && alt.gameControlsEnabled()) {
-                console.log('triggered again');
                 opened = true;
                 view.emit('openChat', false);
                 view.focus();
