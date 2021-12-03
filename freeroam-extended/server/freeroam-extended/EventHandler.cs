@@ -13,24 +13,22 @@ namespace Freeroam_Extended
 {
     public class EventHandler : IScript
     {
-        [AsyncScriptEvent(ScriptEventType.PlayerConnect)]
-        public async Task OnPlayerConnect(IAltPlayer player, string reason)
+        [ScriptEvent(ScriptEventType.PlayerConnect)]
+        public Task OnPlayerConnect(IAltPlayer player, string reason)
         {
             // create async context
-            await using (var asyncContext = AsyncContext.Create())
+            if (Misc.BannedPlayers.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash))
             {
-                if (!player.TryToAsync(asyncContext, out var asyncPlayer)) return;
-                if (Misc.BannedPlayers.Any(tuple => tuple.Item1 == asyncPlayer.HardwareIdHash && tuple.Item2 == asyncPlayer.HardwareIdExHash))
-                {
-                    asyncPlayer.Kick("You're banned from this server!");
-                    return;
-                }
-                // select random entry from SpawnPoints
-                var random = new Random();
-                var randomSpawnPoint = Misc.SpawnPositions.ElementAt(random.Next(0, Misc.SpawnPositions.Count));
-                asyncPlayer.Spawn(randomSpawnPoint + new Position(random.Next(0, 10), random.Next(0, 10), 0));
-                asyncPlayer.Model = (uint) PedModel.FreemodeMale01;
+                player.Kick("You're banned from this server!");
+                return Task.CompletedTask;
             }
+            // select random entry from SpawnPoints
+            var random = new Random();
+            var randomSpawnPoint = Misc.SpawnPositions.ElementAt(random.Next(0, Misc.SpawnPositions.Count));
+            player.Spawn(randomSpawnPoint + new Position(random.Next(0, 10), random.Next(0, 10), 0));
+            player.Model = (uint) PedModel.FreemodeMale01;
+            
+            return Task.CompletedTask;
         }
 
         [AsyncScriptEvent(ScriptEventType.VehicleDestroy)]
@@ -48,40 +46,32 @@ namespace Freeroam_Extended
         }
 
         [AsyncScriptEvent(ScriptEventType.PlayerDisconnect)]
-        public async Task OnPlayerDisconnect(IAltPlayer player, string reason)
+        public Task OnPlayerDisconnect(IAltPlayer player, string reason)
         {
             var vehicles = Alt.GetAllVehicles().Cast<IAltVehicle>().Where(x => x.Owner == player);
-            await using (var asyncContext = AsyncContext.Create())
+           
+            foreach (var veh in vehicles)
             {
-                foreach (var veh in vehicles)
-                {
-                    if (!veh.TryToAsync(asyncContext, out var asyncVeh)) continue;
-                    if (veh.Owner.Id != player.Id) continue;
-                    veh.Remove();
-                }   
+                if (veh.Owner.Id != player.Id) continue;
+                veh.Remove();
             }
+            
+            return Task.CompletedTask;
         }
 
         [AsyncScriptEvent(ScriptEventType.PlayerDead)]
-        public async Task OnPlayerDead(IAltPlayer player, IEntity killer, uint weapon)
+        public Task OnPlayerDead(IAltPlayer player, IEntity killer, uint weapon)
         {
-            // create async context
-            await using (var asyncContext = AsyncContext.Create())
-            {
-                if (!player.TryToAsync(asyncContext, out var asyncPlayer)) return;
-                // find random spawnpoint
-                var random = new Random();
-                var randomSpawnPoint = Misc.SpawnPositions.ElementAt(random.Next(0, Misc.SpawnPositions.Count));
-                asyncPlayer.Spawn(randomSpawnPoint + new Position(random.Next(0, 10), random.Next(0, 10), 0));
+            var random = new Random();
+            var randomSpawnPoint = Misc.SpawnPositions.ElementAt(random.Next(0, Misc.SpawnPositions.Count));
+            player.Spawn(randomSpawnPoint + new Position(random.Next(0, 10), random.Next(0, 10), 0));
 
-                if (Misc.BlacklistedWeapons.Contains(weapon) && killer is IAltPlayer killerPlayer)
-                {
-                    if (!killerPlayer.TryToAsync(asyncContext, out var asyncKiller)) return;
-                    Alt.Server.LogColored($"~r~ Banned Player: {asyncKiller.Name} ({killerPlayer.Id}) for using illegal weapon!");
-                    Misc.BannedPlayers.Add(new Tuple<ulong, ulong>(asyncKiller.HardwareIdHash, asyncKiller.HardwareIdExHash));
-                    asyncKiller.Kick("You're banned from this server!");
-                }
-            }
+            if (!Misc.BlacklistedWeapons.Contains(weapon) || killer is not IAltPlayer killerPlayer) return Task.CompletedTask;
+            Alt.Server.LogColored($"~r~ Banned Player: {killerPlayer.Name} ({killerPlayer.Id}) for using illegal weapon!");
+            Misc.BannedPlayers.Add(new Tuple<ulong, ulong>(killerPlayer.HardwareIdHash, killerPlayer.HardwareIdExHash));
+            killerPlayer.Kick("You're banned from this server!");
+
+            return Task.CompletedTask;
         }
 
         [ScriptEvent(ScriptEventType.ConsoleCommand)]
@@ -138,33 +128,28 @@ namespace Freeroam_Extended
         }
 
         [AsyncScriptEvent(ScriptEventType.WeaponDamage)]
-        public async Task OnWeaponDamage(IAltPlayer player, IEntity target, uint weapon, ushort damage,
+        public Task OnWeaponDamage(IAltPlayer player, IEntity target, uint weapon, ushort damage,
             Position shotOffset, BodyPart bodyPart)
         {
-            await using (var asyncContext = AsyncContext.Create())
-            {
-                if (Misc.BlacklistedWeapons.Contains(weapon) && player is { } damagePlayer)
-                {
-                    if (!damagePlayer.TryToAsync(asyncContext, out var asyncDamagePlayer)) return;
-                    Alt.Server.LogColored($"~r~ Banned Player: {asyncDamagePlayer.Name} ({asyncDamagePlayer.Id}) for using illegal weapon!");
-                    Misc.BannedPlayers.Add(new Tuple<ulong, ulong>(asyncDamagePlayer.HardwareIdHash, asyncDamagePlayer.HardwareIdExHash));
-                    asyncDamagePlayer.Kick("You're banned from this server!");
-                }
-            }
+            if (!Misc.BlacklistedWeapons.Contains(weapon) || player is not { } damagePlayer) return Task.CompletedTask;
+            
+            Alt.Server.LogColored($"~r~ Banned Player: {damagePlayer.Name} ({damagePlayer.Id}) for using illegal weapon!");
+            Misc.BannedPlayers.Add(new Tuple<ulong, ulong>(damagePlayer.HardwareIdHash, damagePlayer.HardwareIdExHash));
+            damagePlayer.Kick("You're banned from this server!");
+
+            return Task.CompletedTask;
         }
 
         [AsyncScriptEvent(ScriptEventType.ColShape)]
-        public async Task OnColshapeEnter(IColShape colshape, IEntity target, bool state)
+        public Task OnColshapeEnter(IColShape colshape, IEntity target, bool state)
         {
-            if (target is not IAltPlayer targetPlayer) return;
+            if (target is not IAltPlayer targetPlayer) return Task.CompletedTask;
 
             // entity to async
-            await using (var asyncContext = AsyncContext.Create())
-            {
-                if (!targetPlayer.TryToAsync(asyncContext, out var asyncPlayer)) return;
-                asyncPlayer.EnableWeaponUsage = state;
-                asyncPlayer.Emit("airport_state", state);
-            }
+            targetPlayer.EnableWeaponUsage = state;
+            targetPlayer.Emit("airport_state", state);
+            
+            return Task.CompletedTask;
         }
     } 
 }
