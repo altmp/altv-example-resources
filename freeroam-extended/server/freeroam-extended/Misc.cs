@@ -72,7 +72,7 @@ namespace Freeroam_Extended
             
         };
         
-        public static bool ChatState = true;
+        public static bool ChatState = false;
         
     }
 }
