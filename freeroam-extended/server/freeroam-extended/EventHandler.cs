@@ -25,7 +25,7 @@ namespace Freeroam_Extended
                 return Task.CompletedTask;
             }
             // select random entry from SpawnPoints
-            var randomSpawnPoint = Misc.SpawnPositions.ElementAt(_random.Next(0, Misc.SpawnPositions.Count));
+            var randomSpawnPoint = Misc.SpawnPositions.ElementAt(_random.Next(0, Misc.SpawnPositions.Length));
             player.Spawn(randomSpawnPoint + new Position(_random.Next(0, 10), _random.Next(0, 10), 0));
             player.Model = (uint) PedModel.FreemodeMale01;
             
@@ -63,7 +63,7 @@ namespace Freeroam_Extended
         [AsyncScriptEvent(ScriptEventType.PlayerDead)]
         public Task OnPlayerDead(IAltPlayer player, IEntity killer, uint weapon)
         {
-            var randomSpawnPoint = Misc.SpawnPositions.ElementAt(_random.Next(0, Misc.SpawnPositions.Count));
+            var randomSpawnPoint = Misc.SpawnPositions.ElementAt(_random.Next(0, Misc.SpawnPositions.Length));
             player.Spawn(randomSpawnPoint + new Position(_random.Next(0, 10), _random.Next(0, 10), 0));
 
             if (!Misc.BlacklistedWeapons.Contains(weapon) || killer is not IAltPlayer killerPlayer) return Task.CompletedTask;

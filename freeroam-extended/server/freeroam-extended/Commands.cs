@@ -85,9 +85,9 @@ namespace Freeroam_Extended
         [Command("tp")]
         public void Teleport(IAltPlayer player, int id)
         {
-            if (id > Misc.SpawnPositions.Count || id < 0)
+            if (id > Misc.SpawnPositions.Length || id < 0)
             {
-                player.SendChatMessage($"{{FF0000}}Invalid Spawnpoint! (Minimum 1, Maximum: {Misc.SpawnPositions.Count}");
+                player.SendChatMessage($"{{FF0000}}Invalid Spawnpoint! (Minimum 1, Maximum: {Misc.SpawnPositions.Length}");
             }
             var spawnpoint = Misc.SpawnPositions.ElementAt(id);
             var random = new Random();

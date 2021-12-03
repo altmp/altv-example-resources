@@ -33,8 +33,7 @@ namespace Freeroam_Extended
             1198879012, // Flaregun
         };
 
-        public static readonly IList<Position> SpawnPositions = new List<Position>
-        {
+        public static readonly Position[] SpawnPositions = {
             new(-386.86154f, -1832.123f, 21.596313f), // Arena
             new(-1204.8923f, -3090.844f, 14.182373f), // Airport runway
             new(-1010.7165f, -2717.789f, 13.693726f) // Airport outside
