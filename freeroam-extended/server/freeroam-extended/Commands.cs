@@ -248,6 +248,7 @@ namespace Freeroam_Extended
                 if (vehicle.Owner.Id != player.Id) continue;
                 veh.Remove();
             }
+            player.Emit("set_last_command");
         }
 
         [Command("tpallhere")]
@@ -265,6 +266,7 @@ namespace Freeroam_Extended
                 target.Position = player.Position;
                 target.SendChatMessage("{00FF00} You were teleported to " + player.Name + "!");
             }
+            player.Emit("set_last_command");
         }
 
         [Command("tphere")]
@@ -285,6 +287,7 @@ namespace Freeroam_Extended
             var targetPlayer = Alt.GetAllPlayers().First(p => p.Id == target);
             targetPlayer.Position = player.Position;
             targetPlayer.SendChatMessage("{00FF00} You were teleported to " + player.Name + "!");
+            player.Emit("set_last_command");
         }
 
         [Command("tpto")]
@@ -305,6 +308,7 @@ namespace Freeroam_Extended
             var targetPlayer = Alt.GetAllPlayers().First(p => p.Id == target);
             player.Position = targetPlayer.Position;
             player.SendChatMessage("{00FF00} You were teleported to " + player.Name + "!");
+            player.Emit("set_last_command");
         }
 
         [Command("clearallvehicles")]
@@ -329,6 +333,48 @@ namespace Freeroam_Extended
                 if (veh.Position.Distance(player.Position) > distance) continue;
                 veh.Remove();
             }
+            player.Emit("set_last_command");
+        }
+
+        [Command("settime")]
+        public void SetTime(IAltPlayer player, int hour)
+        {
+            if (!Misc.Operators.Contains(player.Id))
+            {
+                player.SendChatMessage("{FF0000} No permission!");
+                return;
+            }
+            if (hour > 23 || hour < 0)
+            {
+                player.SendChatMessage("{FF0000} Invalid hour!");
+                return;
+            }
+
+            foreach (var p in Alt.GetAllPlayers())
+            {
+                p.SetDateTime(0, 0, 0, hour, 0, 0);
+            }
+            player.Emit("set_last_command");
+        }
+
+        [Command("setweather")]
+        public void SetWeather(IAltPlayer player, uint weather)
+        {
+            if (!Misc.Operators.Contains(player.Id))
+            {
+                player.SendChatMessage("{FF0000} No permission!");
+                return;
+            }
+            if (weather > 13)
+            {
+                player.SendChatMessage("{FF0000} Invalid weather!");
+                return;
+            }
+            foreach (var p in Alt.GetAllPlayers())
+            {
+                p.SetWeather(Misc.Weather);
+            }
+            player.Emit("set_last_command");
         }
     }
 }
