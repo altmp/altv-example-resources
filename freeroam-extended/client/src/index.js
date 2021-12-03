@@ -28,7 +28,9 @@ alt.everyTick(() => {
 function processNametags() {
     renderNametags(LOCAL_PLAYER);
 
-    for (let player of alt.Player.streamedIn) {
+    const streamedIn = alt.Player.streamedIn;
+    for (let i = 0, len = streamedIn.length; i < len; i++) {
+        let player = streamedIn[i];
         if (player.valid && distance(LOCAL_PLAYER.pos, player.pos) <= 25) {
             renderNametags(player);
         }
