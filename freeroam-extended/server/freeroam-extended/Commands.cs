@@ -45,6 +45,7 @@ namespace Freeroam_Extended
             player.LastVehicleSpawn = DateTime.Now;
             player.Vehicles.Add(spawnedVeh);
             spawnedVeh.Owner = player;
+            player.Emit("set_last_command");
         }
         
         // [Command("spectate")]
@@ -74,12 +75,14 @@ namespace Freeroam_Extended
             {
                 player.GiveWeapon(weapon, 1000, false);
             }
+            player.Emit("set_last_command");
         }
-        
+
         [Command("model")]
         public void ChangeModel(IAltPlayer player, string modelName)
         {
             player.Model = Alt.Hash(modelName);
+            player.Emit("set_last_command");
         }
 
         [Command("tp")]
@@ -92,6 +95,7 @@ namespace Freeroam_Extended
             var spawnpoint = Misc.SpawnPositions.ElementAt(id);
             var random = new Random();
             player.Position = spawnpoint + new Position(random.Next(0, 10), random.Next(0, 10), 0);
+            player.Emit("set_last_command");
         }
         
         [Command("pos")]
@@ -126,6 +130,7 @@ namespace Freeroam_Extended
             target.Kick("You've been banned from this server!");
             Misc.BannedPlayers.Add(new Tuple<ulong, ulong>(target.HardwareIdHash, target.HardwareIdExHash));
             player.SendChatMessage($"{{00FF00}}Player with id {id} banned!");
+            player.Emit("set_last_command");
         }
         
         [Command("unban")]
@@ -154,18 +159,21 @@ namespace Freeroam_Extended
             // remove banned player from list
             Misc.BannedPlayers.RemoveWhere(p => p.Item1 == target.HardwareIdHash && p.Item2 == target.HardwareIdExHash);
             player.SendChatMessage($"{{00FF00}}Player with id {id} unbanned!");
+            player.Emit("set_last_command");
         }
 
         [Command("addcomponent")]
         public void WeaponComponent(IAltPlayer player, string name)
         {
             player.AddWeaponComponent(player.CurrentWeapon, Alt.Hash(name));
+            player.Emit("set_last_command");
         }
         
         [Command("removecomponent")]
         public void RemoveWeaponComponent(IAltPlayer player, string name)
         {
             player.RemoveWeaponComponent(player.CurrentWeapon, Alt.Hash(name));
+            player.Emit("set_last_command");
         }
 
         [Command("tune")]
@@ -178,6 +186,7 @@ namespace Freeroam_Extended
             }
             player.Vehicle.ModKit = 1;
             player.Vehicle.SetMod((byte)index, (byte)value);
+            player.Emit("set_last_command");
         }
     }
 }
