@@ -178,12 +178,16 @@ namespace Freeroam_Extended
         public Task OnChatMessage(IAltPlayer player, params string[] args)
         {
             var isAdmin = Misc.Operators.Contains(player.Id);
-            // check if chat is enabled
-            if (!Misc.ChatState && !isAdmin) return Task.CompletedTask;
+            if (args[0].StartsWith("/")) return Task.CompletedTask;
+            if (!Misc.ChatState && !isAdmin)
+            {
+                player.SendChatMessage("{FF0000}Chat is disabled!");
+                return Task.CompletedTask;
+            }
 
             foreach (var p in Alt.GetAllPlayers())
             {
-                p.SendChatMessage($"{(isAdmin ? "{008736}" : "{FFFFFF}")}  {player.Name}: {string.Join("", args)}");
+                p.SendChatMessage($"{(isAdmin ? "{008736}" : "{FFFFFF}")} <b>{player.Name}</b>: {{FFFFFF}}{string.Join("", args)}");
             }
             return Task.CompletedTask;
         }
