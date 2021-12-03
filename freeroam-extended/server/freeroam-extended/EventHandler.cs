@@ -8,6 +8,7 @@ using AltV.Net.Elements.Entities;
 using AltV.Net.Enums;
 using AltV.Net.Resources.Chat.Api;
 using Freeroam_Extended.Factories;
+using ExplosionType = AltV.Net.Data.ExplosionType;
 
 namespace Freeroam_Extended
 {
@@ -150,6 +151,25 @@ namespace Freeroam_Extended
             targetPlayer.Emit("airport_state", state);
             
             return Task.CompletedTask;
+        }
+
+        [ScriptEvent(ScriptEventType.Fire)]
+        public Task OnFireStart(IAltPlayer player, FireInfo[] fireInfos)
+        {
+            return Task.FromResult(false);
+        }
+
+        [ScriptEvent(ScriptEventType.Explosion)]
+        public Task OnExplosion(IAltPlayer player, ExplosionType explosionType, Position position, uint explosionFx,
+            IEntity target)
+        {
+            return Task.FromResult(false);
+        }
+
+        [ScriptEvent(ScriptEventType.StartProjectile)]
+        public Task OnProjectileStart(IAltPlayer player, Position startPosition, Position direction, uint ammoHash, uint weaponHash)
+        {
+            return Task.FromResult(false);
         }
     } 
 }
