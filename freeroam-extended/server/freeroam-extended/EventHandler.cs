@@ -8,29 +8,31 @@ using AltV.Net.Elements.Entities;
 using AltV.Net.Enums;
 using AltV.Net.Resources.Chat.Api;
 using Freeroam_Extended.Factories;
+using ExplosionType = AltV.Net.Data.ExplosionType;
 
 namespace Freeroam_Extended
 {
     public class EventHandler : IScript
     {
-        [AsyncScriptEvent(ScriptEventType.PlayerConnect)]
-        public async Task OnPlayerConnect(IAltPlayer player, string reason)
+        private readonly Random _random = new Random();
+
+        [ScriptEvent(ScriptEventType.PlayerConnect)]
+        public Task OnPlayerConnect(IAltPlayer player, string reason)
         {
             // create async context
-            await using (var asyncContext = AsyncContext.Create())
+            if (Misc.BannedPlayers.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash))
             {
-                if (!player.TryToAsync(asyncContext, out var asyncPlayer)) return;
-                if (Misc.BannedPlayers.Contains(asyncPlayer.HardwareIdHash + asyncPlayer.HardwareIdExHash)) // Player banned
-                {
-                    asyncPlayer.Kick("You're banned from this server!");
-                    return;
-                }
-                // select random entry from SpawnPoints
-                var random = new Random();
-                var randomSpawnPoint = Misc.SpawnPositions.ElementAt(random.Next(0, Misc.SpawnPositions.Count));
-                asyncPlayer.Spawn(randomSpawnPoint + new Position(random.Next(0, 10), random.Next(0, 10), 0));
-                asyncPlayer.Model = (uint) PedModel.FreemodeMale01;
+                player.Kick("You're banned from this server!");
+                return Task.CompletedTask;
             }
+            // select random entry from SpawnPoints
+            var randomSpawnPoint = Misc.SpawnPositions.ElementAt(_random.Next(0, Misc.SpawnPositions.Length));
+            player.Spawn(randomSpawnPoint + new Position(_random.Next(0, 10), _random.Next(0, 10), 0));
+            player.Model = (uint) PedModel.FreemodeMale01;
+            player.SetDateTime(1, 1, 1, Misc.Hour, 1, 1);
+            player.SetWeather(Misc.Weather);
+            
+            return Task.CompletedTask;
         }
 
         [AsyncScriptEvent(ScriptEventType.VehicleDestroy)]
@@ -48,44 +50,37 @@ namespace Freeroam_Extended
         }
 
         [AsyncScriptEvent(ScriptEventType.PlayerDisconnect)]
-        public async Task OnPlayerDisconnect(IAltPlayer player, string reason)
+        public Task OnPlayerDisconnect(IAltPlayer player, string reason)
         {
             var vehicles = Alt.GetAllVehicles().Cast<IAltVehicle>().Where(x => x.Owner == player);
-            await using (var asyncContext = AsyncContext.Create())
+           
+            foreach (var veh in vehicles)
             {
-                foreach (var veh in vehicles)
-                {
-                    if (!veh.TryToAsync(asyncContext, out var asyncVeh)) continue;
-                    if (veh.Owner.Id != player.Id) continue;
-                    veh.Remove();
-                }   
+                if (veh.Owner.Id != player.Id) continue;
+                veh.Remove();
             }
+            
+            return Task.CompletedTask;
         }
 
         [AsyncScriptEvent(ScriptEventType.PlayerDead)]
-        public async Task OnPlayerDead(IAltPlayer player, IEntity killer, uint weapon)
+        public Task OnPlayerDead(IAltPlayer player, IEntity killer, uint weapon)
         {
-            // create async context
-            await using (var asyncContext = AsyncContext.Create())
-            {
-                if (!player.TryToAsync(asyncContext, out var asyncPlayer)) return;
-                // find random spawnpoint
-                var random = new Random();
-                var randomSpawnPoint = Misc.SpawnPositions.ElementAt(random.Next(0, Misc.SpawnPositions.Count));
-                asyncPlayer.Spawn(randomSpawnPoint + new Position(random.Next(0, 10), random.Next(0, 10), 0));
+            var spawnPointPool = player.DmMode ? Misc.AirportSpawnPositions : Misc.SpawnPositions;
+            
+            var randomSpawnPoint = spawnPointPool.ElementAt(_random.Next(0, Misc.SpawnPositions.Length));
+            player.Spawn(randomSpawnPoint + new Position(_random.Next(0, 10), _random.Next(0, 10), 0));
 
-                if (Misc.BlacklistedWeapons.Contains(weapon) && killer is IAltPlayer killerPlayer)
-                {
-                    if (!killerPlayer.TryToAsync(asyncContext, out var asyncKiller)) return;
-                    Alt.Server.LogColored($"~r~ Banned Player: {asyncKiller.Name} ({killerPlayer.Id}) for using illegal weapon!");
-                    Misc.BannedPlayers.Add(asyncKiller.HardwareIdHash + asyncKiller.HardwareIdExHash);
-                    asyncKiller.Kick("You're banned from this server!");
-                }
-            }
+            if (!Misc.BlacklistedWeapons.Contains(weapon) || killer is not IAltPlayer killerPlayer) return Task.CompletedTask;
+            Alt.Server.LogColored($"~r~ Banned Player: {killerPlayer.Name} ({killerPlayer.Id}) for using illegal weapon!");
+            Misc.BannedPlayers.Add(new Tuple<ulong, ulong>(killerPlayer.HardwareIdHash, killerPlayer.HardwareIdExHash));
+            killerPlayer.Kick("You're banned from this server!");
+
+            return Task.CompletedTask;
         }
 
-        [AsyncScriptEvent(ScriptEventType.ConsoleCommand)]
-        public async Task OnConsoleCommand(string name, string[] args)
+        [ScriptEvent(ScriptEventType.ConsoleCommand)]
+        public Task OnConsoleCommand(string name, string[] args)
         {
             var playerPool = Alt.GetAllPlayers();
             switch (name)
@@ -101,7 +96,7 @@ namespace Freeroam_Extended
                     if (playerOp is null)
                     {
                         Alt.Log("Player not online!");
-                        return;
+                        return Task.CompletedTask;
                     }
                     
                     if (Misc.Operators.Contains(int.Parse(args[0])))
@@ -123,7 +118,7 @@ namespace Freeroam_Extended
                     if (playerDeOp is null)
                     {
                         Alt.Log("Player not online!");
-                        return;
+                        return Task.CompletedTask;
                     }
                     
                     if (!Misc.Operators.Contains(int.Parse(args[0])))
@@ -134,36 +129,69 @@ namespace Freeroam_Extended
                     Misc.Operators.Remove(int.Parse(args[0]));
                     break;
             }
+            return Task.CompletedTask;
         }
 
         [AsyncScriptEvent(ScriptEventType.WeaponDamage)]
-        public async Task OnWeaponDamage(IAltPlayer player, IEntity target, uint weapon, ushort damage,
+        public Task OnWeaponDamage(IAltPlayer player, IEntity target, uint weapon, ushort damage,
             Position shotOffset, BodyPart bodyPart)
         {
-            await using (var asyncContext = AsyncContext.Create())
-            {
-                if (Misc.BlacklistedWeapons.Contains(weapon) && player is IAltPlayer damagePlayer)
-                {
-                    if (!damagePlayer.TryToAsync(asyncContext, out var asyncDamagePlayer)) return;
-                    Alt.Server.LogColored($"~r~ Banned Player: {asyncDamagePlayer.Name} ({asyncDamagePlayer.Id}) for using illegal weapon!");
-                    Misc.BannedPlayers.Add(asyncDamagePlayer.HardwareIdHash + asyncDamagePlayer.HardwareIdExHash);
-                    asyncDamagePlayer.Kick("You're banned from this server!");
-                }
-            }
+            if (!Misc.BlacklistedWeapons.Contains(weapon) || player is not { } damagePlayer) return Task.CompletedTask;
+            
+            Alt.Server.LogColored($"~r~ Banned Player: {damagePlayer.Name} ({damagePlayer.Id}) for using illegal weapon!");
+            Misc.BannedPlayers.Add(new Tuple<ulong, ulong>(damagePlayer.HardwareIdHash, damagePlayer.HardwareIdExHash));
+            damagePlayer.Kick("You're banned from this server!");
+
+            return Task.CompletedTask;
         }
 
         [AsyncScriptEvent(ScriptEventType.ColShape)]
-        public async Task OnColshapeEnter(IColShape colshape, IEntity target, bool state)
+        public Task OnColshapeEnter(IColShape colshape, IEntity target, bool state)
         {
-            if (target is not IAltPlayer targetPlayer) return;
+            if (target is not IAltPlayer targetPlayer) return Task.CompletedTask;
 
             // entity to async
-            await using (var asyncContext = AsyncContext.Create())
+            targetPlayer.EnableWeaponUsage = state;
+            targetPlayer.Emit("airport_state", state);
+            
+            return Task.CompletedTask;
+        }
+
+        [ScriptEvent(ScriptEventType.Fire)]
+        public Task OnFireStart(IAltPlayer player, FireInfo[] fireInfos)
+        {
+            return Task.FromResult(false);
+        }
+
+        [ScriptEvent(ScriptEventType.Explosion)]
+        public Task OnExplosion(IAltPlayer player, ExplosionType explosionType, Position position, uint explosionFx,
+            IEntity target)
+        {
+            return Task.FromResult(false);
+        }
+
+        [ScriptEvent(ScriptEventType.StartProjectile)]
+        public Task OnProjectileStart(IAltPlayer player, Position startPosition, Position direction, uint ammoHash, uint weaponHash)
+        {
+            return Task.FromResult(false);
+        }
+
+        [ClientEvent("chat:message")]
+        public Task OnChatMessage(IAltPlayer player, params string[] args)
+        {
+            var isAdmin = Misc.Operators.Contains(player.Id);
+            if (args[0].StartsWith("/")) return Task.CompletedTask;
+            if (!Misc.ChatState && !isAdmin)
             {
-                if (targetPlayer.TryToAsync(asyncContext, out var asyncPlayer)) return;
-                asyncPlayer.EnableWeaponUsage = state;
-                asyncPlayer.Emit("airport_state", state);
+                player.SendChatMessage("{FF0000}Chat is disabled!");
+                return Task.CompletedTask;
             }
+
+            foreach (var p in Alt.GetAllPlayers())
+            {
+                p.SendChatMessage($"{(isAdmin ? "{008736}" : "{FFFFFF}")} <b>{player.Name}</b>: {{FFFFFF}}{string.Join("", args)}");
+            }
+            return Task.CompletedTask;
         }
     } 
 }
