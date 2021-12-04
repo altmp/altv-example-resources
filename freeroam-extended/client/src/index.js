@@ -1,10 +1,11 @@
-import { LOCAL_PLAYER, playerData, distance } from './helpers';
+import { LOCAL_PLAYER, playerData, distance, drawText3d } from './helpers';
 
 import * as native from 'natives';
 import * as alt from 'alt-client';
 
 import './events';
 import './chat';
+import './noclip';
 
 alt.setConfigFlag('DISABLE_AUTO_WEAPON_SWAP', true);
 alt.setConfigFlag('DISABLE_IDLE_CAMERA', true);
@@ -57,33 +58,3 @@ function renderNametags(player) {
         scale, 255, 255, 255, 255, true, 0.038 * (-scale), true, player
     );
 }
-
-function drawText3d(text, x, y, z, scale, r, g, b, a, outline, offset, lagcomp, lagcompEntity) {
-    // If lagcomp is enabled and the lagcomp entity is in a vehicle.
-    if (lagcomp === true && lagcompEntity.vehicle !== null) {
-        const vector = native.getEntityVelocity(lagcompEntity.vehicle);
-        const frameTime = native.getFrameTime();
-
-        native.setDrawOrigin(x + (vector.x * frameTime), y + (vector.y * frameTime), z + (vector.z * frameTime), 0);
-    } else native.setDrawOrigin(x, y, z, 0);
-    
-    native.setTextFont(4);
-    native.setTextProportional(false);
-    native.setTextScale(scale, scale);
-    native.setTextColour(r, g, b, a);
-    native.setTextDropshadow(0, 0, 0, 0, 255);
-    native.setTextEdge(2, 0, 0, 0, 150);
-    native.setTextDropShadow();
-    native.setTextCentre(true);
-
-    if (outline) native.setTextOutline();
-
-    native.beginTextCommandDisplayText("CELL_EMAIL_BCON");
-
-    text.match(/.{1,99}/g).forEach(textBlock => {
-        native.addTextComponentSubstringPlayerName(textBlock);
-    });
-
-    native.endTextCommandDisplayText(0.0, offset, 0.0);
-    native.clearDrawOrigin();
-};

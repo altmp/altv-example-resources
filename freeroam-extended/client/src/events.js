@@ -1,5 +1,6 @@
 import { playerData, setWeaponsUsage } from './helpers';
 import { pushMessage, chatData, view } from './chat';
+import { toggleNoclip } from './noclip';
 
 import * as alt from 'alt-client';
 
@@ -20,9 +21,7 @@ alt.onServer('set_last_command', () => {
     playerData.commandTimestamp = Date.now();
 });
 
-alt.onServer('noclip', state => {
-    console.log('noclip', state);
-});
+alt.onServer('noclip', toggleNoclip);
 
 alt.onServer('set_chat_state', state => {
     playerData.chatState = state;

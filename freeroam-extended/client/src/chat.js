@@ -40,7 +40,6 @@ view.on("chatloaded", () => {
 view.on("chatmessage", (text) => {
     // alt.emitServer("chat:message", text);
 
-    console.log(playerData.chatState);
     if (text.startsWith('/') && (Date.now() - playerData.lastCommandTimestamp) / 1000 > 10) {
         alt.emitServer("chat:message", text);
     }
