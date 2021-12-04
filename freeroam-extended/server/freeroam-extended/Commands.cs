@@ -256,7 +256,7 @@ namespace Freeroam_Extended
 
             foreach (var p in Alt.GetAllPlayers())
             {
-                if (player is not { } target) continue;
+                if (p is not { } target) continue;
                 target.Position = player.Position;
                 target.SendChatMessage("{00FF00} You were teleported to " + player.Name + "!");
             }
