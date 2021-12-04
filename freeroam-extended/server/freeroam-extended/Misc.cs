@@ -62,7 +62,7 @@ namespace Freeroam_Extended
            
         };
 
-        public static HashSet<Tuple<ulong, ulong>> BannedPlayers = new()
+        public static HashSet<(ulong, ulong)> BannedPlayers = new()
         {
             
         };

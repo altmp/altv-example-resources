@@ -73,7 +73,7 @@ namespace Freeroam_Extended
 
             if (!Misc.BlacklistedWeapons.Contains(weapon) || killer is not IAltPlayer killerPlayer) return Task.CompletedTask;
             Alt.Server.LogColored($"~r~ Banned Player: {killerPlayer.Name} ({killerPlayer.Id}) for using illegal weapon!");
-            Misc.BannedPlayers.Add(new Tuple<ulong, ulong>(killerPlayer.HardwareIdHash, killerPlayer.HardwareIdExHash));
+            Misc.BannedPlayers.Add((killerPlayer.HardwareIdHash, killerPlayer.HardwareIdExHash));
             killerPlayer.Kick("You're banned from this server!");
 
             return Task.CompletedTask;
@@ -139,7 +139,8 @@ namespace Freeroam_Extended
             if (!Misc.BlacklistedWeapons.Contains(weapon) || player is not { } damagePlayer) return Task.CompletedTask;
             
             Alt.Server.LogColored($"~r~ Banned Player: {damagePlayer.Name} ({damagePlayer.Id}) for using illegal weapon!");
-            Misc.BannedPlayers.Add(new Tuple<ulong, ulong>(damagePlayer.HardwareIdHash, damagePlayer.HardwareIdExHash));
+            //Misc.BannedPlayers.Add(<ulong, ulong>(damagePlayer.HardwareIdHash, damagePlayer.HardwareIdExHash));
+            Misc.BannedPlayers.Add((damagePlayer.HardwareIdHash, damagePlayer.HardwareIdExHash));
             damagePlayer.Kick("You're banned from this server!");
 
             return Task.CompletedTask;

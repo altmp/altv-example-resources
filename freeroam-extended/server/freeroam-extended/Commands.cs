@@ -128,7 +128,7 @@ namespace Freeroam_Extended
             }
             
             target.Kick("You've been banned from this server!");
-            Misc.BannedPlayers.Add(new Tuple<ulong, ulong>(target.HardwareIdHash, target.HardwareIdExHash));
+            Misc.BannedPlayers.Add((target.HardwareIdHash, target.HardwareIdExHash));
             player.SendChatMessage($"{{00FF00}}Player with id {id} banned!");
             player.Emit("set_last_command");
         }
@@ -158,7 +158,7 @@ namespace Freeroam_Extended
             }
 
             // remove banned player from list
-            Misc.BannedPlayers.RemoveWhere(p => p.Item1 == target.HardwareIdHash && p.Item2 == target.HardwareIdExHash);
+            Misc.BannedPlayers.Remove((player.HardwareIdHash, player.HardwareIdExHash));
             player.SendChatMessage($"{{00FF00}}Player with id {id} unbanned!");
             player.Emit("set_last_command");
         }
