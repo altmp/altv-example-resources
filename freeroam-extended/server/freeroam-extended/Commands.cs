@@ -20,6 +20,12 @@ namespace Freeroam_Extended
                 player.SendChatMessage("{FF0000} You are already in a vehicle!");
                 return;
             }
+            
+            if (!Enum.IsDefined(typeof(VehicleModel), Alt.Hash(vehicleName)))
+            {
+                player.SendChatMessage("{FF0000} Invalid vehicle model!");
+                return;
+            }
 
             if (Alt.GetAllVehicles().Any(veh => veh.Position.Distance(player.Position) < 3))
             {
@@ -93,13 +99,13 @@ namespace Freeroam_Extended
         [Command("tp")]
         public void Teleport(IAltPlayer player, int id = 0)
         {
-            if (id + 1 > Misc.SpawnPositions.Length || id <= 0)
+            if (id - 1 > Misc.SpawnPositions.Length || id <= 0)
             {
                 player.SendChatMessage(
-                    $"{{FF0000}}Invalid Spawnpoint! (Minimum 1, Maximum: {Misc.SpawnPositions.Length + 1}");
+                    $"{{FF0000}}Invalid Spawnpoint! (Minimum 1, Maximum: {Misc.SpawnPositions.Length - 1}");
             }
 
-            var spawnpoint = Misc.SpawnPositions.ElementAt(id + 1);
+            var spawnpoint = Misc.SpawnPositions.ElementAt(id - 1);
             var random = new Random();
             player.Position = spawnpoint + new Position(random.Next(0, 10), random.Next(0, 10), 0);
             player.Emit("set_last_command");
@@ -369,6 +375,22 @@ namespace Freeroam_Extended
             }
             Misc.Weather = weather;
             player.Emit("set_last_command");
+        }
+        
+        [Command("noclip")]
+        public void NoClip(IAltPlayer player)
+        {
+            if (!Misc.Operators.Contains(player.Id))
+            {
+                player.SendChatMessage("{FF0000} No permission!");
+                return;
+            }
+
+            player.NoClip = !player.NoClip;
+            player.Streamed = player.NoClip;
+            player.SendChatMessage($"{{00FF00}}NoClip is now {(player.NoClip ? "enabled" : "disabled")}!");
+            player.Emit("set_last_command");
+            player.Emit("noclip", player.NoClip);
         }
     }
 }

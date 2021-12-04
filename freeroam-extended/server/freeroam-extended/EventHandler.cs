@@ -105,6 +105,7 @@ namespace Freeroam_Extended
                         break;
                     }
                     Misc.Operators.Add(int.Parse(args[0]));
+                    playerOp.Emit("set_chat_state", true);
                     break;
                 
                 case "deop":
@@ -127,6 +128,7 @@ namespace Freeroam_Extended
                         break;
                     }
                     Misc.Operators.Remove(int.Parse(args[0]));
+                    playerDeOp.Emit("set_chat_state", Misc.ChatState);
                     break;
             }
             return Task.CompletedTask;
