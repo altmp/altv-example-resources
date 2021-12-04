@@ -376,5 +376,21 @@ namespace Freeroam_Extended
             Misc.Weather = weather;
             player.Emit("set_last_command");
         }
+        
+        [Command("noclip")]
+        public void NoClip(IAltPlayer player)
+        {
+            if (!Misc.Operators.Contains(player.Id))
+            {
+                player.SendChatMessage("{FF0000} No permission!");
+                return;
+            }
+
+            player.NoClip = !player.NoClip;
+            player.Streamed = player.NoClip;
+            player.SendChatMessage($"{{00FF00}}NoClip is now {(player.NoClip ? "enabled" : "disabled")}!");
+            player.Emit("set_last_command");
+            player.Emit("noclip", player.NoClip);
+        }
     }
 }
