@@ -272,13 +272,13 @@ namespace Freeroam_Extended
                 return;
             }
 
+            var targetPlayer = Alt.GetAllPlayers().FirstOrDefault(p => p.Id != target);
             // check if target is online
-            if (Alt.GetAllPlayers().All(p => p.Id != target))
+            if (targetPlayer == null)
             {
                 player.SendChatMessage("{FF0000} Player not found!");
                 return;
             }
-            var targetPlayer = Alt.GetAllPlayers().First(p => p.Id == target);
             targetPlayer.Position = player.Position;
             targetPlayer.SendChatMessage("{00FF00} You were teleported to " + player.Name + "!");
             player.Emit("set_last_command");
@@ -293,13 +293,12 @@ namespace Freeroam_Extended
                 return;
             }
 
-            // check if target is online
-            if (Alt.GetAllPlayers().All(p => p.Id != target))
+            var targetPlayer = Alt.GetAllPlayers().FirstOrDefault(p => p.Id != target);
+            if (targetPlayer == null)
             {
                 player.SendChatMessage("{FF0000} Player not found!");
                 return;
             }
-            var targetPlayer = Alt.GetAllPlayers().First(p => p.Id == target);
             player.Position = targetPlayer.Position;
             player.SendChatMessage("{00FF00} You were teleported to " + player.Name + "!");
             player.Emit("set_last_command");
