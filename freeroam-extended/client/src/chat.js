@@ -43,7 +43,9 @@ view.on("chatmessage", (text) => {
     if (text.startsWith('/') && (Date.now() - playerData.lastCommandTimestamp) / 1000 > 10) {
         alt.emitServer("chat:message", text);
     }
-    else if (playerData.chatState && ((Date.now() - playerData.lastMessageTimestamp) / 1000 > 10)) {
+    // Activate this if we want a cd on the messages
+    // else if (playerData.chatState && ((Date.now() - playerData.lastMessageTimestamp) / 1000 > 10)) {
+    else if(playerData.chatState) {
         alt.emitServer("chat:message", text);
         playerData.lastMessageTimestamp = Date.now();
     }
