@@ -372,8 +372,9 @@ namespace Freeroam_Extended
             }
             foreach (var p in Alt.GetAllPlayers())
             {
-                p.SetWeather(Misc.Weather);
+                p.SetWeather(weather);
             }
+            Misc.Weather = weather;
             player.Emit("set_last_command");
         }
     }
