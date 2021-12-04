@@ -158,22 +158,22 @@ namespace Freeroam_Extended
         }
 
         [ScriptEvent(ScriptEventType.Fire)]
-        public Task OnFireStart(IAltPlayer player, FireInfo[] fireInfos)
+        public bool OnFireStart(IAltPlayer player, FireInfo[] fireInfos)
         {
-            return Task.FromResult(false);
+            return false;
         }
 
         [ScriptEvent(ScriptEventType.Explosion)]
-        public Task OnExplosion(IAltPlayer player, ExplosionType explosionType, Position position, uint explosionFx,
+        public bool OnExplosion(IAltPlayer player, ExplosionType explosionType, Position position, uint explosionFx,
             IEntity target)
         {
-            return Task.FromResult(false);
+            return false;
         }
 
         [ScriptEvent(ScriptEventType.StartProjectile)]
-        public Task OnProjectileStart(IAltPlayer player, Position startPosition, Position direction, uint ammoHash, uint weaponHash)
+        public bool OnProjectileStart(IAltPlayer player, Position startPosition, Position direction, uint ammoHash, uint weaponHash)
         {
-            return Task.FromResult(false);
+            return false;
         }
 
         [ClientEvent("chat:message")]
