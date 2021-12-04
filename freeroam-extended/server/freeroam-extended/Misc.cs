@@ -6,7 +6,7 @@ namespace Freeroam_Extended
 {
     public static class Misc
     {
-        public static readonly IList<uint> BlacklistedWeapons = new List<uint>
+        public static HashSet<uint> BlacklistedWeapons = new()
         {
             125959754, // Compact Grenade Launcher
             2726580491, // Grenade Launcher
