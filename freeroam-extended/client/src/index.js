@@ -39,35 +39,51 @@ function processNametags() {
 
 function renderNametags(player) {
     native.requestPedVisibilityTracking(player);
-    if (!native.isTrackedPedVisible(player)) return;
+    if (!native.isTrackedPedVisible(player) && alt.Player.local.vehicle === null) return;
 
-    const entity = player.vehicle ? player.vehicle : player;
-    const velocity = native.getEntityVelocity(entity);
-    const frameTime = native.getFrameTime();
+    const distance = alt.Player.local.pos.distanceTo(player.pos);
+    const pos = native.getPedBoneCoords(player.scriptID, 31086, 0.0, 0.0, 0.0);
+    const scale = 0.35 - distance * 0.01;
 
-    const lagFixX = player.pos.x + (velocity.x * frameTime);
-    const lagFixY = player.pos.y + (velocity.y * frameTime);
-    const lagFixZ = player.pos.z + (velocity.z * frameTime);
+    let nametagText = `~n~~w~<font color='#FFFFFF'>${player.name} #${player.id} | ~g~${player.health - 100} / 100</font>`;
 
     if (player === LOCAL_PLAYER && playerData.areWeaponsDisabled) {
-        native.setDrawOrigin(lagFixX + 0.025, lagFixY, lagFixZ + 1.1, 0);
-        native.beginTextCommandDisplayText("STRING");
-        native.setTextFont(4);
-        native.setTextCentre(true);
-        native.setTextScale(0.35, 0.35);
-        native.setTextProportional(true);
-        native.setTextColour(255, 255, 255, 255);
-        native.addTextComponentSubstringPlayerName('~o~Weapons disabled');
-        native.endTextCommandDisplayText(0, 0, 0);
+        nametagText = "~o~Weapons Disabled" + nametagText;
     }
 
-    native.setDrawOrigin(lagFixX + 0.025, lagFixY, lagFixZ + 1, 0);
-    native.beginTextCommandDisplayText("STRING");
-    native.setTextFont(4);
-    native.setTextCentre(true);
-    native.setTextScale(0.4, 0.4);
-    native.setTextProportional(true);
-    native.setTextColour(255, 255, 255, 255);
-    native.addTextComponentSubstringPlayerName(`${player.name} #${player.id} | ~g~${player.health - 100} / 100`);
-    native.endTextCommandDisplayText(0, 0, 0);
+    drawText3d(
+        nametagText,
+        pos.x, pos.y, (pos.z + -(scale)) + 1.0,
+        scale, 255, 255, 255, 255, true, 0.038 * (-scale), true, player
+    );
 }
+
+function drawText3d(text, x, y, z, scale, r, g, b, a, outline, offset, lagcomp, lagcompEntity) {
+    // If lagcomp is enabled and the lagcomp entity is in a vehicle.
+    if (lagcomp === true && lagcompEntity.vehicle !== null) {
+        const vector = native.getEntityVelocity(lagcompEntity.vehicle);
+        const frameTime = native.getFrameTime();
+
+        native.setDrawOrigin(x + (vector.x * frameTime), y + (vector.y * frameTime), z + (vector.z * frameTime), 0);
+    } else native.setDrawOrigin(x, y, z, 0);
+    
+    native.setTextFont(4);
+    native.setTextProportional(false);
+    native.setTextScale(scale, scale);
+    native.setTextColour(r, g, b, a);
+    native.setTextDropshadow(0, 0, 0, 0, 255);
+    native.setTextEdge(2, 0, 0, 0, 150);
+    native.setTextDropShadow();
+    native.setTextCentre(true);
+
+    if (outline) native.setTextOutline();
+
+    native.beginTextCommandDisplayText("CELL_EMAIL_BCON");
+
+    text.match(/.{1,99}/g).forEach(textBlock => {
+        native.addTextComponentSubstringPlayerName(textBlock);
+    });
+
+    native.endTextCommandDisplayText(0.0, offset, 0.0);
+    native.clearDrawOrigin();
+};
