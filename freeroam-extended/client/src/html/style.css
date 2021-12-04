@@ -21,8 +21,9 @@ body {
 
 .help-keys {
   position: absolute;
-  top: 50%;
-  left: 1em;
+  top: 1.5em;
+  right: 1.5em;
+  text-align: right;
 }
 
 .help-keys ol {
@@ -31,7 +32,7 @@ body {
 
 .help-keys li {
   color: #FFFFFF;
-  font-size: 18px;
+  font-size: 16px;
   margin-bottom: 0.25em;
 }
 
