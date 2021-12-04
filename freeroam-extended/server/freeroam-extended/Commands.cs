@@ -21,7 +21,7 @@ namespace Freeroam_Extended
                 return;
             }
             
-            if (!Enum.IsDefined(typeof(VehicleModel), vehicleName))
+            if (!Enum.IsDefined(typeof(VehicleModel), Alt.Hash(vehicleName)))
             {
                 player.SendChatMessage("{FF0000} Invalid vehicle model!");
                 return;
