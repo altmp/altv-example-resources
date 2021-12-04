@@ -59,15 +59,22 @@ namespace Freeroam_Extended
         };
         
         public static readonly Position[] AirportSpawnPositions = {
-           
+            new (-1100.89990234375f, -2659.896240234375f, 13.756650924682617f),
+            new (-960.344970703125f, -2753.627685546875f, 13.83371639251709f),
+            new (-964.8075561523438f, -3002.284912109375f, 13.945064544677734f),
+            new (-1776.1871337890625f, -2773.560546875f, 13.944681167602539f),
+            new (-1216.00244140625f, -2799.224609375f, 13.945316314697266f),
+            new (-1276.5977783203125f, -3385.822021484375f, 13.940142631530762f),
+            new (-1655.9744873046875f, -3149.0458984375f, 13.985773086547852f),
+            new (-1460.2476806640625f, -3307.091552734375f, 13.945180892944336f),
         };
 
-        public static HashSet<(ulong, ulong)> BannedPlayers = new()
+        public static HashSet<Tuple<ulong,ulong>> BannedPlayers = new()
         {
             
         };
         
-        public static HashSet<int> Operators = new()
+        public static HashSet<Tuple<ulong,ulong>> Operators = new()
         {
             
         };
@@ -76,5 +83,7 @@ namespace Freeroam_Extended
         public static int Hour = 11;
         public static uint Weather = 0;
 
+        public static Position DMPos = new Position(-1216.839599609375f, -2832.514404296875f, 13.9296875f);
+        public static int DMRadius = 800;
     }
 }

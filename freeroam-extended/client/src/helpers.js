@@ -158,3 +158,18 @@ export class DirectionVector {
         );
 	}
 }
+
+export function drawDMZone(center_x, center_y, radius, count)
+{
+    let steps = 2 * Math.PI / count;
+    for(let i = 0; i < count; i++)
+    {
+        let blip_x = radius * Math.cos(steps * i) + center_x;
+        let blip_y = radius * Math.sin(steps * i) + center_y;
+
+        let blip = native.addBlipForCoord(blip_x, blip_y, 0);
+        native.setBlipSprite(blip, 310);
+        native.setBlipHiddenOnLegend(blip, true);
+        native.setBlipAsShortRange(blip, true);
+    }
+}

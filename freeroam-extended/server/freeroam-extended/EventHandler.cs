@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Collections.Generic;
 using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Data;
@@ -31,6 +35,12 @@ namespace Freeroam_Extended
             player.Model = (uint) PedModel.FreemodeMale01;
             player.SetDateTime(1, 1, 1, Misc.Hour, 1, 1);
             player.SetWeather(Misc.Weather);
+
+            player.Emit("draw_dmzone", Misc.DMPos.X, Misc.DMPos.Y, Misc.DMRadius, 150);
+
+            if(Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash))
+                player.Emit("set_chat_state", true);
+
             
             return Task.CompletedTask;
         }
@@ -73,7 +83,9 @@ namespace Freeroam_Extended
 
             if (!Misc.BlacklistedWeapons.Contains(weapon) || killer is not IAltPlayer killerPlayer) return Task.CompletedTask;
             Alt.Server.LogColored($"~r~ Banned Player: {killerPlayer.Name} ({killerPlayer.Id}) for using illegal weapon!");
-            Misc.BannedPlayers.Add((killerPlayer.HardwareIdHash, killerPlayer.HardwareIdExHash));
+            Misc.BannedPlayers.Add(new Tuple<ulong,ulong>(killerPlayer.HardwareIdHash, killerPlayer.HardwareIdExHash));
+            string json = JsonSerializer.Serialize(Misc.BannedPlayers);
+            File.WriteAllText(@"BannedPlayers.json", json);
             killerPlayer.Kick("You're banned from this server!");
 
             return Task.CompletedTask;
@@ -99,12 +111,15 @@ namespace Freeroam_Extended
                         return Task.CompletedTask;
                     }
                     
-                    if (Misc.Operators.Contains(int.Parse(args[0])))
+                    if (Misc.Operators.Any(tuple => tuple.Item1 == playerOp.HardwareIdHash && tuple.Item2 == playerOp.HardwareIdExHash))
                     {
                         Alt.Log($"Id {args[0]} already is an operator!");   
                         break;
                     }
-                    Misc.Operators.Add(int.Parse(args[0]));
+                    Misc.Operators.Add(new Tuple<ulong,ulong>(playerOp.HardwareIdHash, playerOp.HardwareIdExHash));
+                    string json = JsonSerializer.Serialize(Misc.Operators);
+                    File.WriteAllText(@"Operators.json", json);
+
                     playerOp.Emit("set_chat_state", true);
                     break;
                 
@@ -122,12 +137,12 @@ namespace Freeroam_Extended
                         return Task.CompletedTask;
                     }
                     
-                    if (!Misc.Operators.Contains(int.Parse(args[0])))
+                    if (!Misc.Operators.Any(tuple => tuple.Item1 == playerDeOp.HardwareIdHash && tuple.Item2 == playerDeOp.HardwareIdExHash))
                     {
                         Alt.Log($"Id {args[0]} is not an operator!");
                         break;
                     }
-                    Misc.Operators.Remove(int.Parse(args[0]));
+                    Misc.Operators.Remove(new Tuple<ulong,ulong>(playerDeOp.HardwareIdHash, playerDeOp.HardwareIdExHash));
                     playerDeOp.Emit("set_chat_state", Misc.ChatState);
                     break;
             }
@@ -142,7 +157,10 @@ namespace Freeroam_Extended
             
             Alt.Server.LogColored($"~r~ Banned Player: {damagePlayer.Name} ({damagePlayer.Id}) for using illegal weapon!");
             //Misc.BannedPlayers.Add(<ulong, ulong>(damagePlayer.HardwareIdHash, damagePlayer.HardwareIdExHash));
-            Misc.BannedPlayers.Add((damagePlayer.HardwareIdHash, damagePlayer.HardwareIdExHash));
+            Misc.BannedPlayers.Add(new Tuple<ulong,ulong>(damagePlayer.HardwareIdHash, damagePlayer.HardwareIdExHash));
+            string json = JsonSerializer.Serialize(Misc.BannedPlayers);
+            File.WriteAllText(@"BannedPlayers.json", json);
+
             damagePlayer.Kick("You're banned from this server!");
 
             return Task.CompletedTask;
@@ -182,7 +200,7 @@ namespace Freeroam_Extended
         [ClientEvent("chat:message")]
         public Task OnChatMessage(IAltPlayer player, params string[] args)
         {
-            var isAdmin = Misc.Operators.Contains(player.Id);
+            var isAdmin = Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash);
             if (args[0].StartsWith("/")) return Task.CompletedTask;
             if (!Misc.ChatState && !isAdmin)
             {
@@ -192,7 +210,7 @@ namespace Freeroam_Extended
 
             foreach (var p in Alt.GetAllPlayers())
             {
-                p.SendChatMessage($"{(isAdmin ? "{008736}" : "{FFFFFF}")} <b>{player.Name}</b>: {{FFFFFF}}{string.Join("", args)}");
+                p.SendChatMessage($"{(isAdmin ? "{008736}" : "{FFFFFF}")} <b>{player.Name}({player.Id})</b>: {{FFFFFF}}{string.Join("", args)}");
             }
             return Task.CompletedTask;
         }

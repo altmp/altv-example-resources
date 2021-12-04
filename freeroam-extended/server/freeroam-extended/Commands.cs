@@ -121,7 +121,7 @@ namespace Freeroam_Extended
         [Command("ban")]
         public void Ban(IAltPlayer player, int id)
         {
-            if (!Misc.Operators.Contains(player.Id))
+            if (!Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash))
             {
                 player.SendChatMessage("{FF0000} No permission!");
                 return;
@@ -135,7 +135,7 @@ namespace Freeroam_Extended
             }
             
             target.Kick("You've been banned from this server!");
-            Misc.BannedPlayers.Add((target.HardwareIdHash, target.HardwareIdExHash));
+            Misc.BannedPlayers.Add(new Tuple<ulong,ulong>(target.HardwareIdHash, target.HardwareIdExHash));
             player.SendChatMessage($"{{00FF00}}Player with id {id} banned!");
             player.Emit("set_last_command");
         }
@@ -143,7 +143,7 @@ namespace Freeroam_Extended
         [Command("unban")]
         public void Unban(IAltPlayer player, int id)
         {
-            if (!Misc.Operators.Contains(player.Id))
+            if (!Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash))
             {
                 player.SendChatMessage("{FF0000} No permission!");
                 return;
@@ -165,7 +165,7 @@ namespace Freeroam_Extended
             }
 
             // remove banned player from list
-            Misc.BannedPlayers.Remove((player.HardwareIdHash, player.HardwareIdExHash));
+            Misc.BannedPlayers.Remove(new Tuple<ulong,ulong>(player.HardwareIdHash, player.HardwareIdExHash));
             player.SendChatMessage($"{{00FF00}}Player with id {id} unbanned!");
             player.Emit("set_last_command");
         }
@@ -210,7 +210,7 @@ namespace Freeroam_Extended
         public void ToggleChat(IAltPlayer player, bool state)
         {
             // check if player is operator
-            if (!Misc.Operators.Contains(player.Id))
+            if (!Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash))
             {
                 player.SendChatMessage("{FF0000} No permission!");
                 return;
@@ -221,7 +221,7 @@ namespace Freeroam_Extended
             foreach (var p in Alt.GetAllPlayers())
             {
                 // check if player is operator
-                if (Misc.Operators.Contains(p.Id)) continue;
+                if (Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash)) continue;
                 p.Emit("set_chat_state", state);
             }
         }
@@ -229,7 +229,7 @@ namespace Freeroam_Extended
         [Command("dimension")]
         public void Dimension(IAltPlayer player, int dimension = 0)
         {
-            if (!Misc.Operators.Contains(player.Id))
+            if (!Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash))
             {
                 player.SendChatMessage("{FF0000} No permission!");
                 return;
@@ -255,7 +255,7 @@ namespace Freeroam_Extended
         [Command("tpallhere")]
         public void TpAllhere(IAltPlayer player)
         {
-            if (!Misc.Operators.Contains(player.Id))
+            if (!Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash))
             {
                 player.SendChatMessage("{FF0000} No permission!");
                 return;
@@ -273,7 +273,7 @@ namespace Freeroam_Extended
         [Command("tphere")]
         public void TpHere(IAltPlayer player, int target)
         {
-            if (!Misc.Operators.Contains(player.Id))
+            if (!Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash))
             {
                 player.SendChatMessage("{FF0000} No permission!");
                 return;
@@ -294,7 +294,7 @@ namespace Freeroam_Extended
         [Command("tpto")]
         public void TpTo(IAltPlayer player, int target)
         {
-            if (!Misc.Operators.Contains(player.Id))
+            if (!Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash))
             {
                 player.SendChatMessage("{FF0000} No permission!");
                 return;
@@ -314,7 +314,7 @@ namespace Freeroam_Extended
         [Command("clearallvehicles")]
         public void ClearAllVehicles(IAltPlayer player, int distance = 0)
         {
-            if (!Misc.Operators.Contains(player.Id))
+            if (!Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash))
             {
                 player.SendChatMessage("{FF0000} No permission!");
                 return;
@@ -339,7 +339,7 @@ namespace Freeroam_Extended
         [Command("settime")]
         public void SetTime(IAltPlayer player, int hour)
         {
-            if (!Misc.Operators.Contains(player.Id))
+            if (!Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash))
             {
                 player.SendChatMessage("{FF0000} No permission!");
                 return;
@@ -360,7 +360,7 @@ namespace Freeroam_Extended
         [Command("setweather")]
         public void SetWeather(IAltPlayer player, uint weather)
         {
-            if (!Misc.Operators.Contains(player.Id))
+            if (!Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash))
             {
                 player.SendChatMessage("{FF0000} No permission!");
                 return;
@@ -381,7 +381,7 @@ namespace Freeroam_Extended
         [Command("noclip")]
         public void NoClip(IAltPlayer player)
         {
-            if (!Misc.Operators.Contains(player.Id))
+            if (!Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash))
             {
                 player.SendChatMessage("{FF0000} No permission!");
                 return;
