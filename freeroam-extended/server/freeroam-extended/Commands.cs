@@ -124,15 +124,7 @@ namespace Freeroam_Extended
                 player.SendChatMessage($"{{FF0000}}Player with id {id} not found!");
                 return;
             }
-
-            // check if player is already banned
-            if (Misc.BannedPlayers.Any(tuple =>
-                tuple.Item1 == target.HardwareIdHash && tuple.Item2 == target.HardwareIdExHash))
-            {
-                player.SendChatMessage($"{{FF0000}}Player with {id} is already banned!");
-                return;
-            }
-
+            
             target.Kick("You've been banned from this server!");
             Misc.BannedPlayers.Add(new Tuple<ulong, ulong>(target.HardwareIdHash, target.HardwareIdExHash));
             player.SendChatMessage($"{{00FF00}}Player with id {id} banned!");
