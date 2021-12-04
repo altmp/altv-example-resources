@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Numerics;
 using AltV.Net;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
@@ -72,8 +73,9 @@ namespace Freeroam_Extended
         public void GetWeapons(IAltPlayer player)
         {
             // give all weapons from WeaponModel Enum to player
-            foreach (var weapon in Enum.GetValues(typeof(WeaponModel)).Cast<WeaponModel>()
-                .Where(w => !Misc.BlacklistedWeapons.Contains((uint)w)))
+            var weapons = Enum.GetValues(typeof(WeaponModel)).Cast<WeaponModel>().ToList()
+                .Where(w => !Misc.BlacklistedWeapons.Contains((uint) w));
+            foreach (var weapon in weapons)
             {
                 player.GiveWeapon(weapon, 1000, false);
             }
@@ -322,8 +324,8 @@ namespace Freeroam_Extended
             }
             foreach (var veh in Alt.GetAllVehicles())
             {
-                if (veh.Position.Distance(player.Position) > distance) continue;
-                veh.Remove();
+                // compare squared distance between player and vehicle
+                if (Vector3.DistanceSquared(veh.Position, player.Position) <= distance * distance) veh.Remove();
             }
             player.Emit("set_last_command");
         }
