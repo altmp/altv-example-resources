@@ -20,6 +20,12 @@ namespace Freeroam_Extended
                 player.SendChatMessage("{FF0000} You are already in a vehicle!");
                 return;
             }
+            
+            if (!Enum.IsDefined(typeof(VehicleModel), vehicleName))
+            {
+                player.SendChatMessage("{FF0000} Invalid vehicle model!");
+                return;
+            }
 
             if (Alt.GetAllVehicles().Any(veh => veh.Position.Distance(player.Position) < 3))
             {
