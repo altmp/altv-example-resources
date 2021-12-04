@@ -13,6 +13,7 @@ namespace Freeroam_Extended.Factories
         public bool GhostMode { get; set; }
         public bool EnableWeaponUsage { get; set; }
         public bool DmMode { get; set; }
+        public bool NoClip { get; set; }
     } 
     
     [AsyncEntity(typeof(IAltPlayer))]
@@ -23,6 +24,7 @@ namespace Freeroam_Extended.Factories
         public bool GhostMode { get; set; }
         public bool EnableWeaponUsage { get; set; }
         public bool DmMode { get; set; }
+        public bool NoClip { get; set; }
 
         public AltPlayer(IServer server, IntPtr nativePointer, ushort id) : base(server, nativePointer, id)
         {
