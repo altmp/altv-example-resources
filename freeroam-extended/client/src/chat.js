@@ -9,6 +9,11 @@ export const chatData = {
 export const view = new alt.WebView("http://resource/client/src/html/index.html");
 const buffer = [];
 
+export function toggleChat()
+{
+    view.isVisible = !view.isVisible;
+}
+
 function addMessage(name, text) {
     if (name) {
         view.emit("addMessage", name, text);

@@ -78,15 +78,23 @@ namespace Freeroam_Extended
         {
             var spawnPointPool = player.DmMode ? Misc.AirportSpawnPositions : Misc.SpawnPositions;
             
-            var randomSpawnPoint = spawnPointPool.ElementAt(_random.Next(0, Misc.SpawnPositions.Length));
+            var randomSpawnPoint = spawnPointPool.ElementAt(_random.Next(0, spawnPointPool.Length));
             player.Spawn(randomSpawnPoint + new Position(_random.Next(0, 10), _random.Next(0, 10), 0));
 
-            if (!Misc.BlacklistedWeapons.Contains(weapon) || killer is not IAltPlayer killerPlayer) return Task.CompletedTask;
-            Alt.Server.LogColored($"~r~ Banned Player: {killerPlayer.Name} ({killerPlayer.Id}) for using illegal weapon!");
-            Misc.BannedPlayers.Add(new Tuple<ulong,ulong>(killerPlayer.HardwareIdHash, killerPlayer.HardwareIdExHash));
-            string json = JsonSerializer.Serialize(Misc.BannedPlayers);
-            File.WriteAllText(@"BannedPlayers.json", json);
-            killerPlayer.Kick("You're banned from this server!");
+            if (killer is not IAltPlayer killerPlayer)
+                return Task.CompletedTask;
+
+            
+            if (Misc.BlacklistedWeapons.Contains(weapon))
+            {
+                Alt.Server.LogColored($"~r~ Banned Player: {killerPlayer.Name} ({killerPlayer.Id}) for using illegal weapon!");
+                Misc.BannedPlayers.Add(new Tuple<ulong,ulong>(killerPlayer.HardwareIdHash, killerPlayer.HardwareIdExHash));
+                string json = JsonSerializer.Serialize(Misc.BannedPlayers);
+                File.WriteAllText(@"BannedPlayers.json", json);
+                killerPlayer.Kick("You're banned from this server!");
+
+                return Task.CompletedTask;
+            }
 
             return Task.CompletedTask;
         }

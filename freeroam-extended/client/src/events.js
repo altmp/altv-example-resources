@@ -1,5 +1,5 @@
 import { drawDMZone, playerData, setWeaponsUsage } from './helpers';
-import { pushMessage, chatData, view } from './chat';
+import { pushMessage, chatData, view, toggleChat } from './chat';
 import { toggleNoclip } from './noclip';
 
 import * as alt from 'alt-client';
@@ -37,6 +37,7 @@ alt.on('keyup', (key) => {
     switch (key) {
         case 113: { // F2
             playerData.areNametagsVisible = !playerData.areNametagsVisible;
+            toggleChat();
             break;
         }
 

@@ -12,9 +12,18 @@ namespace Freeroam_Extended
 {
     public class Commands : IScript
     {
+        private readonly Random _random = new Random();
+
         [Command("veh")]
         public void SpawnVeh(IAltPlayer player, string vehicleName)
         {
+            Alt.Log("" + Alt.Hash(vehicleName));
+            if (Misc.BlacklistedVehicle.Contains(Alt.Hash(vehicleName)))
+            {
+                player.SendChatMessage("{FF0000} Vehicle is blacklisted.");
+                return;
+            }
+
             if (player.IsInVehicle)
             {
                 player.SendChatMessage("{FF0000} You are already in a vehicle!");
@@ -201,8 +210,21 @@ namespace Freeroam_Extended
         [Command("dm")]
         public void Dm(IAltPlayer player)
         {
-            player.SendChatMessage(player.DmMode ? "{00FF00} DM mode disabled!" : "{00FF00}DM mode enabled!");
+            player.SendChatMessage(player.DmMode ? "{00FF00} Respawning in Death Match Zone disabled!" : "{00FF00}Respawning in Death Match Zone enabled!");
             player.DmMode = !player.DmMode;
+
+            if(player.DmMode)
+            {
+                var weapons = Enum.GetValues(typeof(WeaponModel)).Cast<WeaponModel>().ToList().Where(w => !Misc.BlacklistedWeapons.Contains((uint) w));
+                foreach (var weapon in weapons)
+                {
+                    player.GiveWeapon(weapon, 1000, false);
+                }
+
+                var randomSpawnPoint = Misc.AirportSpawnPositions.ElementAt(_random.Next(0, Misc.AirportSpawnPositions.Length));
+                player.Spawn(randomSpawnPoint + new Position(_random.Next(0, 10), _random.Next(0, 10), 0));
+            }
+
             player.Emit("set_last_command");
         }
 
