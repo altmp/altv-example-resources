@@ -167,20 +167,27 @@ namespace Freeroam_Extended
         }
 
         [ScriptEvent(ScriptEventType.WeaponDamage)]
-        public Task OnWeaponDamage(IAltPlayer player, IEntity target, uint weapon, ushort damage,
+        public async Task OnWeaponDamage(IAltPlayer player, IEntity target, uint weapon, ushort damage,
             Position shotOffset, BodyPart bodyPart)
         {
-            if (!Misc.BlacklistedWeapons.Contains(weapon) || player is not { } damagePlayer) return Task.CompletedTask;
+            await using (var asyncContext = AsyncContext.Create())
+            {
+                if (!player.TryToAsync(asyncContext, out var asyncPlayer)) return;
+                if (!Misc.BlacklistedWeapons.Contains(weapon) || player is not { } damagePlayer) return;
+                if (!damagePlayer.TryToAsync(asyncContext, out var asyncDamagePlayer)) return;
+                
+         
             
-            Alt.Server.LogColored($"~r~ Banned Player: {damagePlayer.Name} ({damagePlayer.Id}) for using illegal weapon!");
-            //Misc.BannedPlayers.Add(<ulong, ulong>(damagePlayer.HardwareIdHash, damagePlayer.HardwareIdExHash));
-            Misc.BannedPlayers.Add(new Tuple<ulong,ulong>(damagePlayer.HardwareIdHash, damagePlayer.HardwareIdExHash));
-            string json = JsonSerializer.Serialize(Misc.BannedPlayers);
-            File.WriteAllText(@"BannedPlayers.json", json);
+                Alt.Server.LogColored($"~r~ Banned Player: {asyncDamagePlayer.Name} ({asyncDamagePlayer.Id}) for using illegal weapon!");
+                //Misc.BannedPlayers.Add(<ulong, ulong>(damagePlayer.HardwareIdHash, damagePlayer.HardwareIdExHash));
+                Misc.BannedPlayers.Add(new Tuple<ulong,ulong>(asyncDamagePlayer.HardwareIdHash, asyncDamagePlayer.HardwareIdExHash));
+                string json = JsonSerializer.Serialize(Misc.BannedPlayers);
+                File.WriteAllText(@"BannedPlayers.json", json);
 
-            damagePlayer.KickAsync("You're banned from this server!");
+                asyncPlayer.Kick("You're banned from this server!");
 
-            return Task.CompletedTask;
+                return;
+            }
         }
 
         [ScriptEvent(ScriptEventType.ColShape)]
