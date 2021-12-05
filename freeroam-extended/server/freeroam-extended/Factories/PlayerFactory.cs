@@ -15,6 +15,7 @@ namespace Freeroam_Extended.Factories
         public bool DmMode { get; set; }
         public bool NoClip { get; set; }
         public bool IsAdmin { get; set; }
+        public int EventCount { get; set; }
     } 
     
     [AsyncEntity(typeof(IAltPlayer))]
@@ -27,6 +28,7 @@ namespace Freeroam_Extended.Factories
         public bool DmMode { get; set; }
         public bool NoClip { get; set; }
         public bool IsAdmin { get; set; }
+        public int EventCount { get; set; }
 
         public AltPlayer(IServer server, IntPtr nativePointer, ushort id) : base(server, nativePointer, id)
         {

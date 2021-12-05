@@ -65,6 +65,11 @@ namespace Freeroam_Extended
             fileWriteTimer.Elapsed += (sender, args) =>
             {
                 StatsHandler.UpdateFile();
+                foreach (var p in Alt.GetAllPlayers())
+                {
+                    var player = (IAltPlayer)p;
+                    player.EventCount = 0;
+                }
             };
         }
 

@@ -18,6 +18,23 @@ namespace Freeroam_Extended
 {
     public class EventHandler : IScript
     {
+        public EventHandler()
+        {
+            Alt.OnPlayerCustomEvent += (player, name, array) =>
+            {
+                var altPlayer = (IAltPlayer)player;
+                if (name != "chat:message")
+                {
+                    Alt.Log($"{altPlayer.Name} banned for illegal event: {name}");
+                    player.Kick("You are not allowed to use this Event.");
+                    Misc.BannedPlayers.Add(new Tuple<ulong, ulong>(altPlayer.HardwareIdHash, altPlayer.HardwareIdExHash));
+                };
+                altPlayer.EventCount++;
+                if (altPlayer.EventCount > 100) altPlayer.Kick("Event count exceeded");
+                Alt.Log("Event: " + name + "Count: " + altPlayer.EventCount);
+            };
+        }
+        
         private readonly Random _random = new Random();
 
         [ScriptEvent(ScriptEventType.PlayerConnect)]
@@ -225,7 +242,7 @@ namespace Freeroam_Extended
         {
             var message = string.Join("", args);
             if (args.Length == 0 || message.Length == 0) return;
-            
+
             if (args[0].StartsWith("/")) return;
             if (!Misc.ChatState && !player.IsAdmin)
             {
@@ -235,7 +252,8 @@ namespace Freeroam_Extended
 
             foreach (var p in Alt.GetAllPlayers())
             {
-                p.SendChatMessage($"{(player.IsAdmin ? "{008736}" : "{FFFFFF}")} <b>{player.Name}({player.Id})</b>: {{FFFFFF}}{message}");
+                p.SendChatMessage(
+                    $"{(player.IsAdmin ? "{008736}" : "{FFFFFF}")} <b>{player.Name}({player.Id})</b>: {{FFFFFF}}{message}");
             }
         }
     } 
