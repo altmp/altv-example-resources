@@ -226,7 +226,7 @@ namespace Freeroam_Extended
         [ClientEvent("chat:message")]
         public Task OnChatMessage(IAltPlayer player, params string[] args)
         {
-            var message = string.Join(" ", args);
+            var message = string.Join("", args);
             if (args.Length == 0 || message.Length == 0) return Task.CompletedTask;
 
             var isAdmin = Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash);
