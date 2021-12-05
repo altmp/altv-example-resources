@@ -102,12 +102,12 @@ namespace Freeroam_Extended
             player.Emit("set_last_command");
         }
 
-        [Command("model")]
-        public void ChangeModel(IAltPlayer player, string modelName)
-        {
-            player.Model = Alt.Hash(modelName);
-            player.Emit("set_last_command");
-        }
+        // [Command("model")]
+        // public void ChangeModel(IAltPlayer player, string modelName)
+        // {
+        //     player.Model = Alt.Hash(modelName);
+        //     player.Emit("set_last_command");
+        // }
 
         [Command("tp")]
         public void Teleport(IAltPlayer player, int id = 0)
