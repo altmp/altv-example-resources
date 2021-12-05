@@ -27,6 +27,7 @@ namespace Freeroam_Extended
             if (Misc.BannedPlayers.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash))
             {
                 player.Kick("You're banned from this server!");
+                AltAsync.Log($"HWID: {player.HardwareIdHash}, SC: {player.SocialClubId}. Tried to join the server with a ban.");
                 return Task.CompletedTask;
             }
             // select random entry from SpawnPoints

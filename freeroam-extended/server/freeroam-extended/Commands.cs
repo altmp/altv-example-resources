@@ -155,7 +155,7 @@ namespace Freeroam_Extended
         }
 
         [Command("unban")]
-        public void Unban(IAltPlayer player, int id)
+        public void Unban(IAltPlayer player, ulong hwid)
         {
             if (!Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash))
             {
@@ -163,24 +163,22 @@ namespace Freeroam_Extended
                 return;
             }
 
-            var target = Alt.GetAllPlayers().FirstOrDefault(p => p.Id == id);
+            var target = Misc.BannedPlayers.FirstOrDefault(tuple => tuple.Item1 == hwid);
             if (target == null)
             {
-                player.SendChatMessage($"{{FF0000}}Player with id {id} not found!");
+                player.SendChatMessage($"{{FF0000}}Player with hwid {hwid} not found!");
                 return;
             }
-
-            // check if player is already banned
-            if (!Misc.BannedPlayers.Any(tuple =>
-                tuple.Item1 == target.HardwareIdHash && tuple.Item2 == target.HardwareIdExHash))
+            
+            if (Misc.BannedPlayers.All(tuple => tuple.Item1 != hwid))
             {
-                player.SendChatMessage($"{{FF0000}}Player with {id} is not banned!");
+                player.SendChatMessage($"{{FF0000}}Player with hwid {hwid} not banned!");
                 return;
             }
-
+            
             // remove banned player from list
             Misc.BannedPlayers.Remove(new Tuple<ulong,ulong>(player.HardwareIdHash, player.HardwareIdExHash));
-            player.SendChatMessage($"{{00FF00}}Player with id {id} unbanned!");
+            player.SendChatMessage($"{{00FF00}}Player with hwid {hwid} unbanned!");
             player.Emit("set_last_command");
         }
 
