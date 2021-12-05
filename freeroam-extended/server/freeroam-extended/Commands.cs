@@ -426,7 +426,7 @@ namespace Freeroam_Extended
         [Command("announce")]
         public void Announce(IAltPlayer player, string header, int time, params string[] body)
         {
-            var message = string.Join("", body);
+            var message = string.Join(" ", body);
             Alt.EmitAllClients("announce", header, message, time);
         }
     }
