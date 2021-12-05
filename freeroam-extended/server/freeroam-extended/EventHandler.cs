@@ -86,25 +86,28 @@ namespace Freeroam_Extended
         public async Task OnPlayerDead(IAltPlayer player, IEntity killer, uint weapon)
         {
             var spawnPointPool = player.DmMode ? Misc.AirportSpawnPositions : Misc.SpawnPositions;
-            
-            var randomSpawnPoint = spawnPointPool.ElementAt(_random.Next(0, spawnPointPool.Length));
-            await player.SpawnAsync(randomSpawnPoint + new Position(_random.Next(0, 10), _random.Next(0, 10), 0));
 
-            lock (StatsHandler.StatsData)
+            await using (var asyncContext = AsyncContext.Create())
             {
-                StatsHandler.StatsData.PlayerDeaths++;
+                if (!player.TryToAsync(asyncContext, out var asyncPlayer)) return;
+                if (killer is not IAltPlayer killerPlayer) return;
+                if (!killerPlayer.TryToAsync(asyncContext, out var asyncKillerPlayer)) return;
+                
+                var randomSpawnPoint = spawnPointPool.ElementAt(_random.Next(0, spawnPointPool.Length));
+                asyncPlayer.Spawn(randomSpawnPoint + new Position(_random.Next(0, 10), _random.Next(0, 10), 0));
+
+                lock (StatsHandler.StatsData)
+                {
+                    StatsHandler.StatsData.PlayerDeaths++;
+                }
+                
+                if (!Misc.BlacklistedWeapons.Contains(weapon)) return;
+                Alt.Server.LogColored($"~r~ Banned Player: {asyncKillerPlayer.Name} ({asyncKillerPlayer.Id}) for using illegal weapon!");
+                Misc.BannedPlayers.Add(new Tuple<ulong,ulong>(asyncKillerPlayer.HardwareIdHash, asyncKillerPlayer.HardwareIdExHash));
+                string json = JsonSerializer.Serialize(Misc.BannedPlayers);
+                await File.WriteAllTextAsync(@"BannedPlayers.json", json);
+                asyncKillerPlayer.Kick("You're banned from this server!");
             }
-
-            if (killer is not IAltPlayer killerPlayer)
-                return;
-
-
-            if (!Misc.BlacklistedWeapons.Contains(weapon)) return;
-            Alt.Server.LogColored($"~r~ Banned Player: {killerPlayer.Name} ({killerPlayer.Id}) for using illegal weapon!");
-            Misc.BannedPlayers.Add(new Tuple<ulong,ulong>(killerPlayer.HardwareIdHash, killerPlayer.HardwareIdExHash));
-            string json = JsonSerializer.Serialize(Misc.BannedPlayers);
-            await File.WriteAllTextAsync(@"BannedPlayers.json", json);
-            await killerPlayer.KickAsync("You're banned from this server!");
         }
 
         [ScriptEvent(ScriptEventType.ConsoleCommand)]
@@ -185,8 +188,6 @@ namespace Freeroam_Extended
                 File.WriteAllText(@"BannedPlayers.json", json);
 
                 asyncPlayer.Kick("You're banned from this server!");
-
-                return;
             }
         }
 
