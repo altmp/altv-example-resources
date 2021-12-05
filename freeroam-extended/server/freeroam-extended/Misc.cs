@@ -43,7 +43,7 @@ namespace Freeroam_Extended
             new (165.87692f,-986.98022f, 31.08862f ),       // Good old lesion square
             new (402.21099f,-981.62634f, 30.39782f),        // LSPD Mission Row
             new (6.14505f,-1749.01977f, 30.29675f),         // Mega Mall near Groove Street
-            new (102.63296f,-1939.50329f,-1939.50329f),     // Groove Street
+            new (102.63296f,-1939.50329f, 20.7964f),        // Groove Street
             new (-279.12527f,-2579.48559f, 6.99340f),       // Harbour
             new (883.93848f, -43.96484f, 79.75098f),        // Casino parkin lot
             new (660.51428f, 29.47253f, 86.37292f),         // Vinewood PD
