@@ -417,6 +417,12 @@ namespace Freeroam_Extended
             player.Emit("noclip", player.NoClip);
         }
 
+        [Command("revive")]
+        public void Respawn(IAltPlayer player)
+        {
+            player.Spawn(player.Position);
+        }
+
         [Command("announce")]
         public void Announce(IAltPlayer player, string header, int time, params string[] body)
         {
