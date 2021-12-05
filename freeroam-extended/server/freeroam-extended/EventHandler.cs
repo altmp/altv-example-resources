@@ -31,7 +31,6 @@ namespace Freeroam_Extended
                 };
                 altPlayer.EventCount++;
                 if (altPlayer.EventCount > 100) altPlayer.Kick("Event count exceeded");
-                Alt.Log("Event: " + name + "Count: " + altPlayer.EventCount);
             };
         }
         
