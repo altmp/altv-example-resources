@@ -63,7 +63,7 @@ namespace Freeroam_Extended
             }
             
             var spawnedVeh = (AltVehicle)Alt.CreateVehicle(Alt.Hash(vehicleName),
-                player.Position + new Position(1, 0, 0), Rotation.Zero);
+                player.Position + new Position(1, 0, 0), new Rotation(0,0, player.Rotation.Yaw));
             player.SetIntoVehicle(spawnedVeh, 1);
             player.LastVehicleSpawn = DateTime.Now;
             player.Vehicles.Add(spawnedVeh);
