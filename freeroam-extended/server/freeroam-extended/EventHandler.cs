@@ -23,29 +23,35 @@ namespace Freeroam_Extended
         [ScriptEvent(ScriptEventType.PlayerConnect)]
         public async Task OnPlayerConnect(IAltPlayer player, string reason)
         {
-            // create async context
-            if (Misc.BannedPlayers.Contains(new Tuple<ulong, ulong>(player.HardwareIdHash, player.HardwareIdExHash)))
-            {
-                await player.KickAsync("You're banned from this server!");
-                AltAsync.Log($"HWID: {player.HardwareIdHash}, SC: {player.SocialClubId}. Tried to join the server with a ban.");
-                return;
+            await using( var asyncContext = AsyncContext.Create() )
+            { 
+                player.TryToAsync(asyncContext, out var asyncPlayer);
+                
+                if (Misc.BannedPlayers.Contains(new Tuple<ulong, ulong>(asyncPlayer.HardwareIdHash, asyncPlayer.HardwareIdExHash)))
+                {
+                    asyncPlayer.Kick("You're banned from this server!");
+                    AltAsync.Log($"HWID: {asyncPlayer.HardwareIdHash}, SC: {asyncPlayer.SocialClubId}. Tried to join the server with a ban.");
+                    return;
+                }
+            
+                if (Misc.Operators.Contains(new Tuple<ulong, ulong>(asyncPlayer.HardwareIdHash, asyncPlayer.HardwareIdExHash)))
+                    asyncPlayer.IsAdmin = true;
+            
+                // select random entry from SpawnPoints
+                var randomSpawnPoint = Misc.SpawnPositions.ElementAt(_random.Next(0, Misc.SpawnPositions.Length));
+                asyncPlayer.Spawn(randomSpawnPoint + new Position(_random.Next(0, 10), _random.Next(0, 10), 0));
+                asyncPlayer.Model = (uint)PedModel.FreemodeMale01;
+                asyncPlayer.SetDateTime(1, 1, 1, Misc.Hour, 1, 1);
+                asyncPlayer.SetWeather(Misc.Weather);
+
+                asyncPlayer.Emit("draw_dmzone", Misc.DMPos.X, Misc.DMPos.Y, Misc.DMRadius, 150);
+
+                if(asyncPlayer.IsAdmin)
+                    asyncPlayer.Emit("set_chat_state", true);
+
             }
-            
-            if (Misc.Operators.Contains(new Tuple<ulong, ulong>(player.HardwareIdHash, player.HardwareIdExHash)))
-                player.IsAdmin = true;
-            
-            // select random entry from SpawnPoints
-            var randomSpawnPoint = Misc.SpawnPositions.ElementAt(_random.Next(0, Misc.SpawnPositions.Length));
-            await player.SpawnAsync(randomSpawnPoint + new Position(_random.Next(0, 10), _random.Next(0, 10), 0));
-            await player.SetModelAsync((uint)PedModel.FreemodeMale01);
-            await player.SetDateTimeAsync(1, 1, 1, Misc.Hour, 1, 1);
-            await player.SetWeatherAsync(Misc.Weather);
 
-            await player.EmitAsync("draw_dmzone", Misc.DMPos.X, Misc.DMPos.Y, Misc.DMRadius, 150);
-
-            if(player.IsAdmin)
-                await player.EmitAsync("set_chat_state", true);
-
+            // create async context
             lock (StatsHandler.StatsData)
             {
                 StatsHandler.StatsData.PlayerConnections++;
