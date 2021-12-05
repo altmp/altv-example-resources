@@ -203,7 +203,7 @@ export function drawText2D(
 
 let adminMessageEveryTick = null;
 
-export function mhint(head, msg, time = 5000) {
+export function mhint(head, msg, time = 5) {
     let scaleform = native.requestScaleformMovie("MIDSIZED_MESSAGE");
     alt.setTimeout(() => {
         if (adminMessageEveryTick != null) {
