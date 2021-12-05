@@ -306,8 +306,7 @@ namespace Freeroam_Extended
                 return;
             }
 
-            var targetPlayer = Alt.GetAllPlayers().FirstOrDefault(p => p.Id != target);
-            // check if target is online
+            var targetPlayer = Alt.GetAllPlayers().FirstOrDefault(p => p.Id == target);
             if (targetPlayer == null)
             {
                 player.SendChatMessage("{FF0000} Player not found!");
