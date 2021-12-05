@@ -300,14 +300,14 @@ namespace Freeroam_Extended
                 return;
             }
 
-            var targetPlayer = Alt.GetAllPlayers().FirstOrDefault(p => p.Id != target);
+            var targetPlayer = Alt.GetAllPlayers().FirstOrDefault(p => p.Id == target);
             if (targetPlayer == null)
             {
                 player.SendChatMessage("{FF0000} Player not found!");
                 return;
             }
             player.Position = targetPlayer.Position;
-            player.SendChatMessage("{00FF00} You were teleported to " + player.Name + "!");
+            player.SendChatMessage("{00FF00} You were teleported to " + targetPlayer.Name + "!");
             player.Emit("set_last_command");
         }
 
