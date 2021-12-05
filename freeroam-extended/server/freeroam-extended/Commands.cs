@@ -418,5 +418,11 @@ namespace Freeroam_Extended
             player.Emit("set_last_command");
             player.Emit("noclip", player.NoClip);
         }
+
+        [Command("announce")]
+        public void Announce(IAltPlayer player, string header, string body, int time = 5)
+        {
+            Alt.EmitAllClients("announce", header, body, time);
+        }
     }
 }
