@@ -49,16 +49,11 @@ namespace Freeroam_Extended
             }
             else
             {
-                string json = File.ReadAllText(@"Operators.json");
-                if(json == null)
-                    json = "";
-                    
+                string json = File.ReadAllText(@"Operators.json") ?? "";
+
                 var operators = JsonSerializer.Deserialize<HashSet<Tuple<ulong,ulong>>>(json);
 
-                if(operators == null)
-                    Misc.Operators = new HashSet<Tuple<ulong,ulong>>();
-                else
-                    Misc.Operators = operators; 
+                Misc.Operators = operators ?? new HashSet<Tuple<ulong,ulong>>(); 
             }
         }
 
