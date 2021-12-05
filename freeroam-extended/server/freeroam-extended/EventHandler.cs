@@ -30,6 +30,10 @@ namespace Freeroam_Extended
                 AltAsync.Log($"HWID: {player.HardwareIdHash}, SC: {player.SocialClubId}. Tried to join the server with a ban.");
                 return Task.CompletedTask;
             }
+            
+            if (Misc.Operators.Contains(new Tuple<ulong, ulong>(player.HardwareIdHash, player.HardwareIdExHash)))
+                player.IsAdmin = true;
+            
             // select random entry from SpawnPoints
             var randomSpawnPoint = Misc.SpawnPositions.ElementAt(_random.Next(0, Misc.SpawnPositions.Length));
             player.Spawn(randomSpawnPoint + new Position(_random.Next(0, 10), _random.Next(0, 10), 0));
@@ -39,7 +43,7 @@ namespace Freeroam_Extended
 
             player.Emit("draw_dmzone", Misc.DMPos.X, Misc.DMPos.Y, Misc.DMRadius, 150);
 
-            if(Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash))
+            if(player.IsAdmin)
                 player.Emit("set_chat_state", true);
 
             lock (StatsHandler.StatsData)
@@ -132,22 +136,19 @@ namespace Freeroam_Extended
                     }
 
                     var playerOp = playerPool.FirstOrDefault(x => x.Id == int.Parse(args[0]));
-                    if (playerOp is null)
-                    {
-                        Alt.Log("Player not online!");
-                        return Task.CompletedTask;
-                    }
+                    if (playerOp is not IAltPlayer playerOpAlt) return Task.CompletedTask;
                     
-                    if (Misc.Operators.Any(tuple => tuple.Item1 == playerOp.HardwareIdHash && tuple.Item2 == playerOp.HardwareIdExHash))
+                    if (Misc.Operators.Any(tuple => tuple.Item1 == playerOpAlt.HardwareIdHash && tuple.Item2 == playerOpAlt.HardwareIdExHash))
                     {
                         Alt.Log($"Id {args[0]} already is an operator!");   
                         break;
                     }
-                    Misc.Operators.Add(new Tuple<ulong,ulong>(playerOp.HardwareIdHash, playerOp.HardwareIdExHash));
+                    Misc.Operators.Add(new Tuple<ulong,ulong>(playerOpAlt.HardwareIdHash, playerOpAlt.HardwareIdExHash));
                     string json = JsonSerializer.Serialize(Misc.Operators);
                     File.WriteAllText(@"Operators.json", json);
 
-                    playerOp.Emit("set_chat_state", true);
+                    playerOpAlt.Emit("set_chat_state", true);
+                    playerOpAlt.IsAdmin = true;
                     break;
                 
                 case "deop":
@@ -155,22 +156,18 @@ namespace Freeroam_Extended
                     {
                         Alt.Log("Usage: deop <ID>");
                         break;
-                    } 
-                    
-                    var playerDeOp = playerPool.FirstOrDefault(x => x.Id == int.Parse(args[0]));
-                    if (playerDeOp is null)
-                    {
-                        Alt.Log("Player not online!");
-                        return Task.CompletedTask;
                     }
+                    var playerDeOp = playerPool.FirstOrDefault(x => x.Id == int.Parse(args[0]));
+                    if (playerDeOp is not IAltPlayer playerDeOpAlt) return Task.CompletedTask;
                     
-                    if (!Misc.Operators.Any(tuple => tuple.Item1 == playerDeOp.HardwareIdHash && tuple.Item2 == playerDeOp.HardwareIdExHash))
+                    if (!Misc.Operators.Any(tuple => tuple.Item1 == playerDeOpAlt.HardwareIdHash && tuple.Item2 == playerDeOpAlt.HardwareIdExHash))
                     {
                         Alt.Log($"Id {args[0]} is not an operator!");
                         break;
                     }
-                    Misc.Operators.Remove(new Tuple<ulong,ulong>(playerDeOp.HardwareIdHash, playerDeOp.HardwareIdExHash));
-                    playerDeOp.Emit("set_chat_state", Misc.ChatState);
+                    Misc.Operators.Remove(new Tuple<ulong,ulong>(playerDeOpAlt.HardwareIdHash, playerDeOpAlt.HardwareIdExHash));
+                    playerDeOpAlt.Emit("set_chat_state", Misc.ChatState);
+                    playerDeOpAlt.IsAdmin = false;
                     break;
             }
             return Task.CompletedTask;
@@ -229,10 +226,9 @@ namespace Freeroam_Extended
         {
             var message = string.Join("", args);
             if (args.Length == 0 || message.Length == 0) return Task.CompletedTask;
-
-            var isAdmin = Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash);
+            
             if (args[0].StartsWith("/")) return Task.CompletedTask;
-            if (!Misc.ChatState && !isAdmin)
+            if (!Misc.ChatState && !player.IsAdmin)
             {
                 player.SendChatMessage("{FF0000}Chat is disabled!");
                 return Task.CompletedTask;
@@ -240,7 +236,7 @@ namespace Freeroam_Extended
 
             foreach (var p in Alt.GetAllPlayers())
             {
-                p.SendChatMessage($"{(isAdmin ? "{008736}" : "{FFFFFF}")} <b>{player.Name}({player.Id})</b>: {{FFFFFF}}{message}");
+                p.SendChatMessage($"{(player.IsAdmin ? "{008736}" : "{FFFFFF}")} <b>{player.Name}({player.Id})</b>: {{FFFFFF}}{message}");
             }
             return Task.CompletedTask;
         }
