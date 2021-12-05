@@ -417,6 +417,7 @@ namespace Freeroam_Extended
 
             player.NoClip = !player.NoClip;
             player.Streamed = !player.NoClip;
+            player.Visible = !player.NoClip;
             player.SendChatMessage($"{{00FF00}}NoClip is now {(player.NoClip ? "enabled" : "disabled")}!");
             player.Emit("set_last_command");
             player.Emit("noclip", player.NoClip);
