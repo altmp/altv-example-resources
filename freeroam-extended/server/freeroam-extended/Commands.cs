@@ -268,10 +268,8 @@ namespace Freeroam_Extended
         public void ClearVehicles(IAltPlayer player)
         {
             // get all vehicles owned by player
-            foreach (var veh in Alt.GetAllVehicles())
+            foreach (var veh in player.Vehicles)
             {
-                if (veh is not IAltVehicle vehicle) continue;
-                if (vehicle.Owner.Id != player.Id) continue;
                 veh.Remove();
             }
             player.Emit("set_last_command");
