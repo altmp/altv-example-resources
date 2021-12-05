@@ -99,13 +99,10 @@ namespace Freeroam_Extended
             string json = JsonSerializer.Serialize(Misc.BannedPlayers);
             await File.WriteAllTextAsync(@"BannedPlayers.json", json);
             await killerPlayer.KickAsync("You're banned from this server!");
-
-            return;
-
         }
 
         [ScriptEvent(ScriptEventType.ConsoleCommand)]
-        public Task OnConsoleCommand(string name, string[] args)
+        public async Task OnConsoleCommand(string name, string[] args)
         {
             var playerPool = Alt.GetAllPlayers();
             switch (name)
@@ -118,7 +115,7 @@ namespace Freeroam_Extended
                     }
 
                     var playerOp = playerPool.FirstOrDefault(x => x.Id == int.Parse(args[0]));
-                    if (playerOp is not IAltPlayer playerOpAlt) return Task.CompletedTask;
+                    if (playerOp is not IAltPlayer playerOpAlt) return;
                     
                     if (Misc.Operators.Any(tuple => tuple.Item1 == playerOpAlt.HardwareIdHash && tuple.Item2 == playerOpAlt.HardwareIdExHash))
                     {
@@ -127,9 +124,9 @@ namespace Freeroam_Extended
                     }
                     Misc.Operators.Add(new Tuple<ulong,ulong>(playerOpAlt.HardwareIdHash, playerOpAlt.HardwareIdExHash));
                     string json = JsonSerializer.Serialize(Misc.Operators);
-                    File.WriteAllText(@"Operators.json", json);
+                    await File.WriteAllTextAsync(@"Operators.json", json);
                     
-                    playerOpAlt.EmitAsync("set_chat_state", true);
+                    await playerOpAlt.EmitAsync("set_chat_state", true);
                     playerOpAlt.IsAdmin = true;
                     break;
                 
@@ -140,7 +137,7 @@ namespace Freeroam_Extended
                         break;
                     }
                     var playerDeOp = playerPool.FirstOrDefault(x => x.Id == int.Parse(args[0]));
-                    if (playerDeOp is not IAltPlayer playerDeOpAlt) return Task.CompletedTask;
+                    if (playerDeOp is not IAltPlayer playerDeOpAlt) return;
                     
                     if (!Misc.Operators.Any(tuple => tuple.Item1 == playerDeOpAlt.HardwareIdHash && tuple.Item2 == playerDeOpAlt.HardwareIdExHash))
                     {
@@ -148,11 +145,11 @@ namespace Freeroam_Extended
                         break;
                     }
                     Misc.Operators.Remove(new Tuple<ulong,ulong>(playerDeOpAlt.HardwareIdHash, playerDeOpAlt.HardwareIdExHash));
-                    playerDeOpAlt.EmitAsync("set_chat_state", Misc.ChatState);
+                    await playerDeOpAlt.EmitAsync("set_chat_state", Misc.ChatState);
                     playerDeOpAlt.IsAdmin = false;
                     break;
             }
-            return Task.CompletedTask;
+            return;
         }
 
         [ScriptEvent(ScriptEventType.WeaponDamage)]
