@@ -11,6 +11,12 @@ alt.setConfigFlag('DISABLE_AUTO_WEAPON_SWAP', true);
 alt.setConfigFlag('DISABLE_IDLE_CAMERA', true);
 alt.setStat('STAMINA', 100);
 
+let playersCount = alt.Player.all.length;
+
+setInterval(() => {
+    playersCount = alt.Player.all.length;
+}, 5000);
+
 alt.everyTick(() => {
     // workaround for flickering GTA BUG
     native.drawRect(0, 0, 0, 0, 0, 0, 0, 0, 0);
@@ -20,18 +26,19 @@ alt.everyTick(() => {
     // native.drawSphere(-1216.839599609375, -2832.514404296875, 13.9296875, 800, 0, 0, 255, 100);
     if (playerData.areNametagsVisible) {
         processNametags();
-
-        drawText2D('F2: toggle HUD', { x: 0.825, y: 0.025 }, 0.35, { r: 255, g: 255, b: 255, a: 255 }, 1);
-        drawText2D('T / Enter: open chat', { x: 0.825, y: 0.05 }, 0.35, { r: 255, g: 255, b: 255, a: 255 }, 1);
-        drawText2D('/tp <1 to 22>', { x: 0.825, y: 0.075 }, 0.35, { r: 255, g: 255, b: 255, a: 255 }, 1);
-        drawText2D('/model <model> (change ped model)', { x: 0.825, y: 0.1 }, 0.35, { r: 255, g: 255, b: 255, a: 255 }, 1);
-        drawText2D('/veh <model> (spawn vehicle)', { x: 0.825, y: 0.125 }, 0.35, { r: 255, g: 255, b: 255, a: 255 }, 1);
-        drawText2D('/clearvehicles (clear your vehicles)', { x: 0.825, y: 0.15 }, 0.35, { r: 255, g: 255, b: 255, a: 255 }, 1);
-        drawText2D('/tune <index> <value> (tune vehicle)', { x: 0.825, y: 0.175 }, 0.35, { r: 255, g: 255, b: 255, a: 255 }, 1);
-        drawText2D('/weapons (give yourself weapons)', { x: 0.825, y: 0.2 }, 0.35, { r: 255, g: 255, b: 255, a: 255 }, 1);
-        drawText2D('/addcomponent <name> (add weapon component)', { x: 0.825, y: 0.225 }, 0.35, { r: 255, g: 255, b: 255, a: 255 }, 1);
-        drawText2D('/removecomponent <name> (remove weapon component)', { x: 0.825, y: 0.25 }, 0.35, { r: 255, g: 255, b: 255, a: 255 }, 1);
-        drawText2D('/dm (toggles respawning in death match zone)', { x: 0.825, y: 0.275 }, 0.35, { r: 255, g: 255, b: 255, a: 255 }, 1);
+        
+        drawText2D(`${playersCount} players online`, { x: 0.925, y: 0.035}, 0.35, { r: 158, g: 209, b: 157, a: 255 }, 1);
+        drawText2D('F2: toggle HUD', { x: 0.8, y: 0.025 }, 0.35, { r: 255, g: 255, b: 255, a: 255 }, 1);
+        drawText2D('T / Enter: open chat', { x: 0.8, y: 0.05 }, 0.35, { r: 255, g: 255, b: 255, a: 255 }, 1);
+        drawText2D('/tp <1 to 26>', { x: 0.8, y: 0.075 }, 0.35, { r: 255, g: 255, b: 255, a: 255 }, 1);
+        drawText2D('/model <model> (change ped model)', { x: 0.8, y: 0.1 }, 0.35, { r: 255, g: 255, b: 255, a: 255 }, 1);
+        drawText2D('/veh <model> (spawn vehicle)', { x: 0.8, y: 0.125 }, 0.35, { r: 255, g: 255, b: 255, a: 255 }, 1);
+        drawText2D('/clearvehicles (clear your vehicles)', { x: 0.8, y: 0.15 }, 0.35, { r: 255, g: 255, b: 255, a: 255 }, 1);
+        drawText2D('/tune <index> <value> (tune vehicle)', { x: 0.8, y: 0.175 }, 0.35, { r: 255, g: 255, b: 255, a: 255 }, 1);
+        drawText2D('/weapons (give yourself weapons)', { x: 0.8, y: 0.2 }, 0.35, { r: 255, g: 255, b: 255, a: 255 }, 1);
+        drawText2D('/addcomponent <name> (add weapon component)', { x: 0.8, y: 0.225 }, 0.35, { r: 255, g: 255, b: 255, a: 255 }, 1);
+        drawText2D('/removecomponent <name> (remove weapon component)', { x: 0.8, y: 0.25 }, 0.35, { r: 255, g: 255, b: 255, a: 255 }, 1);
+        drawText2D('/dm (toggles respawning in death match zone)', { x: 0.8, y: 0.275 }, 0.35, { r: 255, g: 255, b: 255, a: 255 }, 1);
     }
 
     if (playerData.areWeaponsDisabled) {
