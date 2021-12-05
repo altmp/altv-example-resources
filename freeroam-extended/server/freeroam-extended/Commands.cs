@@ -94,8 +94,7 @@ namespace Freeroam_Extended
         public void GetWeapons(IAltPlayer player)
         {
             // give all weapons from WeaponModel Enum to player
-            var weapons = Enum.GetValues(typeof(WeaponModel)).Cast<WeaponModel>().ToList()
-                .Where(w => !Misc.BlacklistedWeapons.Contains((uint) w));
+            var weapons = Misc.WhitelistedWeapons;
             foreach (var weapon in weapons)
             {
                 player.GiveWeapon(weapon, 1000, false);
@@ -218,7 +217,7 @@ namespace Freeroam_Extended
 
             if(player.DmMode)
             {
-                var weapons = Enum.GetValues(typeof(WeaponModel)).Cast<WeaponModel>().ToList().Where(w => !Misc.BlacklistedWeapons.Contains((uint) w));
+                var weapons = Misc.WhitelistedWeapons;
                 foreach (var weapon in weapons)
                 {
                     player.GiveWeapon(weapon, 1000, false);
