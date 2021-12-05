@@ -19,13 +19,7 @@ namespace Freeroam_Extended
             Alt.Server.LogColored("~g~ Freeroam-Extended Started!");
             // colshape for weapon disabling everywhere but the airport
             Alt.CreateColShapeSphere(Misc.DMPos, Misc.DMRadius);
-
-            JsonSerializerOptions options = new()
-            {
-                ReferenceHandler = ReferenceHandler.Preserve,
-                WriteIndented = true
-            };
-
+            
             if(!File.Exists(@"BannedPlayers.json"))
             {
                 var hashSet = new HashSet<Tuple<ulong,ulong>>();
