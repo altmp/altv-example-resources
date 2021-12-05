@@ -54,22 +54,15 @@ namespace Freeroam_Extended
             return Task.CompletedTask;
         }
 
-        [AsyncScriptEvent(ScriptEventType.VehicleDestroy)]
-        public async Task OnVehicleDestroy(IAltVehicle target)
+        [ScriptEvent(ScriptEventType.VehicleDestroy)]
+        public void OnVehicleDestroy(IAltVehicle target)
         {
             lock (StatsHandler.StatsData)
             {
                 StatsHandler.StatsData.VehiclesDestroyed++;
             }
-            await Task.Delay(5000);
-            
-            await using (var asyncContext = AsyncContext.Create())
-            {
-                if (!target.TryToAsync(asyncContext, out var asyncVehicle)) return;
-                if (!target.Owner.TryToAsync(asyncContext, out var asyncOwner)) return;
-                asyncOwner.SendChatMessage("Your Vehicle got destroyed. We removed it for you!");
-                asyncVehicle.Remove();
-            }
+            target.Owner.SendChatMessage("Your Vehicle got destroyed. We removed it for you!");
+            target.Remove();
         }
 
         [AsyncScriptEvent(ScriptEventType.PlayerDisconnect)]
