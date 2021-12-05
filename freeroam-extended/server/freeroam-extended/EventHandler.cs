@@ -226,7 +226,8 @@ namespace Freeroam_Extended
         [ClientEvent("chat:message")]
         public Task OnChatMessage(IAltPlayer player, params string[] args)
         {
-            if (args.Length == 0) return Task.CompletedTask;
+            var message = string.Join(" ", args);
+            if (args.Length == 0 || message.Length == 0) return Task.CompletedTask;
 
             var isAdmin = Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash);
             if (args[0].StartsWith("/")) return Task.CompletedTask;
@@ -238,7 +239,7 @@ namespace Freeroam_Extended
 
             foreach (var p in Alt.GetAllPlayers())
             {
-                p.SendChatMessage($"{(isAdmin ? "{008736}" : "{FFFFFF}")} <b>{player.Name}({player.Id})</b>: {{FFFFFF}}{string.Join("", args)}");
+                p.SendChatMessage($"{(isAdmin ? "{008736}" : "{FFFFFF}")} <b>{player.Name}({player.Id})</b>: {{FFFFFF}}{message}");
             }
             return Task.CompletedTask;
         }
