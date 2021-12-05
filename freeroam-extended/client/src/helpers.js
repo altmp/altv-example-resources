@@ -207,6 +207,7 @@ export function mhint(head, msg, time = 0) {
     let scaleform = native.requestScaleformMovie("MIDSIZED_MESSAGE");
     alt.setTimeout(() => {
         if (adminMessageEveryTick != null) return;
+        native.playSoundFrontend(-1, 'SIGN_DESTROYED', 'HUD_AWARDS', 1);
 
         native.beginScaleformMovieMethod(scaleform, "SHOW_MIDSIZED_MESSAGE");
         native.beginTextCommandScaleformString("STRING");

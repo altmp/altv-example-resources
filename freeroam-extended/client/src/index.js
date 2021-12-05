@@ -11,18 +11,6 @@ alt.setConfigFlag('DISABLE_AUTO_WEAPON_SWAP', true);
 alt.setConfigFlag('DISABLE_IDLE_CAMERA', true);
 alt.setStat('STAMINA', 100);
 
-{/* <li>F2: toggle HUD</li>
-<li>T / Enter: open chat</li>
-<li>/tp &lt;1 to 22&gt; (teleport)</li>
-<li>/model &lt;modelName&gt; (change your ped model)</li>
-<li>/veh &lt;modelName&gt; (spawn a vehicle)</li>
-<li>/clearvehicles (clear your vehicles)</li>
-<li>/tune &lt;index> &lt;value&gt; (tune vehicle)</li>
-<li>/weapons (give yourself weapons)</li>
-<li>/addcomponent &lt;name&gt; (add weapon component)</li>
-<li>/removecomponent &lt;name&gt; (remove weapon component)</li>
-<li>/dm (Toggles respawning in death match zone)</li> */}
-
 alt.everyTick(() => {
     // workaround for flickering GTA BUG
     native.drawRect(0, 0, 0, 0, 0, 0, 0, 0, 0);
