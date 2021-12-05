@@ -37,7 +37,7 @@ namespace Freeroam_Extended
             // select random entry from SpawnPoints
             var randomSpawnPoint = Misc.SpawnPositions.ElementAt(_random.Next(0, Misc.SpawnPositions.Length));
             player.SpawnAsync(randomSpawnPoint + new Position(_random.Next(0, 10), _random.Next(0, 10), 0));
-            player.Model = (uint) PedModel.FreemodeMale01;
+            player.SetModelAsync((uint)PedModel.FreemodeMale01);
             player.SetDateTimeAsync(1, 1, 1, Misc.Hour, 1, 1);
             player.SetWeatherAsync(Misc.Weather);
 
