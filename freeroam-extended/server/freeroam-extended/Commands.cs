@@ -17,7 +17,6 @@ namespace Freeroam_Extended
         [Command("veh")]
         public void SpawnVeh(IAltPlayer player, string vehicleName)
         {
-            Alt.Log("" + Alt.Hash(vehicleName));
             if (Misc.BlacklistedVehicle.Contains(Alt.Hash(vehicleName)))
             {
                 player.SendChatMessage("{FF0000} Vehicle is blacklisted.");
@@ -238,7 +237,7 @@ namespace Freeroam_Extended
         public void ToggleChat(IAltPlayer player, bool state)
         {
             // check if player is operator
-            if (!Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash))
+            if (!Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash) && !Misc.ChatState)
             {
                 player.SendChatMessage("{FF0000} No permission!");
                 return;
