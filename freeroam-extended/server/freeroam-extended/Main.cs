@@ -34,16 +34,11 @@ namespace Freeroam_Extended
             }
             else
             {
-                string json = File.ReadAllText(@"BannedPlayers.json");
-                if(json == null)
-                    json = "";
+                string json = File.ReadAllText(@"BannedPlayers.json") ?? "";
 
                 var bannedPlayers = JsonSerializer.Deserialize<HashSet<Tuple<ulong,ulong>>>(json);
 
-                if(bannedPlayers == null)
-                    Misc.BannedPlayers = new HashSet<Tuple<ulong,ulong>>();
-                else
-                    Misc.BannedPlayers = bannedPlayers; 
+                Misc.BannedPlayers = bannedPlayers ?? new HashSet<Tuple<ulong,ulong>>(); 
             }
 
             if(!File.Exists(@"Operators.json"))
