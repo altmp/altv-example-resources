@@ -16,6 +16,7 @@ namespace Freeroam_Extended
             Alt.Server.LogColored("~g~ Freeroam-Extended Started!");
             // colshape for weapon disabling everywhere but the airport
             Alt.CreateColShapeSphere(Misc.DMPos, Misc.DMRadius);
+
             
             if(!File.Exists(@"BannedPlayers.json"))
             {
@@ -57,6 +58,15 @@ namespace Freeroam_Extended
                 var stats = JsonSerializer.Deserialize<Stats>(File.ReadAllText("Stats.json"));
                 if (stats != null) StatsHandler.StatsData = stats;
             }
+            
+            var fileWriteTimer = new System.Timers.Timer();
+            fileWriteTimer.Interval = 60000;
+            fileWriteTimer.Enabled = true;
+            fileWriteTimer.Elapsed += (sender, args) =>
+            {
+                Console.WriteLine("Writing to file...");
+                StatsHandler.UpdateFile();
+            };
         }
 
         public override void OnStop()

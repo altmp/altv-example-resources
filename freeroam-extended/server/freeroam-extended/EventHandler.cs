@@ -49,7 +49,6 @@ namespace Freeroam_Extended
             lock (StatsHandler.StatsData)
             {
                 StatsHandler.StatsData.PlayerConnections++;
-                StatsHandler.UpdateFile();
             }
 
             return Task.CompletedTask;
@@ -61,9 +60,6 @@ namespace Freeroam_Extended
             lock (StatsHandler.StatsData)
             {
                 StatsHandler.StatsData.VehiclesDestroyed++;
-#pragma warning disable 4014
-                StatsHandler.UpdateFile();
-#pragma warning restore 4014
             }
             await Task.Delay(5000);
             
@@ -101,7 +97,6 @@ namespace Freeroam_Extended
             lock (StatsHandler.StatsData)
             {
                 StatsHandler.StatsData.PlayerDeaths++;
-                StatsHandler.UpdateFile();
             }
 
             if (killer is not IAltPlayer killerPlayer)

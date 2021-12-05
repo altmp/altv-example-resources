@@ -59,7 +59,6 @@ namespace Freeroam_Extended
             lock (StatsHandler.StatsData)
             {
                 StatsHandler.StatsData.VehiclesSpawned++;
-                StatsHandler.UpdateFile();
             }
             
             var spawnedVeh = (AltVehicle)Alt.CreateVehicle(Alt.Hash(vehicleName),
