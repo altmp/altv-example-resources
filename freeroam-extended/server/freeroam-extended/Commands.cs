@@ -22,12 +22,6 @@ namespace Freeroam_Extended
                 player.SendChatMessage("{FF0000} Vehicle is blacklisted.");
                 return;
             }
-
-            if (player.IsInVehicle)
-            {
-                player.SendChatMessage("{FF0000} You are already in a vehicle!");
-                return;
-            }
             
             if (!Enum.IsDefined(typeof(VehicleModel), Alt.Hash(vehicleName)))
             {
@@ -53,6 +47,13 @@ namespace Freeroam_Extended
                 player.Vehicles.Remove(target);
                 target.Remove();
                 player.SendChatMessage("{FF0000} You can't have more than 3 vehicles. We removed your oldest one!");
+            }
+            
+            if (player.IsInVehicle)
+            {
+                player.SendChatMessage("{FF0000} You are already in a vehicle we replaced it for you!");
+                player.Vehicle.Remove();
+                return;
             }
 
             lock (StatsHandler.StatsData)
