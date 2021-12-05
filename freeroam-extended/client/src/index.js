@@ -12,6 +12,9 @@ alt.setConfigFlag('DISABLE_IDLE_CAMERA', true);
 alt.setStat('STAMINA', 100);
 
 alt.everyTick(() => {
+    // workaround for flickering GTA BUG
+    native.drawRect(0, 0, 0, 0, 0, 0, 0, 0, 0);
+
     // native.drawSphere(-1216.839599609375, -2832.514404296875, 13.9296875, 800, 0, 0, 255, 100);
     if (playerData.areNametagsVisible) {
         processNametags();

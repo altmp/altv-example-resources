@@ -2,6 +2,7 @@ import { drawDMZone, playerData, setWeaponsUsage } from './helpers';
 import { pushMessage, chatData, view, toggleChat } from './chat';
 import { toggleNoclip } from './noclip';
 
+import * as native from 'natives';
 import * as alt from 'alt-client';
 
 alt.on('connectionComplete', () => {
@@ -37,6 +38,8 @@ alt.on('keyup', (key) => {
     switch (key) {
         case 113: { // F2
             playerData.areNametagsVisible = !playerData.areNametagsVisible;
+            native.displayRadar(playerData.areNametagsVisible);
+            native.displayHud(playerData.areNametagsVisible);
             toggleChat();
             break;
         }
