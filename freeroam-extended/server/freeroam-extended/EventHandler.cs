@@ -72,7 +72,6 @@ namespace Freeroam_Extended
            
             foreach (var veh in vehicles)
             {
-                if (veh.Owner.Id != player.Id) continue;
                 veh.Remove();
             }
         }
