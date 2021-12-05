@@ -208,6 +208,8 @@ namespace Freeroam_Extended
         [ClientEvent("chat:message")]
         public Task OnChatMessage(IAltPlayer player, params string[] args)
         {
+            if (args.Length == 0) return Task.CompletedTask;
+
             var isAdmin = Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash);
             if (args[0].StartsWith("/")) return Task.CompletedTask;
             if (!Misc.ChatState && !isAdmin)
