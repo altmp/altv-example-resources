@@ -55,6 +55,17 @@ namespace Freeroam_Extended
 
                 Misc.Operators = operators ?? new HashSet<Tuple<ulong,ulong>>(); 
             }
+            
+            if (!File.Exists("Stats.json"))
+            {
+                var json = JsonSerializer.Serialize(StatsHandler.StatsData);
+                File.WriteAllText("Stats.json", json);
+            }
+            else
+            {
+                var stats = JsonSerializer.Deserialize<Stats>(File.ReadAllText("Stats.json"));
+                if (stats != null) StatsHandler.StatsData = stats;
+            }
         }
 
         public override void OnStop()

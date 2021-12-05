@@ -56,6 +56,12 @@ namespace Freeroam_Extended
                 player.SendChatMessage("{FF0000} You can't have more than 3 vehicles. We removed your oldest one!");
             }
 
+            lock (StatsHandler.StatsData)
+            {
+                StatsHandler.StatsData.VehiclesSpawned++;
+                StatsHandler.UpdateFile();
+            }
+            
             var spawnedVeh = (AltVehicle)Alt.CreateVehicle(Alt.Hash(vehicleName),
                 player.Position + new Position(1, 0, 0), Rotation.Zero);
             player.SetIntoVehicle(spawnedVeh, 1);

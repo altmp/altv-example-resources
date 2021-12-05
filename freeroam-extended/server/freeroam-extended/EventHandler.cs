@@ -41,13 +41,25 @@ namespace Freeroam_Extended
             if(Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash))
                 player.Emit("set_chat_state", true);
 
-            
+            lock (StatsHandler.StatsData)
+            {
+                StatsHandler.StatsData.PlayerConnections++;
+                StatsHandler.UpdateFile();
+            }
+
             return Task.CompletedTask;
         }
 
         [AsyncScriptEvent(ScriptEventType.VehicleDestroy)]
         public async Task OnVehicleDestroy(IAltVehicle target)
         {
+            lock (StatsHandler.StatsData)
+            {
+                StatsHandler.StatsData.VehiclesDestroyed++;
+#pragma warning disable 4014
+                StatsHandler.UpdateFile();
+#pragma warning restore 4014
+            }
             await Task.Delay(5000);
             
             await using (var asyncContext = AsyncContext.Create())
@@ -80,6 +92,12 @@ namespace Freeroam_Extended
             
             var randomSpawnPoint = spawnPointPool.ElementAt(_random.Next(0, spawnPointPool.Length));
             player.Spawn(randomSpawnPoint + new Position(_random.Next(0, 10), _random.Next(0, 10), 0));
+
+            lock (StatsHandler.StatsData)
+            {
+                StatsHandler.StatsData.PlayerDeaths++;
+                StatsHandler.UpdateFile();
+            }
 
             if (killer is not IAltPlayer killerPlayer)
                 return Task.CompletedTask;
