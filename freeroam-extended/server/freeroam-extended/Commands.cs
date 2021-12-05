@@ -122,8 +122,7 @@ namespace Freeroam_Extended
             }
 
             var spawnpoint = Misc.SpawnPositions[id - 1];
-            var random = new Random();
-            player.Position = spawnpoint + new Position(random.Next(0, 10), random.Next(0, 10), 0);
+            player.Position = spawnpoint + new Position(_random.Next(0, 10), _random.Next(0, 10), 0);
             player.Emit("set_last_command");
         }
 
@@ -136,7 +135,7 @@ namespace Freeroam_Extended
         [Command("ban")]
         public void Ban(IAltPlayer player, int id)
         {
-            if (!Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash))
+            if (!player.IsAdmin)
             {
                 player.SendChatMessage("{FF0000} No permission!");
                 return;
@@ -158,7 +157,7 @@ namespace Freeroam_Extended
         [Command("unban")]
         public void Unban(IAltPlayer player, ulong hwid)
         {
-            if (!Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash))
+            if (!player.IsAdmin)
             {
                 player.SendChatMessage("{FF0000} No permission!");
                 return;
@@ -236,7 +235,7 @@ namespace Freeroam_Extended
         public void ToggleChat(IAltPlayer player, bool state)
         {
             // check if player is operator
-            if (!Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash) && !Misc.ChatState)
+            if (!player.IsAdmin && !Misc.ChatState)
             {
                 player.SendChatMessage("{FF0000} No permission!");
                 return;
@@ -247,7 +246,7 @@ namespace Freeroam_Extended
             foreach (var p in Alt.GetAllPlayers())
             {
                 // check if player is operator
-                if (Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash)) continue;
+                if (player.IsAdmin) continue;
                 p.Emit("set_chat_state", state);
             }
         }
@@ -255,7 +254,7 @@ namespace Freeroam_Extended
         [Command("dimension")]
         public void Dimension(IAltPlayer player, int dimension = 0)
         {
-            if (!Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash))
+            if (!player.IsAdmin)
             {
                 player.SendChatMessage("{FF0000} No permission!");
                 return;
@@ -279,7 +278,7 @@ namespace Freeroam_Extended
         [Command("tpallhere")]
         public void TpAllhere(IAltPlayer player)
         {
-            if (!Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash))
+            if (!player.IsAdmin)
             {
                 player.SendChatMessage("{FF0000} No permission!");
                 return;
@@ -297,7 +296,7 @@ namespace Freeroam_Extended
         [Command("tphere")]
         public void TpHere(IAltPlayer player, int target)
         {
-            if (!Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash))
+            if (!player.IsAdmin)
             {
                 player.SendChatMessage("{FF0000} No permission!");
                 return;
@@ -317,7 +316,7 @@ namespace Freeroam_Extended
         [Command("tpto")]
         public void TpTo(IAltPlayer player, int target)
         {
-            if (!Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash))
+            if (!player.IsAdmin)
             {
                 player.SendChatMessage("{FF0000} No permission!");
                 return;
@@ -337,7 +336,7 @@ namespace Freeroam_Extended
         [Command("clearallvehicles")]
         public void ClearAllVehicles(IAltPlayer player, int distance = 0)
         {
-            if (!Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash))
+            if (!player.IsAdmin)
             {
                 player.SendChatMessage("{FF0000} No permission!");
                 return;
@@ -351,10 +350,12 @@ namespace Freeroam_Extended
                 }
                 return;
             }
+
+            var distSqr = distance * distance;
             foreach (var veh in Alt.GetAllVehicles())
             {
                 // compare squared distance between player and vehicle
-                if (Vector3.DistanceSquared(veh.Position, player.Position) <= distance * distance) veh.Remove();
+                if (Vector3.DistanceSquared(veh.Position, player.Position) <= distSqr) veh.Remove();
             }
             player.Emit("set_last_command");
         }
@@ -362,7 +363,7 @@ namespace Freeroam_Extended
         [Command("settime")]
         public void SetTime(IAltPlayer player, int hour)
         {
-            if (!Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash))
+            if (!player.IsAdmin)
             {
                 player.SendChatMessage("{FF0000} No permission!");
                 return;
@@ -383,7 +384,7 @@ namespace Freeroam_Extended
         [Command("setweather")]
         public void SetWeather(IAltPlayer player, uint weather)
         {
-            if (!Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash))
+            if (!player.IsAdmin)
             {
                 player.SendChatMessage("{FF0000} No permission!");
                 return;
@@ -404,7 +405,7 @@ namespace Freeroam_Extended
         [Command("noclip")]
         public void NoClip(IAltPlayer player)
         {
-            if (!Misc.Operators.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash))
+            if (!player.IsAdmin)
             {
                 player.SendChatMessage("{FF0000} No permission!");
                 return;
