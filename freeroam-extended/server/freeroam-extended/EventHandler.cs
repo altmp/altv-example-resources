@@ -21,14 +21,14 @@ namespace Freeroam_Extended
         private readonly Random _random = new Random();
 
         [ScriptEvent(ScriptEventType.PlayerConnect)]
-        public Task OnPlayerConnect(IAltPlayer player, string reason)
+        public async Task OnPlayerConnect(IAltPlayer player, string reason)
         {
             // create async context
             if (Misc.BannedPlayers.Contains(new Tuple<ulong, ulong>(player.HardwareIdHash, player.HardwareIdExHash)))
             {
-                player.KickAsync("You're banned from this server!");
+                await player.KickAsync("You're banned from this server!");
                 AltAsync.Log($"HWID: {player.HardwareIdHash}, SC: {player.SocialClubId}. Tried to join the server with a ban.");
-                return Task.CompletedTask;
+                return;
             }
             
             if (Misc.Operators.Contains(new Tuple<ulong, ulong>(player.HardwareIdHash, player.HardwareIdExHash)))
@@ -36,22 +36,22 @@ namespace Freeroam_Extended
             
             // select random entry from SpawnPoints
             var randomSpawnPoint = Misc.SpawnPositions.ElementAt(_random.Next(0, Misc.SpawnPositions.Length));
-            player.SpawnAsync(randomSpawnPoint + new Position(_random.Next(0, 10), _random.Next(0, 10), 0));
-            player.SetModelAsync((uint)PedModel.FreemodeMale01);
-            player.SetDateTimeAsync(1, 1, 1, Misc.Hour, 1, 1);
-            player.SetWeatherAsync(Misc.Weather);
+            await player.SpawnAsync(randomSpawnPoint + new Position(_random.Next(0, 10), _random.Next(0, 10), 0));
+            await player.SetModelAsync((uint)PedModel.FreemodeMale01);
+            await player.SetDateTimeAsync(1, 1, 1, Misc.Hour, 1, 1);
+            await player.SetWeatherAsync(Misc.Weather);
 
-            player.EmitAsync("draw_dmzone", Misc.DMPos.X, Misc.DMPos.Y, Misc.DMRadius, 150);
+            await player.EmitAsync("draw_dmzone", Misc.DMPos.X, Misc.DMPos.Y, Misc.DMRadius, 150);
 
             if(player.IsAdmin)
-                player.EmitAsync("set_chat_state", true);
+                await player.EmitAsync("set_chat_state", true);
 
             lock (StatsHandler.StatsData)
             {
                 StatsHandler.StatsData.PlayerConnections++;
             }
 
-            return Task.CompletedTask;
+            return;
         }
 
         [ScriptEvent(ScriptEventType.VehicleDestroy)]
