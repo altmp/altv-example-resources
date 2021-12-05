@@ -4,22 +4,25 @@ import * as alt from 'alt-client';
 import { DirectionVector } from "./helpers";
 
 let tick = null;
-let tickId = null;
 let noclipCam = null;
 
 export function toggleNoclip(state) {
     switch (state) {
         case false: {
-            alt.clearEveryTick(tickId);
+            alt.clearEveryTick(tick);
 
             noclipCam = null;
             native.renderScriptCams(false, true, 500, true, false, 0);
+
+            const position = native.getEntityCoords(alt.Player.local.scriptID, true);
+            let [unk, ground] = native.getGroundZFor3dCoord(position.x, position.y, position.z, 0.0, false, false);
+            native.setEntityCoordsNoOffset(alt.Player.local.scriptID, position.x, position.y, ground, false, false, false);
 
             break;
         }
 
         case true: {
-            tickId = alt.everyTick(handleTick);
+            tick = alt.everyTick(handleTick);
 
             const gameplayCamPos = native.getGameplayCamCoord();
             const gameplayCamRot = native.getGameplayCamRot(2);
@@ -38,18 +41,7 @@ export function toggleNoclip(state) {
     }
 };
 
-// We do this so that we can freeze the player with disableAllControlActions &
-// be able to access all other keys, like 'ESC' & etc..
-const keys = [];
-
-alt.on("keydown", (key) => { keys.push(key) });
-alt.on("keyup", (key) => { keys.splice(keys.indexOf(key), 1) });
-
 function handleTick() {
-    // native.disableAllControlActions(0);
-    // native.disableAllControlActions(1);
-    // native.disableAllControlActions(2);
-
     native.disableControlAction(0, 1, true);
     native.disableControlAction(0, 2, true);
     native.disableControlAction(0, 24, true);
@@ -57,9 +49,6 @@ function handleTick() {
     native.disableControlAction(0, 30, true);
     native.disableControlAction(0, 31, true);
     native.disableControlAction(0, 49, true);
-
-    if (alt.isConsoleOpen())
-        return;
 
     const pos = native.getCamCoord(noclipCam);
     const rot = native.getCamRot(noclipCam, 2);
@@ -70,8 +59,11 @@ function handleTick() {
 
     native.setEntityCoords(alt.Player.local, fwd.x, fwd.y, fwd.z - 2.0, true, false, false, true);
 
+    if (alt.gameControlsEnabled() === false)
+        return;
+
     // 'W' and 'D'
-    if (keys.includes(87) && keys.includes(68)) {
+    if (native.isDisabledControlPressed(0, 32) && native.isDisabledControlPressed(0, 30)) {
         const forward = dir.Forward(sens);
         const right = dir.Right(sens);
 
@@ -85,7 +77,7 @@ function handleTick() {
     }
     
     // 'W' and 'A'
-    else if (keys.includes(87) && keys.includes(65)) {
+    else if (native.isDisabledControlPressed(0, 32) && native.isDisabledControlPressed(0, 34)) {
         const forward = dir.Forward(sens);
         const left = dir.Right(-sens);
 
@@ -99,7 +91,7 @@ function handleTick() {
     }
 
     // 'S' and 'D'
-    else if (keys.includes(83) && keys.includes(68)) {
+    else if (native.isDisabledControlPressed(0, 33) && native.isDisabledControlPressed(0, 30)) {
         const back = dir.Forward(-sens);
         const right = dir.Right(sens);
 
@@ -113,7 +105,7 @@ function handleTick() {
     }
 
     // 'S' and 'A'
-    else if (keys.includes(83) && keys.includes(65)) {
+    else if (native.isDisabledControlPressed(0, 33) && native.isDisabledControlPressed(0, 34)) {
         const back = dir.Forward(-sens);
         const left = dir.Right(-sens);
 
@@ -129,10 +121,10 @@ function handleTick() {
     else {
         let direction = null;
 
-        if (keys.includes(87)) direction = dir.Forward(sens);
-        if (keys.includes(83)) direction = dir.Forward(-sens);
-        if (keys.includes(65)) direction = dir.Right(-sens);
-        if (keys.includes(68)) direction = dir.Right(sens);
+        if (native.isDisabledControlPressed(0, 32)) direction = dir.Forward(sens);
+        if (native.isDisabledControlPressed(0, 33)) direction = dir.Forward(-sens);
+        if (native.isDisabledControlPressed(0, 34)) direction = dir.Right(-sens);
+        if (native.isDisabledControlPressed(0, 30)) direction = dir.Right(sens);
 
         if (direction !== null) {
             native.setCamCoord(noclipCam, direction.x, direction.y, direction.z);
@@ -167,9 +159,9 @@ function getSensitivity() {
     let sens = 0.15;
 
     // Left Shift
-    if (keys.includes(16)) {
+    if (native.isDisabledControlPressed(0, 21)) {
         // 'E' Key
-        if (keys.includes(69)) {
+        if (native.isDisabledControlPressed(0, 38)) {
             sens *= 5;
         }
 
@@ -177,7 +169,7 @@ function getSensitivity() {
     }
 
     // Left Ctrl
-    if (keys.includes(17)) {
+    if (native.isDisabledControlPressed(0, 36)) {
         return sens = 0.035;
     }
 
