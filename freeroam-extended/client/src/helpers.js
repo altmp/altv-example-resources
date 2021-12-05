@@ -203,10 +203,14 @@ export function drawText2D(
 
 let adminMessageEveryTick = null;
 
-export function mhint(head, msg, time = 0) {
+export function mhint(head, msg, time = 5000) {
     let scaleform = native.requestScaleformMovie("MIDSIZED_MESSAGE");
     alt.setTimeout(() => {
-        if (adminMessageEveryTick != null) return;
+        if (adminMessageEveryTick != null) {
+            alt.clearEveryTick(adminMessageEveryTick);
+            adminMessageEveryTick = null;
+        }
+
         native.playSoundFrontend(-1, 'SIGN_DESTROYED', 'HUD_AWARDS', 1);
 
         native.beginScaleformMovieMethod(scaleform, "SHOW_MIDSIZED_MESSAGE");
@@ -222,11 +226,9 @@ export function mhint(head, msg, time = 0) {
             native.drawScaleformMovieFullscreen(scaleform, 255, 255, 255, 255, 0);
         });
 
-        if (time != 0) {
-            alt.setTimeout(() => {
-                alt.clearEveryTick(adminMessageEveryTick);
-                adminMessageEveryTick = null;
-            }, time * 1000);
-        }
+        alt.setTimeout(() => {
+            alt.clearEveryTick(adminMessageEveryTick);
+            adminMessageEveryTick = null;
+        }, time * 1000);
     }, 1000);
 }

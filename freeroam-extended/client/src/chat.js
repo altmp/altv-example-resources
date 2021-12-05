@@ -61,7 +61,7 @@ view.on("chatmessage", (text) => {
     // Timeout to avoid collision with Enter key
     setTimeout(() => {
         chatData.opened = false;
-    }, 150);
+    }, 200);
 });
 
 pushLine("<b>alt:V Multiplayer has started</b>");
