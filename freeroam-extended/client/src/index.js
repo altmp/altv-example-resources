@@ -31,7 +31,8 @@ alt.everyTick(() => {
         drawText2D('F2: toggle HUD', { x: 0.8, y: 0.025 }, 0.35, { r: 255, g: 255, b: 255, a: 255 }, 1);
         drawText2D('T / Enter: open chat', { x: 0.8, y: 0.05 }, 0.35, { r: 255, g: 255, b: 255, a: 255 }, 1);
         drawText2D('/tp <1 to 26>', { x: 0.8, y: 0.075 }, 0.35, { r: 255, g: 255, b: 255, a: 255 }, 1);
-        drawText2D('/model <model> (change ped model)', { x: 0.8, y: 0.1 }, 0.35, { r: 255, g: 255, b: 255, a: 255 }, 1);
+        drawText2D('/revive (revive your ped)', { x: 0.8, y: 0.1 }, 0.35, { r: 255, g: 255, b: 255, a: 255 }, 1);
+        // drawText2D('/model <model> (change ped model)', { x: 0.8, y: 0.1 }, 0.35, { r: 255, g: 255, b: 255, a: 255 }, 1);
         drawText2D('/veh <model> (spawn vehicle)', { x: 0.8, y: 0.125 }, 0.35, { r: 255, g: 255, b: 255, a: 255 }, 1);
         drawText2D('/clearvehicles (clear your vehicles)', { x: 0.8, y: 0.15 }, 0.35, { r: 255, g: 255, b: 255, a: 255 }, 1);
         drawText2D('/tune <index> <value> (tune vehicle)', { x: 0.8, y: 0.175 }, 0.35, { r: 255, g: 255, b: 255, a: 255 }, 1);
