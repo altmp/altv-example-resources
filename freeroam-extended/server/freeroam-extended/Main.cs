@@ -64,7 +64,6 @@ namespace Freeroam_Extended
             fileWriteTimer.Enabled = true;
             fileWriteTimer.Elapsed += (sender, args) =>
             {
-                Console.WriteLine("Writing to file...");
                 StatsHandler.UpdateFile();
             };
         }
