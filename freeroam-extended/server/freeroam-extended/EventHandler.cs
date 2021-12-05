@@ -122,20 +122,24 @@ namespace Freeroam_Extended
 
                     var playerOp = playerPool.FirstOrDefault(x => x.Id == int.Parse(args[0]));
                     if (playerOp is not IAltPlayer playerOpAlt) return;
-                    
-                    if (Misc.Operators.Any(tuple => tuple.Item1 == playerOpAlt.HardwareIdHash && tuple.Item2 == playerOpAlt.HardwareIdExHash))
+
+                    await using (var asyncContext = AsyncContext.Create())
                     {
-                        Alt.Log($"Id {args[0]} already is an operator!");   
+                        playerOpAlt.TryToAsync(asyncContext, out var asyncPlayer);
+                        if (Misc.Operators.Any(tuple => tuple.Item1 == asyncPlayer.HardwareIdHash && tuple.Item2 == asyncPlayer.HardwareIdExHash))
+                        {
+                            Alt.Log($"Id {args[0]} already is an operator!");   
+                            break;
+                        }
+                        Misc.Operators.Add(new Tuple<ulong,ulong>(asyncPlayer.HardwareIdHash, asyncPlayer.HardwareIdExHash));
+                        string json = JsonSerializer.Serialize(Misc.Operators);
+                        await File.WriteAllTextAsync(@"Operators.json", json);
+                    
+                        await asyncPlayer.EmitAsync("set_chat_state", true);
+                        asyncPlayer.IsAdmin = true;
                         break;
                     }
-                    Misc.Operators.Add(new Tuple<ulong,ulong>(playerOpAlt.HardwareIdHash, playerOpAlt.HardwareIdExHash));
-                    string json = JsonSerializer.Serialize(Misc.Operators);
-                    await File.WriteAllTextAsync(@"Operators.json", json);
-                    
-                    await playerOpAlt.EmitAsync("set_chat_state", true);
-                    playerOpAlt.IsAdmin = true;
-                    break;
-                
+
                 case "deop":
                     if (args.Length is > 1 or 0) 
                     {
@@ -144,16 +148,20 @@ namespace Freeroam_Extended
                     }
                     var playerDeOp = playerPool.FirstOrDefault(x => x.Id == int.Parse(args[0]));
                     if (playerDeOp is not IAltPlayer playerDeOpAlt) return;
-                    
-                    if (!Misc.Operators.Any(tuple => tuple.Item1 == playerDeOpAlt.HardwareIdHash && tuple.Item2 == playerDeOpAlt.HardwareIdExHash))
+                    await using (var asyncContext = AsyncContext.Create())
                     {
-                        AltAsync.Log($"Id {args[0]} is not an operator!");
+                        playerDeOpAlt.TryToAsync(asyncContext, out var asyncPlayer);
+                        
+                        if (!Misc.Operators.Any(tuple => tuple.Item1 == asyncPlayer.HardwareIdHash && tuple.Item2 == asyncPlayer.HardwareIdExHash))
+                        {
+                            AltAsync.Log($"Id {args[0]} is not an operator!");
+                            break;
+                        }
+                        Misc.Operators.Remove(new Tuple<ulong,ulong>(asyncPlayer.HardwareIdHash, asyncPlayer.HardwareIdExHash));
+                        await asyncPlayer.EmitAsync("set_chat_state", Misc.ChatState);
+                        asyncPlayer.IsAdmin = false;
                         break;
                     }
-                    Misc.Operators.Remove(new Tuple<ulong,ulong>(playerDeOpAlt.HardwareIdHash, playerDeOpAlt.HardwareIdExHash));
-                    await playerDeOpAlt.EmitAsync("set_chat_state", Misc.ChatState);
-                    playerDeOpAlt.IsAdmin = false;
-                    break;
             }
             return;
         }
