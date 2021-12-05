@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>Freeroam-Extended</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AltV.Net" Version="7.1.3" />
+    <PackageReference Include="AltV.Net.Async" Version="7.1.3" />
+    <PackageReference Include="AltV.Net.Async.CodeGen" Version="7.1.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="AltV.Net.Resources.Chat.Api" Version="7.1.3" />
+  </ItemGroup>
+
+</Project>
