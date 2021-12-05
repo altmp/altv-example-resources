@@ -24,7 +24,7 @@ namespace Freeroam_Extended
         public Task OnPlayerConnect(IAltPlayer player, string reason)
         {
             // create async context
-            if (Misc.BannedPlayers.Any(tuple => tuple.Item1 == player.HardwareIdHash && tuple.Item2 == player.HardwareIdExHash))
+            if (Misc.BannedPlayers.Contains(new Tuple<ulong, ulong>(player.HardwareIdHash, player.HardwareIdExHash)))
             {
                 player.Kick("You're banned from this server!");
                 AltAsync.Log($"HWID: {player.HardwareIdHash}, SC: {player.SocialClubId}. Tried to join the server with a ban.");
