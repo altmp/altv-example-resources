@@ -25,7 +25,7 @@ namespace Freeroam_Extended
         {
             await using( var asyncContext = AsyncContext.Create() )
             { 
-                player.TryToAsync(asyncContext, out var asyncPlayer);
+                if (!player.TryToAsync(asyncContext, out var asyncPlayer)) return;
                 
                 if (Misc.BannedPlayers.Contains(new Tuple<ulong, ulong>(asyncPlayer.HardwareIdHash, asyncPlayer.HardwareIdExHash)))
                 {
@@ -125,7 +125,7 @@ namespace Freeroam_Extended
 
                     await using (var asyncContext = AsyncContext.Create())
                     {
-                        playerOpAlt.TryToAsync(asyncContext, out var asyncPlayer);
+                        if (!playerOpAlt.TryToAsync(asyncContext, out var asyncPlayer)) return;
                         if (Misc.Operators.Any(tuple => tuple.Item1 == asyncPlayer.HardwareIdHash && tuple.Item2 == asyncPlayer.HardwareIdExHash))
                         {
                             Alt.Log($"Id {args[0]} already is an operator!");   
@@ -150,7 +150,7 @@ namespace Freeroam_Extended
                     if (playerDeOp is not IAltPlayer playerDeOpAlt) return;
                     await using (var asyncContext = AsyncContext.Create())
                     {
-                        playerDeOpAlt.TryToAsync(asyncContext, out var asyncPlayer);
+                        if (!playerDeOpAlt.TryToAsync(asyncContext, out var asyncPlayer)) return;
                         
                         if (!Misc.Operators.Any(tuple => tuple.Item1 == asyncPlayer.HardwareIdHash && tuple.Item2 == asyncPlayer.HardwareIdExHash))
                         {
