@@ -19,7 +19,7 @@ body {
   overflow: hidden;
 }
 
-.help-keys {
+/* .help-keys {
   position: absolute;
   top: 1.5em;
   right: 1.5em;
@@ -34,7 +34,7 @@ body {
   color: #FFFFFF;
   font-size: 16px;
   margin-bottom: 0.25em;
-}
+} */
 
 .shblock {
   width: 70vw;

@@ -173,3 +173,59 @@ export function drawDMZone(center_x, center_y, radius, count)
         native.setBlipAsShortRange(blip, true);
     }
 }
+
+export function drawText2D(
+    text,
+    pos,
+    scale,
+    color,
+    alignment = 0,
+    padding = 0
+) {
+    if (scale > 2) {
+        scale = 2;
+    }
+
+    native.beginTextCommandDisplayText('STRING');
+    native.addTextComponentSubstringPlayerName(text);
+    native.setTextFont(4);
+    native.setTextScale(1, scale);
+    native.setTextColour(color.r, color.g, color.b, color.a);
+    native.setTextOutline();
+    native.setTextDropShadow();
+    if (alignment !== null) {
+        native.setTextWrap(padding, 1 - padding);
+        native.setTextJustification(alignment);
+    }
+
+    native.endTextCommandDisplayText(pos.x, pos.y, 0);
+}
+
+let adminMessageEveryTick = null;
+
+export function mhint(head, msg, time = 0) {
+    let scaleform = native.requestScaleformMovie("MIDSIZED_MESSAGE");
+    alt.setTimeout(() => {
+        if (adminMessageEveryTick != null) return;
+
+        native.beginScaleformMovieMethod(scaleform, "SHOW_MIDSIZED_MESSAGE");
+        native.beginTextCommandScaleformString("STRING");
+        native.scaleformMovieMethodAddParamPlayerNameString(head);
+        native.scaleformMovieMethodAddParamTextureNameString(msg);
+        native.scaleformMovieMethodAddParamInt(100);
+        native.scaleformMovieMethodAddParamBool(true);
+        native.scaleformMovieMethodAddParamInt(100);
+        native.endScaleformMovieMethod();
+        
+        adminMessageEveryTick = alt.everyTick(() => {
+            native.drawScaleformMovieFullscreen(scaleform, 255, 255, 255, 255, 0);
+        });
+
+        if (time != 0) {
+            alt.setTimeout(() => {
+                alt.clearEveryTick(adminMessageEveryTick);
+                adminMessageEveryTick = null;
+            }, time * 1000);
+        }
+    }, 1000);
+}

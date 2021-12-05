@@ -1,4 +1,4 @@
-import { drawDMZone, playerData, setWeaponsUsage } from './helpers';
+import { drawDMZone, playerData, setWeaponsUsage, mhint } from './helpers';
 import { pushMessage, chatData, view, toggleChat } from './chat';
 import { toggleNoclip } from './noclip';
 
@@ -30,6 +30,10 @@ alt.onServer('set_chat_state', state => {
 
 alt.onServer('draw_dmzone', (center_x, center_y, radius, count) => {
     drawDMZone(center_x, center_y, radius, count);
+});
+
+alt.onServer('announce', (header, body, time) => {
+    mhint(header, body, time);
 });
 
 alt.on('keyup', (key) => {
