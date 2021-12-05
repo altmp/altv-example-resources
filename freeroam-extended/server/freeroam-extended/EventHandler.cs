@@ -68,7 +68,7 @@ namespace Freeroam_Extended
         [ScriptEvent(ScriptEventType.PlayerDisconnect)]
         public void OnPlayerDisconnect(IAltPlayer player, string reason)
         {
-            var vehicles = Alt.GetAllVehicles().Cast<IAltVehicle>().Where(x => x.Owner == player);
+            var vehicles = player.Vehicles;
            
             foreach (var veh in vehicles)
             {
