@@ -1,4 +1,4 @@
-# weapon-infinityblade
+# weapon-addon
 
 Custom [weapon addon](https://docs.altv.mp/gta/articles/tutorials/stream_weapons.html) example resource that adds "infinityblade" weapon to the server
 
