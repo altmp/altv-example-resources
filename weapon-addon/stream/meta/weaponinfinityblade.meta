@@ -84,31 +84,31 @@
           <ForceHitVehicle value="0.000000" />
           <ForceHitFlyingHeli value="0.000000" />
           <OverrideForces>
-			  <Item>
-				  <BoneTag>BONETAG_HEAD</BoneTag>
-				  <ForceFront value="75.000000" />
-				  <ForceBack value="85.000000" />
-			  </Item>
-			  <Item>
-				  <BoneTag>BONETAG_NECK</BoneTag>
-				  <ForceFront value="60.000000" />
-				  <ForceBack value="60.000000" />
-			  </Item>
-			  <Item>
-				  <BoneTag>BONETAG_R_CLAVICLE</BoneTag>
-				  <ForceFront value="90.000000" />
-				  <ForceBack value="100.000000" />
-			  </Item>
-			  <Item>
-				  <BoneTag>BONETAG_L_CLAVICLE</BoneTag>
-				  <ForceFront value="90.000000" />
-				  <ForceBack value="100.000000" />
-			  </Item>
-			  <Item>
-				  <BoneTag>BONETAG_SPINE3</BoneTag>
-				  <ForceFront value="75.000000" />
-				  <ForceBack value="90.000000" />
-			  </Item>
+        <Item>
+          <BoneTag>BONETAG_HEAD</BoneTag>
+          <ForceFront value="75.000000" />
+          <ForceBack value="85.000000" />
+        </Item>
+        <Item>
+          <BoneTag>BONETAG_NECK</BoneTag>
+          <ForceFront value="60.000000" />
+          <ForceBack value="60.000000" />
+        </Item>
+        <Item>
+          <BoneTag>BONETAG_R_CLAVICLE</BoneTag>
+          <ForceFront value="90.000000" />
+          <ForceBack value="100.000000" />
+        </Item>
+        <Item>
+          <BoneTag>BONETAG_L_CLAVICLE</BoneTag>
+          <ForceFront value="90.000000" />
+          <ForceBack value="100.000000" />
+        </Item>
+        <Item>
+          <BoneTag>BONETAG_SPINE3</BoneTag>
+          <ForceFront value="75.000000" />
+          <ForceBack value="90.000000" />
+        </Item>
           </OverrideForces>
           <ForceMaxStrengthMult value="1.300000" />
           <ForceFalloffRangeStart value="0.000000" />
@@ -296,11 +296,11 @@
           <HudAccuracy value="0" />
           <HudRange value="0" />
           <VehicleAttackAngle value="25.000000" />
-		  <CamoDiffuseTexIdxs>
-			<Item key="w_me_hatchet">
-			  <Item key="0" value="1" />
-			  <Item key="1" value="2" />
-			</Item>
+      <CamoDiffuseTexIdxs>
+      <Item key="w_me_hatchet">
+        <Item key="0" value="1" />
+        <Item key="1" value="2" />
+      </Item>
           </CamoDiffuseTexIdxs>				  
         </Item>
       </Infos>

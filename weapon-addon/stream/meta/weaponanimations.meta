@@ -44,10 +44,10 @@
           <UseFromStrafeUpperBodyAimNetwork value="false" />
           <AimingDownTheBarrel value="true" />
           <WeaponSwapData ref="SWAP_DEFAULT" />
-		  <AimGrenadeThrowNormalClipsetHash />
-		  <AimGrenadeThrowAlternateClipsetHash />
+      <AimGrenadeThrowNormalClipsetHash />
+      <AimGrenadeThrowAlternateClipsetHash />
         </Item>
-	  </WeaponAnimations>
-	</Item>
+    </WeaponAnimations>
+  </Item>
   </WeaponAnimationsSets>
 </CWeaponAnimationsSets>
