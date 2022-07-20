@@ -128,6 +128,7 @@ window.addEventListener("load", () => {
 });
 
 function saveBuffer() {
+  if (!msgInputLine.value) return;
   if (buffer.length > 100) {
     buffer.pop();
   }
