@@ -1,0 +1,13 @@
+{
+  "name": "altv.rmlui.nametag.example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "client.js",
+  "author": "deluvas1911",
+  "license": "ISC",
+  "devDependencies": {
+    "@altv/types-client": "^2.1.8",
+    "@altv/types-natives": "^1.4.4",
+    "@altv/types-shared": "^1.2.5"
+  }
+}
