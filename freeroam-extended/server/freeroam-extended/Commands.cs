@@ -1,9 +1,6 @@
-﻿using System;
-using System.Linq;
-using System.Numerics;
+﻿using System.Numerics;
 using AltV.Net;
 using AltV.Net.Data;
-using AltV.Net.Elements.Entities;
 using AltV.Net.Enums;
 using AltV.Net.Resources.Chat.Api;
 using Freeroam_Extended.Factories;
@@ -12,7 +9,7 @@ namespace Freeroam_Extended
 {
     public class Commands : IScript
     {
-        private readonly Random _random = new Random();
+        private readonly Random _random = new();
 
         [Command("veh")]
         public void SpawnVeh(IAltPlayer player, string vehicleName)
@@ -136,6 +133,12 @@ namespace Freeroam_Extended
             if (!player.IsAdmin)
             {
                 player.SendChatMessage("{FF0000} No permission!");
+                return;
+            }
+
+            if (player.Id == id)
+            {
+                player.SendChatMessage("{FF0000} You can't ban yourself!");
                 return;
             }
 
@@ -428,6 +431,20 @@ namespace Freeroam_Extended
         {
             var message = string.Join(" ", body);
             Alt.EmitAllClients("announce", header, message, time);
+        }
+        
+        [Command("tpcoords")]
+        public void TpCoords(IAltPlayer player, int x, int y, int z)
+        {
+            if (!player.IsAdmin)
+            {
+                player.SendChatMessage("{FF0000} No permission!");
+                return;
+            }
+            
+            player.Position = new Vector3(x, y, z);
+            player.SendChatMessage($"{{00FF00}} You were teleported to {x}, {y}, {z}!");
+            player.Emit("set_last_command");
         }
     }
 }
