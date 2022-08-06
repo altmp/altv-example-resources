@@ -18,12 +18,12 @@ namespace Freeroam_Extended.Factories
         public IAltPlayer Owner { get; set; }
         public DateTime SpawnTime { get; set; }
         
-        public AltVehicle(IServer server, uint model, Position position, Rotation rotation) : base(server, model, position, rotation)
+        public AltVehicle(ICore server, uint model, Position position, Rotation rotation) : base(server, model, position, rotation)
         {
             SpawnTime = DateTime.Now;
         }
         
-        public AltVehicle(IServer server, IntPtr nativePointer, ushort id) : base(server, nativePointer, id)
+        public AltVehicle(ICore server, IntPtr nativePointer, ushort id) : base(server, nativePointer, id)
         {
             SpawnTime = DateTime.Now;
         }
@@ -31,7 +31,7 @@ namespace Freeroam_Extended.Factories
     
     public class AltVehicleFactory : IEntityFactory<IVehicle>
     {
-        public IVehicle Create(IServer server, IntPtr playerPointer, ushort id)
+        public IVehicle Create(ICore server, IntPtr playerPointer, ushort id)
         {
             return new AltVehicle(server, playerPointer, id);
         }

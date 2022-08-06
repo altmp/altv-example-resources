@@ -30,7 +30,7 @@ namespace Freeroam_Extended.Factories
         public bool IsAdmin { get; set; }
         public int EventCount { get; set; }
 
-        public AltPlayer(IServer server, IntPtr nativePointer, ushort id) : base(server, nativePointer, id)
+        public AltPlayer(ICore server, IntPtr nativePointer, ushort id) : base(server, nativePointer, id)
         {
             Vehicles = new List<AltVehicle>();
         }
@@ -38,7 +38,7 @@ namespace Freeroam_Extended.Factories
     
     public class AltPlayerFactory : IEntityFactory<IPlayer>
     {
-        public IPlayer Create(IServer server, IntPtr playerPointer, ushort id)
+        public IPlayer Create(ICore server, IntPtr playerPointer, ushort id)
         {
             return new AltPlayer(server, playerPointer, id);
         }
