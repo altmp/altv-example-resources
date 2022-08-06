@@ -6,7 +6,7 @@ export const chatData = {
     opened: false
 }
 
-export const view = new alt.WebView("http://resource/client/src/html/index.html");
+export const view = new alt.WebView("http://resource/src/html/index.html");
 const buffer = [];
 
 export function toggleChat()
