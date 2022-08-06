@@ -118,7 +118,7 @@ namespace Freeroam_Extended
                 }
                 
                 if (!Misc.BlacklistedWeapons.Contains(weapon)) return;
-                Alt.Server.LogColored($"~r~ Banned Player: {asyncKillerPlayer.Name} ({asyncKillerPlayer.Id}) for using illegal weapon!");
+                Alt.Core.LogColored($"~r~ Banned Player: {asyncKillerPlayer.Name} ({asyncKillerPlayer.Id}) for using illegal weapon!");
                 Misc.BannedPlayers.Add(new Tuple<ulong,ulong>(asyncKillerPlayer.HardwareIdHash, asyncKillerPlayer.HardwareIdExHash));
                 string json = JsonSerializer.Serialize(Misc.BannedPlayers);
                 await File.WriteAllTextAsync(@"BannedPlayers.json", json);
@@ -197,7 +197,7 @@ namespace Freeroam_Extended
                 
          
             
-                Alt.Server.LogColored($"~r~ Banned Player: {asyncDamagePlayer.Name} ({asyncDamagePlayer.Id}) for using illegal weapon!");
+                Alt.Core.LogColored($"~r~ Banned Player: {asyncDamagePlayer.Name} ({asyncDamagePlayer.Id}) for using illegal weapon!");
                 //Misc.BannedPlayers.Add(<ulong, ulong>(damagePlayer.HardwareIdHash, damagePlayer.HardwareIdExHash));
                 Misc.BannedPlayers.Add(new Tuple<ulong,ulong>(asyncDamagePlayer.HardwareIdHash, asyncDamagePlayer.HardwareIdExHash));
                 string json = JsonSerializer.Serialize(Misc.BannedPlayers);
