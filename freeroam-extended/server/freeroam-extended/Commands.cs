@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using System.Text.Json;
 using AltV.Net;
 using AltV.Net.Data;
 using AltV.Net.Enums;
@@ -151,6 +152,9 @@ namespace Freeroam_Extended
             
             target.Kick("You've been banned from this server!");
             Misc.BannedPlayers.Add(new Tuple<ulong,ulong>(target.HardwareIdHash, target.HardwareIdExHash));
+            string json = JsonSerializer.Serialize(Misc.BannedPlayers);
+            File.WriteAllText(@"BannedPlayers.json", json);
+            
             player.SendChatMessage($"{{00FF00}}Player with id {id} banned!");
             player.Emit("set_last_command");
         }
