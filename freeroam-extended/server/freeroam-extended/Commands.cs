@@ -478,5 +478,53 @@ namespace Freeroam_Extended
             player.SendChatMessage($"{{00FF00}}Player with id {id} kicked!");
             player.Emit("set_last_command");
         }
+        
+        [Command("godmode")]
+        public void Godmode(IAltPlayer player, int id)
+        {
+            if (!player.IsAdmin)
+            {
+                player.SendChatMessage("{FF0000} No permission!");
+                return;
+            }
+            
+            var target = Alt.GetAllPlayers().FirstOrDefault(p => p.Id == id);
+            if (target == null)
+            {
+                player.SendChatMessage($"{{FF0000}}Player with id {id} not found!");
+                return;
+            }
+
+            target.Invincible = !target.Invincible;
+            target.SendChatMessage($"{(target.Invincible ? "{00FF00}" : "{FF0000}")}Godmode {(target.Invincible ? "on" : "off")}!");
+
+            if (player.Id != target.Id) player.SendChatMessage($"{{00FF00}}Godmode {(target.Invincible ? "on" : "off")}!");
+            player.Emit("set_last_command");
+        }
+        
+        [Command("godmodeall")]
+        public void GodmodeAllPlayers(IAltPlayer player, bool mode)
+        {
+            if (!player.IsAdmin)
+            {
+                player.SendChatMessage("{FF0000} No permission!");
+                return;
+            }
+            
+            var targets = Alt.GetAllPlayers().ToList();
+            if (targets.Count <= 0)
+            {
+                player.SendChatMessage("{{FF0000}}Players not found!");
+                return;
+            }
+
+            foreach (var target in targets)
+            {
+                target.Invincible = mode;
+                target.SendChatMessage($"{(mode ? "{00FF00}" : "{FF0000}")}Godmode for all players is {(mode ? "activated" : "deactivated")}!");
+            }
+            
+            player.Emit("set_last_command");
+        }
     }
 }
