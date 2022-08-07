@@ -5,6 +5,7 @@ using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Collections.Generic;
+using System.Numerics;
 using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Data;
@@ -23,7 +24,7 @@ namespace Freeroam_Extended
             Alt.OnPlayerCustomEvent += (player, name, array) =>
             {
                 var altPlayer = (IAltPlayer)player;
-                if (name != "chat:message")
+                if (name != "chat:message" && !altPlayer.IsAdmin)
                 {
                     Alt.Log($"{altPlayer.Name} banned for illegal event: {name}");
                     player.Kick("You are not allowed to use this Event.");
@@ -254,6 +255,21 @@ namespace Freeroam_Extended
                 p.SendChatMessage(
                     $"{(player.IsAdmin ? "{008736}" : "{FFFFFF}")} <b>{player.Name}({player.Id})</b>: {{FFFFFF}}{message}");
             }
+        }
+        
+        [ClientEvent("tp_to_waypoint")]
+        public void TeleportWaypoint(IAltPlayer player, int x, int y, int z)
+        {
+            if (!player.IsAdmin)
+            {
+                player.SendChatMessage("{FF0000} No permission!");
+                return;
+            }
+
+            if (player.IsInVehicle) player.Vehicle.Position = new Vector3(x, y, z);
+            else player.Position = new Vector3(x, y, z);
+            
+            player.SendChatMessage($"{{00FF00}} You were teleported to waypoint on {x}, {y}, {z}!");
         }
     } 
 }

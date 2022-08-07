@@ -283,7 +283,7 @@ export async function tpToWaypoint(): Promise<void> {
   if (foundZ == null)
     alt.logError("failed to get ground z for waypoint")
 
-  alt.emitServer("tp_to_waypoint", { x, y, z: foundZ ?? 9999 })
+  alt.emitServer("tp_to_waypoint", x, y, foundZ ?? 9999)
 
   native.clearFocus()
 }
