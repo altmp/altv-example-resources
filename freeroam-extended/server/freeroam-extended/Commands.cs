@@ -450,5 +450,33 @@ namespace Freeroam_Extended
             player.SendChatMessage($"{{00FF00}} You were teleported to {x}, {y}, {z}!");
             player.Emit("set_last_command");
         }
+        
+        [Command("kick")]
+        public void Kick(IAltPlayer player, int id)
+        {
+            if (!player.IsAdmin)
+            {
+                player.SendChatMessage("{FF0000} No permission!");
+                return;
+            }
+
+            if (player.Id == id)
+            {
+                player.SendChatMessage("{FF0000} You can't kick yourself!");
+                return;
+            }
+
+            var target = Alt.GetAllPlayers().FirstOrDefault(p => p.Id == id);
+            if (target == null)
+            {
+                player.SendChatMessage($"{{FF0000}}Player with id {id} not found!");
+                return;
+            }
+            
+            target.Kick("You've been kicked from this server!");
+
+            player.SendChatMessage($"{{00FF00}}Player with id {id} kicked!");
+            player.Emit("set_last_command");
+        }
     }
 }
