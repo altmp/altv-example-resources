@@ -166,7 +166,12 @@ function addString(text) {
   highlightChat();
 }
 
+function updatePlayersOnline (number) {
+  document.querySelector(".players-online").textContent = `${number} players online`;
+}
+
 alt.on("addString", (text) => addString(colorify(text)));
 alt.on("addMessage", (name, text) => addString("<b>" + name + ": </b>" + colorify(text)));
 alt.on("openChat", openChat);
 alt.on("closeChat", closeChat);
+alt.on("updatePlayersOnline", updatePlayersOnline);

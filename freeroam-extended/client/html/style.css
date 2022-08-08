@@ -1,10 +1,17 @@
+@font-face {
+  font-family: "Inter";
+  src: url("./Inter-Medium.ttf"),
+}
+
 * {
   margin: 0;
   padding: 0;
   cursor: default;
+  user-select: none;
   -webkit-font-smoothing: antialiased;
-  -webkit-user-select: none;
   -webkit-user-drag: none;
+  font-family: Inter, "Segoe UI", "Segoe UI Symbol", Arial, sans-serif;
+  text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.793);
 }
 
 *:focus {
@@ -19,11 +26,17 @@ body {
   overflow: hidden;
 }
 
-/* .help-keys {
+.help-keys {
   position: absolute;
-  top: 1.5em;
+  top: 3.0em;
   right: 1.5em;
   text-align: right;
+  text-shadow: 0px 0px 5px #00000099;
+}
+
+.help-keys-command {
+  color:rgb(123, 209, 255);
+  font-weight: bold;
 }
 
 .help-keys ol {
@@ -32,9 +45,9 @@ body {
 
 .help-keys li {
   color: #FFFFFF;
-  font-size: 16px;
+  font-size: .8em;
   margin-bottom: 0.25em;
-} */
+}
 
 .shblock {
   width: 70vw;
@@ -71,7 +84,6 @@ body {
   line-height: 25px;
   padding: 5px 0;
   margin: 0;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
   font-size: 1em;
   color: rgba(255, 255, 255, 0.9);
   width: 100%;
@@ -197,4 +209,24 @@ body {
     height: 15px;
     margin-top: 10px;
   }
+}
+
+.players-online {
+  font-size: .9em;
+  color: rgb(60, 255, 180);
+  position: absolute;
+  top: 1.5em;
+  right: 1.5em;
+  text-align: right;
+}
+
+.stress-test-label {
+  top: .2em;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  width: 100%;
+  font-size: .8em;
+  position: absolute;
+  color: rgba(255, 255, 255, 0.628);
 }

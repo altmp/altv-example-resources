@@ -1,10 +1,11 @@
-import { drawDMZone, playerData, setWeaponsUsage, mhint, tpToWaypoint } from "./helpers"
-import { pushMessage, chatData, view, toggleChat } from "./chat"
-import { toggleNoclip } from "./noclip"
-
 import * as native from "natives"
 import * as alt from "alt-client"
+import { drawDMZone, setWeaponsUsage, mhint, tpToWaypoint } from "./helpers"
+import { pushMessage, chatData, toggleChat } from "./chat"
+import { toggleNoclip } from "./noclip"
 import { KeyCode } from "./keycodes"
+import { playerData } from "./playerdata"
+import { view } from "./view"
 
 alt.on("connectionComplete", () => {
   setTimeout(() => {
@@ -67,7 +68,7 @@ alt.on("keyup", (key) => {
         view.emit("openChat", false)
         view.focus()
         alt.toggleGameControls(false)
-        alt.emit("Client:HUD:setCefStatus", true)
+        alt.emit("Client:HUD:setCefStatus", true) // for what its here?
       }
       break
     }
@@ -78,7 +79,7 @@ alt.on("keyup", (key) => {
         view.emit("closeChat")
         view.unfocus()
         alt.toggleGameControls(true)
-        alt.emit("Client:HUD:setCefStatus", false)
+        alt.emit("Client:HUD:setCefStatus", false) // for what its here?
       }
       break
     }

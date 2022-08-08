@@ -1,12 +1,11 @@
 import * as alt from "alt-client"
-import { playerData } from "./helpers"
+import { playerData } from "./playerdata"
+import { view } from "./view"
 
 export const chatData = {
   loaded: false,
   opened: false,
 }
-
-export const view = new alt.WebView("http://resource/html/index.html")
 
 interface IBufferItem {
   name: string | null

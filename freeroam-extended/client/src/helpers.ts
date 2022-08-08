@@ -1,18 +1,10 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility */
 import * as native from "natives"
 import * as alt from "alt-client"
+import { playerData } from "./playerdata"
 
 export const LOCAL_PLAYER = alt.Player.local
 export const EMPTY_WEAPON_HASH = 0xA2719263
-
-export const playerData = {
-  areWeaponsDisabled: true,
-  areNametagsVisible: true,
-  lastCommandTimestamp: Date.now() - 10000,
-  lastMessageTimestamp: Date.now() - 10000,
-  chatState: false,
-  commandTimestamp: 0,
-}
 
 export function displayAdvancedNotification(
   message: string,
@@ -263,10 +255,14 @@ export function mhint(head: string, msg: string, time = 5): void {
 
 export async function tpToWaypoint(): Promise<void> {
   const point = getWaypoint()
-  if (!point) return
+  if (!point) {
+    alt.log("no waypoint to tp")
+    return
+  }
+
   const [x, y, z] = point
 
-  native.setFocusPosAndVel(x, y, z, 0, 0, 0)
+  native.setFocusPosAndVel(x, y, 99999, 0, 0, 0)
 
   let foundZ: number | null = null
   try {
@@ -283,7 +279,7 @@ export async function tpToWaypoint(): Promise<void> {
   if (foundZ == null)
     alt.logError("failed to get ground z for waypoint")
 
-  alt.emitServer("tp_to_waypoint", x, y, foundZ ?? 9999)
+  alt.emitServer("tp_to_waypoint", x, y, (foundZ ?? 9999) + 1.0)
 
   native.clearFocus()
 }
