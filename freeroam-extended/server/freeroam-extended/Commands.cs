@@ -122,12 +122,6 @@ namespace Freeroam_Extended
             player.Emit("set_last_command");
         }
 
-        [Command("pos")]
-        public void Position(IAltPlayer player)
-        {
-            Alt.Log($"new Position({player.Position.X}, {player.Position.Y}, {player.Position.Z}),");
-        }
-
         [Command("ban")]
         public void Ban(IAltPlayer player, int id)
         {
@@ -428,11 +422,18 @@ namespace Freeroam_Extended
         public void Respawn(IAltPlayer player)
         {
             player.Spawn(player.Position);
+            player.ClearBloodDamage();
         }
 
         [Command("announce")]
         public void Announce(IAltPlayer player, string header, int time, params string[] body)
         {
+            if (!player.IsAdmin)
+            {
+                player.SendChatMessage("{FF0000} No permission!");
+                return;
+            }
+            
             var message = string.Join(" ", body);
             Alt.EmitAllClients("announce", header, message, time);
         }
