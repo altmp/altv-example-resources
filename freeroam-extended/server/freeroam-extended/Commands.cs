@@ -422,6 +422,7 @@ namespace Freeroam_Extended
         public void Respawn(IAltPlayer player)
         {
             player.Spawn(player.Position);
+            player.ClearBloodDamage();
         }
 
         [Command("announce")]
