@@ -1,8 +1,7 @@
-import esbuild from 'esbuild'
+import esbuild from "esbuild"
 import { altvEsbuild } from 'altv-esbuild'
 
 const dev = process.argv[2] === '-dev'
-
 console.log('dev:', dev)
 
 esbuild.build({
@@ -11,13 +10,14 @@ esbuild.build({
   format: 'esm',
   target: "esnext",
   logLevel: "info",
-  entryPoints: ['src/index.ts'],
-  outfile: 'dist/client.js',
+  platform: 'node',
+  entryPoints: ['src-server/index.ts'],
+  outfile: 'dist/server.js',
 
   plugins: [
     altvEsbuild({
-      mode: 'client',
+      mode: 'server',
       dev,
-    })
+    }),
   ]
 })

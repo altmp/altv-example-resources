@@ -10,6 +10,9 @@
     "@altv/types-shared": "^1.2.6",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
+    "altv-esbuild": "^0.0.8",
+    "concurrently": "^7.3.0",
+    "esbuild": "^0.14.53",
     "eslint": "^7.30.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-plugin-import": "^2.24.2",
@@ -17,12 +20,13 @@
     "eslint-plugin-promise": "^5.1.0",
     "typescript": "^4.7.4"
   },
-  "dependencies": {
-    "altv-esbuild": "^0.0.7",
-    "esbuild": "^0.14.53"
-  },
   "scripts": {
-    "build": "node --es-module-specifier-resolution=node build.js"
+    "build:client": "node --es-module-specifier-resolution=node build.js",
+    "build:server": "node --es-module-specifier-resolution=node build-server.js",
+    "dev:server": "node --es-module-specifier-resolution=node build-server.js -dev",
+    "dev:client": "node --es-module-specifier-resolution=node build.js -dev",
+    "dev": "concurrently \"npm:dev:*\"",
+    "build": "concurrently \"npm:build:*\""
   },
   "type": "module"
 }
