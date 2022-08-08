@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility */
 import * as native from "natives"
 import * as alt from "alt-client"
+import { playerData } from "./playerdata"
 
 export const LOCAL_PLAYER = alt.Player.local
 export const EMPTY_WEAPON_HASH = 0xA2719263
