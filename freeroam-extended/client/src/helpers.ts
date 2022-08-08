@@ -262,12 +262,12 @@ export async function tpToWaypoint(): Promise<void> {
 
   const [x, y, z] = point
 
-  native.setFocusPosAndVel(x, y, 99999, 0, 0, 0)
+  native.setFocusPosAndVel(x, y, z, 0, 0, 0)
 
   let foundZ: number | null = null
   try {
     await alt.Utils.waitFor(() => {
-      const [found, z] = native.getGroundZFor3dCoord(x, y, 9999999, 0, false, false)
+      const [found, z] = native.getGroundZAndNormalFor3dCoord(x, y, 9999)
       if (!found) return false
 
       foundZ = z
