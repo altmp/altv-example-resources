@@ -263,23 +263,52 @@ export async function tpToWaypoint(): Promise<void> {
   const [x, y, z] = point
 
   native.setFocusPosAndVel(x, y, z, 0, 0, 0)
+  const startPos = new alt.Vector3(x, y, 1500)
+  let destPos = startPos
+  let groundPos: alt.Vector3 | null = null
 
-  let foundZ: number | null = null
   try {
     await alt.Utils.waitFor(() => {
-      const [found, z] = native.getGroundZAndNormalFor3dCoord(x, y, 9999)
-      if (!found) return false
+      destPos = destPos.sub(0, 0, 100)
+      if (destPos.z < -500)
+        throw new Error("failed to get ground pos")
 
-      foundZ = z
-      return found
+      groundPos = raycast(startPos, destPos)
+      // alt.log("checking dest pos z:", destPos.z)
+      if (!groundPos) return false
+
+      return true
     }, 3000)
   }
   catch {}
 
-  if (foundZ == null)
-    alt.logError("failed to get ground z for waypoint")
+  if (!groundPos) {
+    alt.logWarning("failed to get ground pos for waypoint, trying getGroundZ native...")
 
-  alt.emitServer("tp_to_waypoint", x, y, (foundZ ?? 9999) + 1.0)
+    let foundZ: number | null = null
+    try {
+      await alt.Utils.waitFor(() => {
+        const [found, z] = native.getGroundZAndNormalFor3dCoord(x, y, 9999)
+        if (!found) return false
+
+        foundZ = z
+        return found
+      }, 3000)
+    }
+    catch {}
+
+    if (foundZ == null) {
+      alt.logError("failed to get ground z for waypoint")
+      groundPos = new alt.Vector3(x, y, 5000)
+    }
+  }
+
+  if (!groundPos)
+    throw new Error("no groundPos")
+
+  groundPos = groundPos.add(0, 0, 2.0)
+
+  alt.emitServer("tp_to_waypoint", ...groundPos.toArray())
 
   native.clearFocus()
 }
@@ -293,4 +322,21 @@ function getWaypoint(sprite = 8): [number, number, number, number] | null {
   }
 
   return null
+}
+
+function raycast(start: alt.Vector3, dest: alt.Vector3): alt.Vector3 | null {
+  const ray = native.startExpensiveSynchronousShapeTestLosProbe(
+    start.x,
+    start.y,
+    start.z,
+    dest.x,
+    dest.y,
+    dest.z,
+    1 + 16,
+    0,
+    0,
+  )
+
+  const [, hit, hitPos] = native.getShapeTestResult(ray)
+  return hit ? hitPos : null
 }
