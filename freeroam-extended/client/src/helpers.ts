@@ -269,12 +269,15 @@ export async function tpToWaypoint(): Promise<void> {
 
   try {
     await alt.Utils.waitFor(() => {
-      destPos = destPos.sub(0, 0, 100)
+      destPos = destPos.sub(0, 0, 200.0)
+
+      native.clearFocus()
+      native.setFocusPosAndVel(...destPos.toArray(), 0, 0, 0)
+
       if (destPos.z < -500)
         throw new Error("failed to get ground pos")
 
       groundPos = raycast(startPos, destPos)
-      // alt.log("checking dest pos z:", destPos.z)
       if (!groundPos) return false
 
       return true
@@ -299,7 +302,7 @@ export async function tpToWaypoint(): Promise<void> {
 
     if (foundZ == null) {
       alt.logError("failed to get ground z for waypoint")
-      groundPos = new alt.Vector3(x, y, 5000)
+      groundPos = startPos
     }
   }
 
