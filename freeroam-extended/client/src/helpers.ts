@@ -48,48 +48,6 @@ export function setWeaponsUsage(state: boolean): void {
   }
 }
 
-export function drawText3d(
-  text: string,
-  x: number,
-  y: number,
-  z: number,
-  scale: number,
-  r: number, g: number, b: number, a: number,
-  outline: boolean,
-  offset: number,
-  lagcomp: boolean,
-  lagcompEntity: { vehicle: alt.Vehicle | null },
-): void {
-  // If lagcomp is enabled and the lagcomp entity is in a vehicle.
-  if (lagcomp === true && lagcompEntity.vehicle !== null) {
-    const vector = native.getEntityVelocity(lagcompEntity.vehicle)
-    const frameTime = native.getFrameTime()
-
-    native.setDrawOrigin(x + (vector.x * frameTime), y + (vector.y * frameTime), z + (vector.z * frameTime), 0)
-  }
-  else native.setDrawOrigin(x, y, z, 0)
-
-  native.setTextFont(4)
-  native.setTextProportional(false)
-  native.setTextScale(scale, scale)
-  native.setTextColour(r, g, b, a)
-  native.setTextDropshadow(0, 0, 0, 0, 255)
-  native.setTextEdge(2, 0, 0, 0, 150)
-  native.setTextDropShadow()
-  native.setTextCentre(true)
-
-  if (outline) native.setTextOutline()
-
-  native.beginTextCommandDisplayText("CELL_EMAIL_BCON")
-
-  text.match(/.{1,99}/g)?.forEach(textBlock => {
-    native.addTextComponentSubstringPlayerName(textBlock)
-  })
-
-  native.endTextCommandDisplayText(0.0, offset, 0.0)
-  native.clearDrawOrigin()
-}
-
 export class DirectionVector {
   constructor(
     private readonly position: alt.IVector3,
@@ -188,32 +146,6 @@ export function drawDMZone(
   }
 }
 
-export function drawText2D(
-  text: string,
-  pos: alt.IVector2,
-  scale: number,
-  color: { r: number; g: number; b: number; a: number },
-  alignment = 0,
-  padding = 0,
-): void {
-  if (scale > 2)
-    scale = 2
-
-  native.beginTextCommandDisplayText("STRING")
-  native.addTextComponentSubstringPlayerName(text)
-  native.setTextFont(4)
-  native.setTextScale(1, scale)
-  native.setTextColour(color.r, color.g, color.b, color.a)
-  native.setTextOutline()
-  native.setTextDropShadow()
-  if (alignment !== null) {
-    native.setTextWrap(padding, 1 - padding)
-    native.setTextJustification(alignment)
-  }
-
-  native.endTextCommandDisplayText(pos.x, pos.y, 0)
-}
-
 let adminMessageEveryTick: number | null = null
 
 export function mhint(head: string, msg: string, time = 5): void {
@@ -277,7 +209,7 @@ export async function tpToWaypoint(): Promise<void> {
       if (destPos.z < -500)
         throw new Error("failed to get ground pos")
 
-      groundPos = raycast(startPos, destPos)
+      groundPos = raycast(startPos, destPos)?.pos ?? null
       if (!groundPos) return false
 
       return true
@@ -327,7 +259,11 @@ function getWaypoint(sprite = 8): [number, number, number, number] | null {
   return null
 }
 
-function raycast(start: alt.Vector3, dest: alt.Vector3): alt.Vector3 | null {
+export function raycast(
+  start: alt.Vector3,
+  dest: alt.Vector3,
+  flags = 1 | 16,
+): { pos: alt.Vector3; entity: number } | null {
   const ray = native.startExpensiveSynchronousShapeTestLosProbe(
     start.x,
     start.y,
@@ -335,11 +271,17 @@ function raycast(start: alt.Vector3, dest: alt.Vector3): alt.Vector3 | null {
     dest.x,
     dest.y,
     dest.z,
-    1 + 16,
-    0,
+    flags,
+    LOCAL_PLAYER,
     0,
   )
 
-  const [, hit, hitPos] = native.getShapeTestResult(ray)
-  return hit ? hitPos : null
+  const [, hit, pos,, entity] = native.getShapeTestResult(ray)
+  return hit
+    ? { pos: pos, entity }
+    : null
+}
+
+export function clamp(value: number, min: number, max: number): number {
+  return Math.min(Math.max(min, value), max)
 }
