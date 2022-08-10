@@ -262,7 +262,7 @@ function getWaypoint(sprite = 8): [number, number, number, number] | null {
 export function raycast(
   start: alt.Vector3,
   dest: alt.Vector3,
-  flags = 1 | 16,
+  flags = 99999,
 ): { pos: alt.Vector3; entity: number } | null {
   const ray = native.startExpensiveSynchronousShapeTestLosProbe(
     start.x,
