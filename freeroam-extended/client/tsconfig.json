@@ -10,13 +10,12 @@
     "resolveJsonModule": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "isolatedModules": true,
+    "isolatedModules": false,
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "typeRoots": [
       "./node_modules/@altv",
-      "./node_modules/@types",
-      "./@types",
+      "node_modules/altv-esbuild/altv-enums/types"
     ],
     "paths": {
       "@/*": ["./src/*"]

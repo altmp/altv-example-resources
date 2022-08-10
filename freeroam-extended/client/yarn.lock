@@ -208,10 +208,10 @@ ajv@^8.0.1:
     require-from-string "^2.0.2"
     uri-js "^4.2.2"
 
-altv-esbuild@^0.0.8:
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/altv-esbuild/-/altv-esbuild-0.0.8.tgz#aa412ecc179585e23c23370e5a04fc8c0fcf9f44"
-  integrity sha512-nrIf6GYyUysD/8JsQ5Tc63rDPIiKPNvG59UAgP0Q15bF6esNUQrxP0SCal/7ZQR6dx+Z56IxAl45p29gJl8VRg==
+altv-esbuild@^0.1.3:
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/altv-esbuild/-/altv-esbuild-0.1.3.tgz#3d05d4cad7b4ec005ac4f4053ba9cc228f08dd5d"
+  integrity sha512-tJajq+1isEdYkusRaQPES/jZucAoQ8QHbufE4O9WqCkH90NKhfMjHfS5K/eKyQL2J9EulBnHULVvi7uLIm203A==
 
 ansi-colors@^4.1.1:
   version "4.1.3"

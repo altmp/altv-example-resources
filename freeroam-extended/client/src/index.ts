@@ -1,19 +1,18 @@
 import { LOCAL_PLAYER } from "./helpers"
-
 import * as native from "natives"
 import * as alt from "alt-client"
-
 import "./events"
 import "./chat"
 import "./noclip"
 import { playerData } from "./playerdata"
 import { view } from "./view"
 import { playerNametags } from "./nametags"
+import { ConfigFlag, StatName, WatermarkPosition } from "altv-enums"
 
-alt.setConfigFlag("DISABLE_AUTO_WEAPON_SWAP", true)
-alt.setConfigFlag("DISABLE_IDLE_CAMERA", true)
-alt.setStat("stamina", 100)
-alt.setWatermarkPosition(3) // top center
+alt.setConfigFlag(ConfigFlag.DisableAutoWeaponSwap, true)
+alt.setConfigFlag(ConfigFlag.DisableIdleCamera, true)
+alt.setStat(StatName.Stamina, 100)
+alt.setWatermarkPosition(WatermarkPosition.TopCenter) // top center
 
 setInterval(() => {
   if (!playerData.areNametagsVisible) return

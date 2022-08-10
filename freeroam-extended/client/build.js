@@ -18,6 +18,7 @@ esbuild.build({
     altvEsbuild({
       mode: 'client',
       dev,
+      altvEnums: true,
     })
   ]
 })
