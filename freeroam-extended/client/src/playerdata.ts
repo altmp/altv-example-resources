@@ -1,5 +1,6 @@
 class PlayerData {
   public onAreNametagsVisibleChange: ((value: boolean) => void) | null = null
+  public onAreWeaponsDisabledChange: ((value: boolean) => void) | null = null
 
   private _areNametagsVisible = true
   private _areWeaponsDisabled = true
@@ -23,6 +24,7 @@ class PlayerData {
 
   public set areWeaponsDisabled(value: boolean) {
     this._areWeaponsDisabled = value
+    this.onAreWeaponsDisabledChange?.(value)
   }
 
   public get lastCommandTimestamp(): number {

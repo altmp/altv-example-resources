@@ -15,6 +15,8 @@ alt.setConfigFlag(ConfigFlag.DisableIdleCamera, true)
 alt.setStat(StatName.Stamina, 100)
 alt.setWatermarkPosition(WatermarkPosition.TopCenter)
 
+view.emit("setPlayerId", LOCAL_PLAYER.id)
+
 setInterval(() => {
   if (!playerData.areNametagsVisible) return
   view.emit("updatePlayersOnline", alt.Player.all.length)
@@ -22,6 +24,10 @@ setInterval(() => {
 
 playerData.onAreNametagsVisibleChange = (value) => {
   playerNametags.enable(value)
+}
+
+playerData.onAreWeaponsDisabledChange = (value) => {
+  view.emit("setWeaponsDisabled", value)
 }
 
 alt.everyTick(() => {

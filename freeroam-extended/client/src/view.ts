@@ -5,7 +5,9 @@ type EventNames =
   "openChat" |
   "closeChat" |
   "addString" |
-  "addMessage"
+  "addMessage" |
+  "setPlayerId" |
+  "setWeaponsDisabled"
 
 class View extends alt.WebView {
   public override emit(eventName: EventNames, ...args: unknown[]) {
