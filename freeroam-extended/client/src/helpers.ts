@@ -192,10 +192,8 @@ export async function tpToWaypoint(): Promise<void> {
     return
   }
 
-  const [x, y, z] = point
-
-  native.setFocusPosAndVel(x, y, z, 0, 0, 0)
-  const startPos = new alt.Vector3(x, y, 1500)
+  alt.FocusData.overrideFocus(point)
+  const startPos = new alt.Vector3(point.x, point.y, 1500)
   let destPos = startPos
   let groundPos: alt.Vector3 | null = null
 
@@ -222,7 +220,7 @@ export async function tpToWaypoint(): Promise<void> {
     let foundZ: number | null = null
     try {
       await alt.Utils.waitFor(() => {
-        const [found, z] = native.getGroundZAndNormalFor3dCoord(x, y, 9999)
+        const [found, z] = native.getGroundZAndNormalFor3dCoord(point.x, point.y, 9999)
         if (!found) return false
 
         foundZ = z
@@ -247,13 +245,11 @@ export async function tpToWaypoint(): Promise<void> {
   alt.FocusData.clearFocus()
 }
 
-function getWaypoint(sprite = 8): [number, number, number, number] | null {
+function getWaypoint(sprite = 8): alt.Vector3 | null {
   const waypoint = native.getFirstBlipInfoId(sprite)
 
-  if (native.doesBlipExist(waypoint)) {
-    const coords = native.getBlipInfoIdCoord(waypoint)
-    return [coords.x, coords.y, coords.z, waypoint]
-  }
+  if (native.doesBlipExist(waypoint))
+    return native.getBlipInfoIdCoord(waypoint)
 
   return null
 }
