@@ -203,8 +203,7 @@ export async function tpToWaypoint(): Promise<void> {
     await alt.Utils.waitFor(() => {
       destPos = destPos.sub(0, 0, 200.0)
 
-      native.clearFocus()
-      native.setFocusPosAndVel(...destPos.toArray(), 0, 0, 0)
+      alt.FocusData.overrideFocus(destPos)
 
       if (destPos.z < -500)
         throw new Error("failed to get ground pos")
@@ -245,7 +244,7 @@ export async function tpToWaypoint(): Promise<void> {
 
   alt.emitServer("tp_to_waypoint", ...groundPos.toArray())
 
-  native.clearFocus()
+  alt.FocusData.clearFocus()
 }
 
 function getWaypoint(sprite = 8): [number, number, number, number] | null {
