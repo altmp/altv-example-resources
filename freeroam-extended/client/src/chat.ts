@@ -44,17 +44,8 @@ view.on("chatloaded", () => {
 })
 
 view.on("chatmessage", (text: string) => {
-  // alt.emitServer("chat:message", text);
-
-  if (text.startsWith("/") && (Date.now() - playerData.lastCommandTimestamp) / 1000 > 10)
+  if (playerData.chatState)
     alt.emitServer("chat:message", text)
-
-  // Activate this if we want a cd on the messages
-  // else if (playerData.chatState && ((Date.now() - playerData.lastMessageTimestamp) / 1000 > 10)) {
-  else if (playerData.chatState) {
-    alt.emitServer("chat:message", text)
-    playerData.lastMessageTimestamp = Date.now()
-  }
 
   alt.toggleGameControls(true)
   view.unfocus()

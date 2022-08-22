@@ -19,13 +19,9 @@ alt.onServer("airport_state", setWeaponsUsage)
 
 alt.onServer("chat:message", pushMessage)
 
-alt.onServer("set_last_command", () => {
-  playerData.commandTimestamp = Date.now()
-})
-
 alt.onServer("noclip", toggleNoclip)
 
-alt.onServer("set_chat_state", state => {
+alt.onServer("set_chat_state", (state: boolean) => {
   playerData.chatState = state
 })
 
@@ -38,7 +34,7 @@ alt.onServer("draw_dmzone", (
   drawDMZone(centerX, centerY, radius, count)
 })
 
-alt.onServer("announce", (header, body, time) => {
+alt.onServer("announce", (header: string, body: string, time: number) => {
   mhint(header, body, time)
 })
 
