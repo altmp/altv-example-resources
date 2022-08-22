@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using AltV.Net;
-using AltV.Net.Async.CodeGen;
+﻿using AltV.Net;
+using AltV.Net.Async;
+using AltV.Net.Async.Elements.Entities;
 using AltV.Net.Elements.Entities;
 
 namespace Freeroam_Extended.Factories
 {
-    public partial interface IAltPlayer : IPlayer
+    public partial interface IAltPlayer : IPlayer, IAsyncConvertible<IAltPlayer>
     {
         public IList<AltVehicle> Vehicles { get; set; }
         public DateTime LastVehicleSpawn { get; set; } 
@@ -18,8 +17,7 @@ namespace Freeroam_Extended.Factories
         public int EventCount { get; set; }
     } 
     
-    [AsyncEntity(typeof(IAltPlayer))]
-    public partial class AltPlayer : Player, IAltPlayer
+    public partial class AltPlayer : AsyncPlayer, IAltPlayer
     {
         public IList<AltVehicle> Vehicles { get; set; }
         public DateTime LastVehicleSpawn { get; set; }
@@ -34,6 +32,8 @@ namespace Freeroam_Extended.Factories
         {
             Vehicles = new List<AltVehicle>();
         }
+        
+        public new IAltPlayer ToAsync(IAsyncContext _) => this;
     }
     
     public class AltPlayerFactory : IEntityFactory<IPlayer>

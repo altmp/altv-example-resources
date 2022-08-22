@@ -1,16 +1,19 @@
-﻿using System;
-using System.IO;
-using System.Text.Json;
-using System.Collections.Generic;
+﻿using System.Text.Json;
 using AltV.Net;
 using AltV.Net.Async;
 using AltV.Net.Elements.Entities;
 using Freeroam_Extended.Factories;
+using Timer = System.Timers.Timer;
 
 namespace Freeroam_Extended
 {
     public class Main : AsyncResource
     {
+        public Main() : base(true)
+        {
+            
+        }
+        
         public override void OnStart()
         {
             Alt.Core.LogColored("~g~ Freeroam-Extended Started!");
@@ -59,7 +62,7 @@ namespace Freeroam_Extended
                 if (stats != null) StatsHandler.StatsData = stats;
             }
             
-            var fileWriteTimer = new System.Timers.Timer();
+            var fileWriteTimer = new Timer();
             fileWriteTimer.Interval = 60000;
             fileWriteTimer.Enabled = true;
             fileWriteTimer.Elapsed += (sender, args) =>

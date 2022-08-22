@@ -1,19 +1,18 @@
-﻿using System;
-using AltV.Net;
+﻿using AltV.Net;
+using AltV.Net.Async;
+using AltV.Net.Async.Elements.Entities;
 using AltV.Net.Data;
 using AltV.Net.Elements.Entities;
-using AltV.Net.Async.CodeGen;
 
 namespace Freeroam_Extended.Factories
 {
-    public partial interface IAltVehicle : IVehicle
+    public partial interface IAltVehicle : IVehicle, IAsyncConvertible<IAltVehicle>
     {
         public IAltPlayer Owner { get; set; }
         public DateTime SpawnTime { get; set; }
     }
     
-    [AsyncEntity(typeof(IAltVehicle))]
-    public partial class AltVehicle : Vehicle, IAltVehicle
+    public partial class AltVehicle : AsyncVehicle, IAltVehicle
     {
         public IAltPlayer Owner { get; set; }
         public DateTime SpawnTime { get; set; }
@@ -27,6 +26,8 @@ namespace Freeroam_Extended.Factories
         {
             SpawnTime = DateTime.Now;
         }
+        
+        public new IAltVehicle ToAsync(IAsyncContext _) => this;
     }
     
     public class AltVehicleFactory : IEntityFactory<IVehicle>
