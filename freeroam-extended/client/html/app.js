@@ -176,8 +176,7 @@ function setPlayerId (id) {
 
 function setWeaponsDisabled (disabled) {
   const el = document.querySelector(".weapons-enabled").children[0];
-  const [, styleClass] = el.classList;
-  
+
   if (disabled) {
     el.classList.remove("weapons-enabled-on");
     el.classList.add("weapons-enabled-off");
@@ -190,6 +189,10 @@ function setWeaponsDisabled (disabled) {
   }
 }
 
+function focusChatInput () {
+  msgInputLine.focus();
+}
+
 alt.on("addString", (text) => addString(colorify(text)));
 alt.on("addMessage", (name, text) => addString("<b>" + name + ": </b>" + colorify(text)));
 alt.on("openChat", openChat);
@@ -197,3 +200,4 @@ alt.on("closeChat", closeChat);
 alt.on("updatePlayersOnline", updatePlayersOnline);
 alt.on("setPlayerId", setPlayerId);
 alt.on("setWeaponsDisabled", setWeaponsDisabled);
+alt.on("focusChatInput", focusChatInput);

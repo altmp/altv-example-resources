@@ -36,6 +36,12 @@ export function pushLine(text: string): void {
   pushMessage(null, text)
 }
 
+export function onGameFocusChange(state: boolean): void {
+  if (!state) return
+  if (!chatData.opened) return
+  view.emit("focusChatInput")
+}
+
 view.on("chatloaded", () => {
   for (const msg of buffer)
     addMessage(msg.name, msg.text)

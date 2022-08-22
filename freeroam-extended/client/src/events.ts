@@ -79,8 +79,5 @@ alt.on("keyup", (key) => {
       }
       break
     }
-
-    default:
-      break
   }
 })

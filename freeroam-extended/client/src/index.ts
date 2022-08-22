@@ -9,6 +9,7 @@ import { view } from "./view"
 import { playerNametags } from "./nametags"
 import { ConfigFlag, StatName, WatermarkPosition } from "altv-enums"
 import { ATTACK_CONTROLS } from "./const"
+import "./game-focus-change"
 
 alt.setConfigFlag(ConfigFlag.DisableAutoWeaponSwap, true)
 alt.setConfigFlag(ConfigFlag.DisableIdleCamera, true)
