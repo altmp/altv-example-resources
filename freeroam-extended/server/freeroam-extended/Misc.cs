@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using AltV.Net.Data;
+﻿using AltV.Net.Data;
 
 namespace Freeroam_Extended
 {
@@ -313,5 +311,7 @@ namespace Freeroam_Extended
 
         public static Position DMPos = new Position(-1216.839599609375f, -2832.514404296875f, 13.9296875f);
         public static int DMRadius = 800;
+
+        public static Position? AdminOverridedSpawnPos = null;
     }
 }
