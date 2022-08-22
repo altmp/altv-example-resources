@@ -1,11 +1,12 @@
 import * as native from "natives"
 import * as alt from "alt-client"
-import { drawDMZone, setWeaponsUsage, mhint, tpToWaypoint } from "./helpers"
-import { pushMessage, chatData, toggleChat } from "./chat"
+import { drawDMZone, setWeaponsUsage, mhint, tpToWaypoint, LOCAL_PLAYER } from "./helpers"
+import * as chat from "./chat"
 import { toggleNoclip } from "./noclip"
 import { KeyCode } from "./keycodes"
 import { playerData } from "./playerdata"
 import { view } from "./view"
+import { Permission, PermissionState } from "altv-enums"
 
 alt.on("connectionComplete", () => {
   setTimeout(() => {
@@ -17,7 +18,7 @@ alt.on("connectionComplete", () => {
 
 alt.onServer("airport_state", setWeaponsUsage)
 
-alt.onServer("chat:message", pushMessage)
+alt.onServer("chat:message", chat.pushMessage)
 
 alt.onServer("noclip", toggleNoclip)
 
@@ -39,14 +40,14 @@ alt.onServer("announce", (header: string, body: string, time: number) => {
 })
 
 alt.on("keyup", (key) => {
-  if (!chatData.loaded) return
+  if (!chat.chatData.loaded) return
 
   switch (key) {
     case KeyCode.F2: {
       playerData.areNametagsVisible = !playerData.areNametagsVisible
       native.displayRadar(playerData.areNametagsVisible)
       native.displayHud(playerData.areNametagsVisible)
-      toggleChat()
+      chat.toggleChat()
       break
     }
 
@@ -59,8 +60,8 @@ alt.on("keyup", (key) => {
         break
       }
 
-      if (!chatData.opened && alt.gameControlsEnabled()) {
-        chatData.opened = true
+      if (!chat.chatData.opened && alt.gameControlsEnabled()) {
+        chat.chatData.opened = true
         view.emit("openChat", false)
         view.focus()
         alt.toggleGameControls(false)
@@ -70,8 +71,8 @@ alt.on("keyup", (key) => {
     }
 
     case KeyCode.Escape: { // Escape
-      if (chatData.opened) {
-        chatData.opened = false
+      if (chat.chatData.opened) {
+        chat.chatData.opened = false
         view.emit("closeChat")
         view.unfocus()
         alt.toggleGameControls(true)
@@ -80,4 +81,21 @@ alt.on("keyup", (key) => {
       break
     }
   }
+})
+
+alt.onServer("get_pos", () => {
+  const state = alt.getPermissionState(Permission.ClipboardAccess)
+
+  if (state !== PermissionState.Allowed) {
+    alt.log("get_pos clipboard access is not allowed, state:", state)
+    return
+  }
+
+  alt.copyToClipboard(LOCAL_PLAYER.pos
+    .toArray()
+    .map(v => v.toFixed(2))
+    .join(" "),
+  )
+
+  chat.pushLine("{5eff64}Your position is copied to clipboard!")
 })
