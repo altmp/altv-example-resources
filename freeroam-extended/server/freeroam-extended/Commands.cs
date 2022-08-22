@@ -523,7 +523,7 @@ namespace Freeroam_Extended
         {
             var pos = player.Position;
             player.SendChatMessage($"{{00FF00}} Your position is {pos.X}, {pos.Y}, {pos.Z}!");
-            player.Emit("get-pos");
+            player.Emit("get_pos");
         }
 
         [Command("godmodeall")]
