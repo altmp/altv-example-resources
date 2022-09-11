@@ -217,6 +217,8 @@ export async function tpToWaypoint(): Promise<void> {
   if (!groundPos) {
     alt.logWarning("failed to get ground pos for waypoint, trying getGroundZ native...")
 
+    alt.FocusData.overrideFocus(point)
+
     let foundZ: number | null = null
     try {
       await alt.Utils.waitFor(() => {
@@ -224,7 +226,7 @@ export async function tpToWaypoint(): Promise<void> {
         if (!found) return false
 
         foundZ = z
-        return found
+        return true
       }, 3000)
     }
     catch {}
@@ -233,7 +235,11 @@ export async function tpToWaypoint(): Promise<void> {
       alt.logError("failed to get ground z for waypoint")
       groundPos = startPos
     }
+    else
+      groundPos = new alt.Vector3(point.x, point.y, foundZ)
   }
+
+  alt.FocusData.clearFocus()
 
   if (!groundPos)
     throw new Error("no groundPos")
@@ -241,8 +247,6 @@ export async function tpToWaypoint(): Promise<void> {
   groundPos = groundPos.add(0, 0, 2.0)
 
   alt.emitServer("tp_to_waypoint", ...groundPos.toArray())
-
-  alt.FocusData.clearFocus()
 }
 
 function getWaypoint(sprite = 8): alt.Vector3 | null {
