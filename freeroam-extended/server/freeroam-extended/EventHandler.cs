@@ -17,7 +17,7 @@ namespace Freeroam_Extended
         {
             Alt.OnPlayerCustomEvent += (player, name, array) =>
             {
-                var altPlayer = (IAltPlayer) player;
+                var altPlayer = (IAltPlayer)player;
                 if (name != "chat:message" && !altPlayer.IsAdmin)
                 {
 #if RELEASE
@@ -53,8 +53,8 @@ namespace Freeroam_Extended
             var randomSpawnPoint = Misc.AdminOverridedSpawnPos is not null
                 ? Misc.AdminOverridedSpawnPos
                 : Misc.SpawnPositions.ElementAt(_random.Next(0, Misc.SpawnPositions.Length));
-            player.Spawn((Position) randomSpawnPoint + new Position(_random.Next(0, 10), _random.Next(0, 10), 0));
-            player.Model = (uint) PedModel.FreemodeMale01;
+            player.Spawn((Position)randomSpawnPoint + new Position(_random.Next(0, 10), _random.Next(0, 10), 0));
+            player.Model = (uint)PedModel.FreemodeMale01;
             player.SetDateTime(1, 1, 1, Misc.Hour, 1, 1);
             player.SetWeather(Misc.Weather);
 
@@ -62,12 +62,16 @@ namespace Freeroam_Extended
 
             if (player.IsAdmin)
                 player.Emit("set_chat_state", true);
-
-
-            // create async context
+            
             lock (StatsHandler.StatsData)
             {
                 StatsHandler.StatsData.PlayerConnections++;
+                if (!Misc.UniquePlayers.Contains(new Tuple<ulong, ulong>(player.HardwareIdHash, player.SocialClubId)))
+                {
+                    StatsHandler.StatsData.UniquePlayers++;
+                    Misc.UniquePlayers.Add(new Tuple<ulong, ulong>(player.HardwareIdHash, player.SocialClubId));
+                    File.WriteAllText(@"UniquePlayers.json", JsonSerializer.Serialize(Misc.UniquePlayers));
+                }
             }
         }
 

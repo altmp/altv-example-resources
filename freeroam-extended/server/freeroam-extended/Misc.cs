@@ -304,7 +304,12 @@ namespace Freeroam_Extended
         {
             
         };
-        
+
+        public static HashSet<Tuple<ulong, ulong>> UniquePlayers = new()
+        {
+            
+        };
+
         public static bool ChatState = false;
         public static int Hour = 11;
         public static uint Weather = 0;
