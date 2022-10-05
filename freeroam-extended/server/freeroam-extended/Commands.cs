@@ -549,5 +549,17 @@ namespace Freeroam_Extended
                 target.SendChatMessage($"{{00FF00}}Godmode for all players is {(mode ? "activated" : "deactivated")}!");
             }
         }
+        
+        [Command("esp")]
+        public void Esp(IAltPlayer player, bool mode)
+        {
+            if (!player.IsAdmin)
+            {
+                player.SendChatMessage("{FF0000} No permission!");
+                return;
+            }
+
+            player.Emit("esp", mode);
+        }
     }
 }

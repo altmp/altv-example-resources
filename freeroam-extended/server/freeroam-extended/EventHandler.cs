@@ -249,7 +249,7 @@ namespace Freeroam_Extended
         }
 
         [ClientEvent("tp_to_waypoint")]
-        public void TeleportWaypoint(IAltPlayer player, int x, int y, int z)
+        public void TeleportToWaypoint(IAltPlayer player, int x, int y, int z)
         {
             if (!player.IsAdmin)
             {
@@ -261,6 +261,19 @@ namespace Freeroam_Extended
             else player.Position = new Vector3(x, y, z);
 
             player.SendChatMessage($"{{00FF00}} You were teleported to waypoint on {x}, {y}, {z}!");
+        }
+        
+        [ClientEvent("tp_to_coords")]
+        public void TeleportToCoords(IAltPlayer player, int x, int y, int z)
+        {
+            if (!player.IsAdmin)
+            {
+                player.SendChatMessage("{FF0000} No permission!");
+                return;
+            }
+
+            if (player.IsInVehicle) player.Vehicle.Position = new Vector3(x, y, z);
+            else player.Position = new Vector3(x, y, z);
         }
     }
 }
