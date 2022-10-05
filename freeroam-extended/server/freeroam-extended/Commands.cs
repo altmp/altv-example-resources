@@ -26,6 +26,12 @@ namespace Freeroam_Extended
                 player.SendChatMessage("{FF0000} Invalid vehicle model!");
                 return;
             }
+            
+            if (player.InteriorLocation != 0)
+            {
+                player.SendChatMessage("{FF0000} You can't spawn vehicles in interiors!");
+                return;
+            }
 
             if (Alt.GetAllVehicles().Any(veh => veh.Position.Distance(player.Position) < 3))
             {
