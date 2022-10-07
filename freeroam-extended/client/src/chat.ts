@@ -36,11 +36,14 @@ export function pushLine(text: string): void {
   pushMessage(null, text)
 }
 
-export function onGameFocusChange(state: boolean): void {
+alt.on("windowFocusChange", (state) => {
   if (!state) return
   if (!chatData.opened) return
-  view.emit("focusChatInput")
-}
+
+  alt.nextTick(() => {
+    view.emit("focusChatInput")
+  })
+})
 
 view.on("chatloaded", () => {
   for (const msg of buffer)
