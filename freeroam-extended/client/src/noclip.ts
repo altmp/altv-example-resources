@@ -5,6 +5,8 @@ import { DirectionVector } from "./helpers"
 let tick: number | null = null
 let noclipCam: number | null = null
 
+let oldPlayerPos: alt.Vector3 | null = null
+
 export function toggleNoclip(state: boolean): void {
   switch (state) {
     case false: {
@@ -15,9 +17,11 @@ export function toggleNoclip(state: boolean): void {
       noclipCam = null
       native.renderScriptCams(false, true, 500, true, false, 0)
 
-      const position = native.getEntityCoords(alt.Player.local.scriptID, true)
-      const [, ground] = native.getGroundZFor3dCoord(position.x, position.y, position.z, 0.0, false, false)
-      native.setEntityCoordsNoOffset(alt.Player.local.scriptID, position.x, position.y, ground, false, false, false)
+      const pos = alt.FocusData.focusOverridePos
+
+      const [, ground] = native.getGroundZFor3dCoord(...pos.toArray(), 0.0, false, false)
+
+      alt.emitServer("tp_to_coords", pos.x, pos.y, ground + 1.0)
 
       break
     }
@@ -51,14 +55,25 @@ function handleTick(noclipCam: number) {
   native.disableControlAction(0, 31, true)
   native.disableControlAction(0, 49, true)
 
-  const pos = native.getCamCoord(noclipCam)
+  const currentPlayerPos = alt.Player.local.pos
+  oldPlayerPos ??= currentPlayerPos
+  let pos: alt.Vector3
+
+  if (oldPlayerPos.distanceToSquared(currentPlayerPos) > 10.0) {
+    oldPlayerPos = currentPlayerPos
+    pos = currentPlayerPos
+    native.setCamCoord(noclipCam, ...pos.toArray())
+  }
+  else
+    pos = native.getCamCoord(noclipCam)
+
   const rot = native.getCamRot(noclipCam, 2)
 
   const dir = new DirectionVector(pos, rot)
   const fwd = dir.forward(3.5)
   const sens = getSensitivity()
 
-  native.setEntityCoords(alt.Player.local, fwd.x, fwd.y, fwd.z - 2.0, true, false, false, true)
+  alt.FocusData.overrideFocus(fwd)
 
   if (alt.gameControlsEnabled() === false)
     return
