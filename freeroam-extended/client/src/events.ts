@@ -99,3 +99,21 @@ alt.onServer("get_pos", () => {
 
   chat.pushLine("{5eff64}Your position is copied to clipboard!")
 })
+
+// TODO: use alt.Utils.EveryTick
+let espTick = 0
+alt.onServer("esp", (state: boolean) => {
+  chat.pushLine(`esp ${state}`)
+
+  if (espTick) alt.clearEveryTick(espTick)
+  espTick = 0
+
+  // if (!state) return
+
+  // TODO: add abstract 3d nametags for players and vehicles
+  // espTick = alt.everyTick(() => {
+  //   for (const veh of alt.Vehicle.streamedIn) {
+
+  //   }
+  // })
+})

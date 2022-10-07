@@ -8,7 +8,8 @@ type EventNames =
   "addMessage" |
   "setPlayerId" |
   "setWeaponsDisabled" |
-  "focusChatInput"
+  "focusChatInput" |
+  "setStreamedEntities"
 
 class View extends alt.WebView {
   public override emit(eventName: EventNames, ...args: unknown[]) {

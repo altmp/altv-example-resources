@@ -166,15 +166,15 @@ function addString(text) {
   highlightChat();
 }
 
-function updatePlayersOnline (number) {
+function updatePlayersOnline(number) {
   document.querySelector(".players-online-number").textContent = `${number}`;
 }
 
-function setPlayerId (id) {
+function setPlayerId(id) {
   document.querySelector(".player-id-number").textContent = `${id}`;
 }
 
-function setWeaponsDisabled (disabled) {
+function setWeaponsDisabled(disabled) {
   const el = document.querySelector(".weapons-enabled").children[0];
 
   if (disabled) {
@@ -189,8 +189,13 @@ function setWeaponsDisabled (disabled) {
   }
 }
 
-function focusChatInput () {
+function focusChatInput() {
   msgInputLine.focus();
+}
+
+function setStreamedEntities(players, vehicles) {
+  document.querySelector(".streamed-in-players").textContent = players
+  document.querySelector(".streamed-in-vehicles").textContent = vehicles
 }
 
 alt.on("addString", (text) => addString(colorify(text)));
@@ -201,3 +206,4 @@ alt.on("updatePlayersOnline", updatePlayersOnline);
 alt.on("setPlayerId", setPlayerId);
 alt.on("setWeaponsDisabled", setWeaponsDisabled);
 alt.on("focusChatInput", focusChatInput);
+alt.on("setStreamedEntities", setStreamedEntities)

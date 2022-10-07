@@ -41,3 +41,10 @@ alt.everyTick(() => {
   else
     native.setCanPedEquipAllWeapons(LOCAL_PLAYER, true)
 })
+
+alt.setInterval(() => {
+  const players = alt.Player.streamedIn.length + 1 // local player always in the stream
+  const vehicles = alt.Vehicle.streamedIn.length
+
+  view.emit("setStreamedEntities", players, vehicles)
+}, 500)

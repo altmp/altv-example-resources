@@ -34,7 +34,7 @@ body {
 
 .help-keys {
   position: absolute;
-  top: 7em;
+  top: 10em;
   right: 1.5em;
   text-align: right;
 }
@@ -280,4 +280,8 @@ body {
   --bg-color: rgb(235, 91, 86);
   background: var(--bg-color) !important;
   box-shadow: 0 0 0.5em var(--bg-color) !important;
+}
+
+.streamed-in > * {
+
 }
