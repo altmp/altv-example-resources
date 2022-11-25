@@ -59,6 +59,7 @@ alt.on("gameEntityDestroy", (entity) => {
     if (rmlElement === undefined) return;
     container.removeChild(rmlElement);
     rmlElement.destroy();
+    nameTags.delete(entity);
 
     if (tickHandle === undefined || nameTags.size > 0) return;
     alt.clearEveryTick(tickHandle);
