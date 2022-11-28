@@ -1,4 +1,5 @@
 import * as alt from "alt-server";
+import { CHAT_MESSAGE_EVENT } from "../shared";
 
 let cmdHandlers = {};
 let mutedPlayers = new Map();
@@ -14,7 +15,7 @@ function invokeCmd(player, cmd, args) {
   }
 }
 
-alt.onClient("chat:message", (player, msg) => {
+alt.onClient(CHAT_MESSAGE_EVENT, (player, msg) => {
   if (msg[0] === "/") {
     msg = msg.trim().slice(1);
 
@@ -37,17 +38,22 @@ alt.onClient("chat:message", (player, msg) => {
     if (msg.length > 0) {
       alt.log("[chat:msg] " + player.name + ": " + msg);
 
-      alt.emitClient(null, "chat:message", player.name, msg.replace(/</g, "&lt;").replace(/'/g, "&#39").replace(/"/g, "&#34"));
+      alt.emitAllClients(CHAT_MESSAGE_EVENT, player.name, msg.replace(/</g, "&lt;").replace(/'/g, "&#39").replace(/"/g, "&#34"));
     }
   }
 });
 
 export function send(player, msg) {
-  alt.emitClient(player, "chat:message", null, msg);
+  if (!player) {
+    alt.logError("[chat.send] player parameter should not be null, use chat.broadcast instead.");
+    return;
+  }
+
+  alt.emitClient(player, CHAT_MESSAGE_EVENT, null, msg);
 }
 
 export function broadcast(msg) {
-  send(null, msg);
+  alt.emitAllClients(CHAT_MESSAGE_EVENT, null, msg);
 }
 
 export function registerCmd(cmd, callback) {
@@ -64,7 +70,7 @@ export function mutePlayer(player, state) {
   mutedPlayers.set(player, state);
 }
 
-// Used in an onConnect function to add functions to the player entity for a seperate resource.
+// Used in an onConnect function to add functions to the player entity for a separate resource.
 export function setupPlayer(player) {
   player.sendMessage = (msg) => {
     send(player, msg);
@@ -83,5 +89,5 @@ alt.on("sendChatMessage", (player, msg) => {
 
 alt.on("broadcastMessage", (msg) => {
   alt.logWarning("Usage of chat events is deprecated use export functions instead");
-  send(null, msg);
+  broadcast(msg);
 });
