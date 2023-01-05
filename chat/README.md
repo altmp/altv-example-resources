@@ -2,7 +2,7 @@
 
 Simple chat system with user interface.
 
-### Instalation
+### Installation
 
 You can start by adding the chat resource in its own folder called 'chat'.
 
@@ -10,27 +10,36 @@ You can start by adding the chat resource in its own folder called 'chat'.
 altVServerFolder/
 └── resources/
     ├── chat/
-    |   ├── index.mjs
-    |   ├── client.mjs
-    |   ├── resource.cfg
+    |   ├── index.js
+    |   ├── client.js
+    |   ├── resource.toml
     |   └── html/
     └── your_resource/
-        ├── your_resource_main.mjs
-        ├── your_resource_client.mjs
-        └── your_resource.cfg
+        ├── your_resource_main.js
+        ├── your_resource_client.js
+        └── your_resource.toml
+        └── package.json
 ```
 
 **This is for YOUR resource that you want to implement the chat resource into.**
-resource.cfg
+resource.toml
 
-```
-type: js,
-main: your_resource_main.mjs
-client-main: your_resource_client.mjs
-client-files: [],
-deps: [
-    chat
+```toml
+type = 'js'
+main = 'your_resource_main.js'
+client-main = 'your_resource_client.js'
+client-files = []
+deps = [
+    'chat'
 ]
+```
+
+package.json
+
+```json
+{
+    "type": "module"
+}
 ```
 
 ### General Usage
