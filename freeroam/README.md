@@ -24,5 +24,5 @@ Simple Freeroam Gamemode for alt:V by [MrNeta](https://github.com/MrNeta)
 
 ## Dependencies
 
-- Chat Resource | [GitHub](https://github.com/altmp/chat)
+- Chat Resource | [GitHub](/chat)
 - Node-Module
