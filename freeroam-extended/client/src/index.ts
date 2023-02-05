@@ -32,14 +32,14 @@ playerData.onAreWeaponsDisabledChange = (value) => {
 
 alt.everyTick(() => {
   if (playerData.areWeaponsDisabled) {
-    native.setCanPedEquipAllWeapons(LOCAL_PLAYER, false)
+    native.setCanPedSelectAllWeapons(LOCAL_PLAYER, false)
     native.disablePlayerFiring(LOCAL_PLAYER, true)
 
     for (const control of ATTACK_CONTROLS)
       native.disableControlAction(0, control, true)
   }
   else
-    native.setCanPedEquipAllWeapons(LOCAL_PLAYER, true)
+    native.setCanPedSelectAllWeapons(LOCAL_PLAYER, true)
 })
 
 alt.setInterval(() => {

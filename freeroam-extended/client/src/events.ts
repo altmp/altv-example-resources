@@ -3,10 +3,9 @@ import * as alt from "alt-client"
 import { drawDMZone, setWeaponsUsage, mhint, tpToWaypoint, LOCAL_PLAYER } from "./helpers"
 import * as chat from "./chat"
 import { toggleNoclip } from "./noclip"
-import { KeyCode } from "./keycodes"
 import { playerData } from "./playerdata"
 import { view } from "./view"
-import { Permission, PermissionState } from "altv-enums"
+import { KeyCode, Permission, PermissionState } from "altv-enums"
 
 alt.on("connectionComplete", () => {
   setTimeout(() => {
