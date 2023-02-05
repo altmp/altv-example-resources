@@ -18,6 +18,7 @@ export function toggleNoclip(state: boolean): void {
       native.renderScriptCams(false, true, 500, true, false, 0)
 
       const pos = alt.FocusData.focusOverridePos
+      alt.FocusData.clearFocus()
 
       const [, ground] = native.getGroundZFor3dCoord(...pos.toArray(), 0.0, false, false)
 
