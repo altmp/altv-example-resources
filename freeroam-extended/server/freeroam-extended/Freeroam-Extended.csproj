@@ -9,13 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AltV.Net" Version="13.0.18" />
-    <PackageReference Include="AltV.Net.Async" Version="13.0.18" />
-    <PackageReference Include="AltV.Net.Async.CodeGen" Version="13.0.18">
+    <PackageReference Include="AltV.Net" Version="14.0.2" />
+    <PackageReference Include="AltV.Net.Async" Version="14.0.2" />
+    <PackageReference Include="AltV.Net.Async.CodeGen" Version="14.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="AltV.Net.Resources.Chat.Api" Version="13.0.18" />
+    <PackageReference Include="AltV.Net.Resources.Chat.Api" Version="14.0.2" />
   </ItemGroup>
 
 </Project>
