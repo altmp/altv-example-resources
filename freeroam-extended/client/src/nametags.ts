@@ -43,17 +43,13 @@ export class PlayerNametags {
   }
 
   private everyTickHandler(): void {
-    const renderCam = native.getRenderingCam()
-    const camCoord = (renderCam > -1)
-      ? native.getCamCoord(renderCam)
-      : native.getGameplayCamCoord()
+    const camCoord = alt.getCamPos()
 
     for (const player of alt.Player.streamedIn) {
       const dist = player.pos.distanceTo(camCoord)
       if (dist > this.drawRange) continue
 
-      const { x, y, z } = player.pos
-      if (!native.isSphereVisible(x, y, z, 0.1)) continue
+      if (!native.isEntityOnScreen(player)) continue
       if (!native.hasEntityClearLosToEntity(LOCAL_PLAYER, player, 17)) continue
 
       this.drawPlayerTick(player, dist)
@@ -76,7 +72,7 @@ export class PlayerNametags {
       pos.x + velocityVector.x * frameTime,
       pos.y + velocityVector.y * frameTime,
       pos.z + velocityVector.z * frameTime,
-      0,
+      false,
     )
 
     for (const handler of this.handlers) {

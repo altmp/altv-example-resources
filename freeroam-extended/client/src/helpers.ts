@@ -18,7 +18,7 @@ export function displayAdvancedNotification(
   native.beginTextCommandThefeedPost("STRING")
   native.addTextComponentSubstringPlayerName(message)
   if (backgroundColor != null)
-    native.thefeedSetNextPostBackgroundColor(backgroundColor)
+    native.thefeedSetBackgroundColorForNextPost(backgroundColor)
   if (notifImage != null)
     native.endTextCommandThefeedPostMessagetextTu(notifImage, notifImage, false, iconType, title, subtitle, durationMult)
   return native.endTextCommandThefeedPostTicker(false, true)
@@ -30,14 +30,14 @@ export function setWeaponsUsage(state: boolean): void {
   if (state) {
     playerData.areWeaponsDisabled = false
 
-    native.setCanPedEquipAllWeapons(LOCAL_PLAYER, true)
+    native.setCanPedSelectAllWeapons(LOCAL_PLAYER, true)
     displayAdvancedNotification("Have fun.", "Weapons Usage", "Activated", "CHAR_AMMUNATION", 1, 203, 1.5)
   }
   else {
     native.giveWeaponToPed(LOCAL_PLAYER, EMPTY_WEAPON_HASH, 0, false, true)
     playerData.areWeaponsDisabled = true
 
-    native.setCanPedEquipAllWeapons(LOCAL_PLAYER, false)
+    native.setCanPedSelectAllWeapons(LOCAL_PLAYER, false)
     displayAdvancedNotification(
       "You can only use weapons in the LS Airport zone.",
       "Weapons Usage",
