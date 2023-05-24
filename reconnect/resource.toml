@@ -1,0 +1,3 @@
+type = 'js'
+main = 'server/index.js'
+client-files = []
