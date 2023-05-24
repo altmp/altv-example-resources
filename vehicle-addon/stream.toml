@@ -1,0 +1,7 @@
+files = [
+	'stream/assets/*'
+]
+
+[meta]
+'stream/vehicles.meta' = 'VEHICLE_METADATA_FILE'
+'stream/handling.meta' = 'HANDLING_FILE'
