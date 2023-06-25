@@ -1,5 +1,5 @@
 import * as alt from "alt-server";
-import { CHAT_MESSAGE_EVENT } from "../shared";
+import { CHAT_MESSAGE_EVENT } from "../shared/index.js";
 
 let cmdHandlers = {};
 let mutedPlayers = new Map();
