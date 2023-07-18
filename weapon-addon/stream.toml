@@ -1,0 +1,6 @@
+files = [ 'stream/models/*' ]
+
+[meta]
+'stream/meta/weaponanimations.meta' = 'WEAPON_ANIMATIONS_FILE'
+'stream/meta/weaponarchetypes.meta' = 'WEAPON_METADATA_FILE'
+'stream/meta/weaponinfinityblade.meta' = 'WEAPONINFO_FILE'

@@ -1,0 +1,4 @@
+files = [ 'stream/assets/*' ]
+
+[meta]
+'stream/assets/tw_altv_logo.ytyp' = 'DLC_ITYP_REQUEST'

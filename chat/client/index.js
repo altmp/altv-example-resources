@@ -1,4 +1,5 @@
 import * as alt from "alt-client";
+import { CHAT_MESSAGE_EVENT } from "../shared/index.js";
 
 let buffer = [];
 
@@ -24,7 +25,7 @@ view.on("chatloaded", () => {
 });
 
 view.on("chatmessage", (text) => {
-  alt.emitServer("chat:message", text);
+  alt.emitServer(CHAT_MESSAGE_EVENT, text);
 
   opened = false;
   alt.toggleGameControls(true);
@@ -43,7 +44,7 @@ export function pushLine(text) {
   pushMessage(null, text);
 }
 
-alt.onServer("chat:message", pushMessage);
+alt.onServer(CHAT_MESSAGE_EVENT, pushMessage);
 
 alt.on("keyup", (key) => {
   if (loaded) {
