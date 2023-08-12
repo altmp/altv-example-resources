@@ -7,13 +7,13 @@ jobs:
     runs-on: ubuntu-20.04
     if: "contains(github.event.head_commit.message, 'Bump version')"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: montudor/action-zip@v1
         with:
           args: 'zip -r ./resources.zip . -i ./*/* -x ./.*/*'
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
-          node-version: 12.x
+          node-version: 18.x
       - run: npm i -D @altmp/upload-tool
       - run: |
           mkdir ./dist
