@@ -22,7 +22,7 @@ namespace Freeroam_Extended.Factories
             SpawnTime = DateTime.Now;
         }
         
-        public AltVehicle(ICore server, IntPtr nativePointer, ushort id) : base(server, nativePointer, id)
+        public AltVehicle(ICore server, IntPtr nativePointer, uint id) : base(server, nativePointer, id)
         {
             SpawnTime = DateTime.Now;
         }
@@ -32,7 +32,7 @@ namespace Freeroam_Extended.Factories
     
     public class AltVehicleFactory : IEntityFactory<IVehicle>
     {
-        public IVehicle Create(ICore server, IntPtr playerPointer, ushort id)
+        public IVehicle Create(ICore server, IntPtr playerPointer, uint id)
         {
             return new AltVehicle(server, playerPointer, id);
         }

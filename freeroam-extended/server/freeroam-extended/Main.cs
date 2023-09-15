@@ -18,7 +18,7 @@ namespace Freeroam_Extended
             Alt.Core.LogColored("~g~ Freeroam-Extended Started!");
             // colshape for weapon disabling everywhere but the airport
             Alt.CreateColShapeSphere(Misc.DMPos, Misc.DMRadius);
-
+            Voice.Init();
 
             if (!File.Exists(@"BannedPlayers.json"))
             {
@@ -30,14 +30,14 @@ namespace Freeroam_Extended
             {
                 string json = File.ReadAllText(@"BannedPlayers.json") ?? "";
 
-                var bannedPlayers = JsonSerializer.Deserialize<HashSet<Tuple<ulong, ulong>>>(json);
+                var bannedPlayers = JsonSerializer.Deserialize<HashSet<string>>(json);
 
-                Misc.BannedPlayers = bannedPlayers ?? new HashSet<Tuple<ulong, ulong>>();
+                Misc.BannedPlayers = bannedPlayers ?? new HashSet<string>();
             }
 
             if (!File.Exists(@"Operators.json"))
             {
-                var hashSet = new HashSet<Tuple<ulong, ulong>>();
+                var hashSet = new HashSet<string>();
                 var json = JsonSerializer.Serialize(hashSet);
                 File.WriteAllText(@"Operators.json", json);
             }
@@ -45,9 +45,9 @@ namespace Freeroam_Extended
             {
                 string json = File.ReadAllText(@"Operators.json") ?? "";
 
-                var operators = JsonSerializer.Deserialize<HashSet<Tuple<ulong, ulong>>>(json);
+                var operators = JsonSerializer.Deserialize<HashSet<string>>(json);
 
-                Misc.Operators = operators ?? new HashSet<Tuple<ulong, ulong>>();
+                Misc.Operators = operators ?? new HashSet<string>();
             }
 
             if (!File.Exists("Stats.json"))
@@ -65,7 +65,7 @@ namespace Freeroam_Extended
                 File.WriteAllText("UniquePlayers.json", JsonSerializer.Serialize(Misc.UniquePlayers));
             else
             {
-                var uniquePlayers = JsonSerializer.Deserialize<HashSet<Tuple<ulong, ulong>>>(File.ReadAllText("UniquePlayers.json"));
+                var uniquePlayers = JsonSerializer.Deserialize<HashSet<string>>(File.ReadAllText("UniquePlayers.json"));
                 if (uniquePlayers != null) Misc.UniquePlayers = uniquePlayers;
             }
 

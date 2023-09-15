@@ -1,4 +1,5 @@
-﻿using AltV.Net.Data;
+﻿using AltV.Net;
+using AltV.Net.Data;
 
 namespace Freeroam_Extended
 {
@@ -295,22 +296,22 @@ namespace Freeroam_Extended
             new (-675.2044f, -2378.4658f, 13.087158f), 
         };
 
-        public static HashSet<Tuple<ulong,ulong>> BannedPlayers = new()
+        public static HashSet<string> BannedPlayers = new()
         {
             
         };
         
-        public static HashSet<Tuple<ulong,ulong>> Operators = new()
+        public static HashSet<string> Operators = new()
         {
             
         };
 
-        public static HashSet<Tuple<ulong, ulong>> UniquePlayers = new()
+        public static HashSet<string> UniquePlayers = new()
         {
             
         };
 
-        public static bool ChatState = false;
+        public static bool ChatState = true;
         public static int Hour = 11;
         public static uint Weather = 0;
 
@@ -318,5 +319,11 @@ namespace Freeroam_Extended
         public static int DMRadius = 800;
 
         public static Position? AdminOverridedSpawnPos = null;
+
+        public static bool IsResourceLoaded(string resourceName)
+        {
+            var allResources = Alt.GetAllResources();
+            return allResources.Count(x => x.Name == resourceName) > 0;
+        }
     }
 }
