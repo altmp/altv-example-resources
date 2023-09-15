@@ -1,10 +1,23 @@
+@font-face {
+  font-family: "Inter";
+  src: url("./Inter-Medium.ttf");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-weight: bold;
+  src: url("./Inter-Bold.ttf");
+}
+
 * {
   margin: 0;
   padding: 0;
   cursor: default;
+  user-select: none;
   -webkit-font-smoothing: antialiased;
-  -webkit-user-select: none;
   -webkit-user-drag: none;
+  font-family: Inter, "Segoe UI", "Segoe UI Symbol", Arial, sans-serif;
+  text-shadow: 0px 0px 0.1em rgba(0, 0, 0, 0.6);
 }
 
 *:focus {
@@ -19,11 +32,16 @@ body {
   overflow: hidden;
 }
 
-/* .help-keys {
+.help-keys {
   position: absolute;
-  top: 1.5em;
+  top: 10em;
   right: 1.5em;
   text-align: right;
+}
+
+.help-keys-command {
+  color:rgb(123, 209, 255);
+  font-weight: bold;
 }
 
 .help-keys ol {
@@ -32,9 +50,9 @@ body {
 
 .help-keys li {
   color: #FFFFFF;
-  font-size: 16px;
+  font-size: .8em;
   margin-bottom: 0.25em;
-} */
+}
 
 .shblock {
   width: 70vw;
@@ -71,7 +89,6 @@ body {
   line-height: 25px;
   padding: 5px 0;
   margin: 0;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
   font-size: 1em;
   color: rgba(255, 255, 255, 0.9);
   width: 100%;
@@ -197,4 +214,74 @@ body {
     height: 15px;
     margin-top: 10px;
   }
+}
+
+.info {
+  font-size: .9em;
+  position: absolute;
+  top: 1.5em;
+  right: 1.5em;
+  text-align: right;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-weight: bold;
+}
+
+.info > div {
+  justify-self: right;
+  margin-bottom: 0.2em;
+  border-radius: 1.5em;
+  padding: 0.2em 0.5em;
+  width: fit-content;
+  flex-grow: 20%;
+}
+
+.info > div > .info-number {
+  background:rgb(255, 255, 255);
+  box-shadow: 0 0 0.5em rgba(255, 255, 255, 0.69);
+  border-radius: 0.5em;
+  color: black;
+  display: inline;
+  padding: 0.2em 0.5em;
+  text-shadow: none;
+}
+
+.players-online-number {
+  /* background: rgb(0,0, 0, 0.3);
+  padding: 0.1em;
+  border-radius: 0.5em; */
+  display: inline;
+}
+
+.stress-test-label {
+  top: .2em;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  width: 100%;
+  font-size: .8em;
+  position: absolute;
+  color: rgba(255, 255, 255, 0.628);
+}
+
+.weapons-enabled > * {
+  color: rgb(255, 255, 255) !important;
+}
+
+.weapons-enabled-on {
+  --bg-color: rgb(98, 218, 114);
+  background: var(--bg-color) !important;
+  box-shadow: 0 0 0.5em var(--bg-color) !important;
+}
+
+.weapons-enabled-off {
+  --bg-color: rgb(235, 91, 86);
+  background: var(--bg-color) !important;
+  box-shadow: 0 0 0.5em var(--bg-color) !important;
+}
+
+.streamed-in > * {
+
 }

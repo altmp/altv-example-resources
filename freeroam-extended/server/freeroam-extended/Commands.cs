@@ -1,31 +1,37 @@
-﻿using System;
-using System.Linq;
-using System.Numerics;
+﻿using System.Numerics;
+using System.Text.Json;
 using AltV.Net;
+using AltV.Net.Async;
 using AltV.Net.Data;
-using AltV.Net.Elements.Entities;
 using AltV.Net.Enums;
 using AltV.Net.Resources.Chat.Api;
+using Freeroam_Extended.Clothes;
 using Freeroam_Extended.Factories;
 
 namespace Freeroam_Extended
 {
     public class Commands : IScript
     {
-        private readonly Random _random = new Random();
+        private readonly Random _random = new();
 
         [Command("veh")]
         public void SpawnVeh(IAltPlayer player, string vehicleName)
         {
-            if (Misc.BlacklistedVehicle.Contains(Alt.Hash(vehicleName)))
+            if (Misc.BlacklistedVehicle.Contains(Alt.Hash(vehicleName)) && !player.IsAdmin)
             {
                 player.SendChatMessage("{FF0000} Vehicle is blacklisted.");
                 return;
             }
-            
+
             if (!Enum.IsDefined(typeof(VehicleModel), Alt.Hash(vehicleName)))
             {
                 player.SendChatMessage("{FF0000} Invalid vehicle model!");
+                return;
+            }
+            
+            if (player.InteriorLocation != 0)
+            {
+                player.SendChatMessage("{FF0000} You can't spawn vehicles in interiors!");
                 return;
             }
 
@@ -45,14 +51,14 @@ namespace Freeroam_Extended
             {
                 var target = player.Vehicles.OrderBy(veh => veh.SpawnTime).First();
                 player.Vehicles.Remove(target);
-                target.Remove();
+                target.Destroy();
                 player.SendChatMessage("{FF0000} You can't have more than 3 vehicles. We removed your oldest one!");
             }
-            
+
             if (player.IsInVehicle)
             {
                 player.SendChatMessage("{FF0000} You are already in a vehicle we replaced it for you!");
-                player.Vehicle.Remove();
+                player.Vehicle.Destroy();
                 return;
             }
 
@@ -60,14 +66,13 @@ namespace Freeroam_Extended
             {
                 StatsHandler.StatsData.VehiclesSpawned++;
             }
-            
-            var spawnedVeh = (AltVehicle)Alt.CreateVehicle(Alt.Hash(vehicleName),
-                player.Position + new Position(1, 0, 0), new Rotation(0,0, player.Rotation.Yaw));
+
+            var spawnedVeh = (AltVehicle) Alt.CreateVehicle(Alt.Hash(vehicleName),
+                player.Position + new Position(1, 0, 0), new Rotation(0, 0, player.Rotation.Yaw));
             player.SetIntoVehicle(spawnedVeh, 1);
             player.LastVehicleSpawn = DateTime.Now;
             player.Vehicles.Add(spawnedVeh);
             spawnedVeh.Owner = player;
-            player.Emit("set_last_command");
         }
 
         // [Command("spectate")]
@@ -98,16 +103,39 @@ namespace Freeroam_Extended
             {
                 player.GiveWeapon(weapon, 1000, false);
             }
-
-            player.Emit("set_last_command");
         }
 
-        // [Command("model")]
-        // public void ChangeModel(IAltPlayer player, string modelName)
-        // {
-        //     player.Model = Alt.Hash(modelName);
-        //     player.Emit("set_last_command");
-        // }
+        [Command("model")]
+        public void ChangeModel(IAltPlayer player)
+        {
+            if (player.Model == Alt.Hash("mp_m_freemode_01"))
+            {
+                player.Model = Alt.Hash("mp_f_freemode_01");
+            }
+            else
+            {
+                player.Model = Alt.Hash("mp_m_freemode_01");
+            }
+
+            player.RefreshFace();
+
+            player.RefreshClothes();
+            player.SendChatMessage(
+                    $"{{00FF00}}Your model changed");
+        }
+
+        [Command("outfit")]
+        public void Outfit(IAltPlayer player, string outfitUniqueName = "")
+        {
+            if (string.IsNullOrEmpty(outfitUniqueName))
+            {
+                player.RefreshClothes();
+                return;
+            }
+            player.EquipOutfit(Alt.Hash(outfitUniqueName));
+            player.SendChatMessage(
+                    $"{{00FF00}}Your outfit updated");
+        }
 
         [Command("tp")]
         public void Teleport(IAltPlayer player, int id = 0)
@@ -121,13 +149,6 @@ namespace Freeroam_Extended
 
             var spawnpoint = Misc.SpawnPositions[id - 1];
             player.Position = spawnpoint + new Position(_random.Next(0, 10), _random.Next(0, 10), 0);
-            player.Emit("set_last_command");
-        }
-
-        [Command("pos")]
-        public void Position(IAltPlayer player)
-        {
-            Alt.Log($"new Position({player.Position.X}, {player.Position.Y}, {player.Position.Z}),");
         }
 
         [Command("ban")]
@@ -139,21 +160,29 @@ namespace Freeroam_Extended
                 return;
             }
 
-            var target = Alt.GetAllPlayers().FirstOrDefault(p => p.Id == id);
+            if (player.Id == id)
+            {
+                player.SendChatMessage("{FF0000} You can't ban yourself!");
+                return;
+            }
+
+            var target = (IAltPlayer)Alt.GetAllPlayers().FirstOrDefault(p => p.Id == id);
             if (target == null)
             {
                 player.SendChatMessage($"{{FF0000}}Player with id {id} not found!");
                 return;
             }
-            
+
             target.Kick("You've been banned from this server!");
-            Misc.BannedPlayers.Add(new Tuple<ulong,ulong>(target.HardwareIdHash, target.HardwareIdExHash));
+            Misc.BannedPlayers.Add(target.CloudID);
+            string json = JsonSerializer.Serialize(Misc.BannedPlayers);
+            File.WriteAllText(@"BannedPlayers.json", json);
+
             player.SendChatMessage($"{{00FF00}}Player with id {id} banned!");
-            player.Emit("set_last_command");
         }
 
         [Command("unban")]
-        public void Unban(IAltPlayer player, ulong hwid)
+        public void Unban(IAltPlayer player, string rsid)
         {
             if (!player.IsAdmin)
             {
@@ -161,37 +190,34 @@ namespace Freeroam_Extended
                 return;
             }
 
-            var target = Misc.BannedPlayers.FirstOrDefault(tuple => tuple.Item1 == hwid);
+            var target = Misc.BannedPlayers.FirstOrDefault(id => id == rsid);
             if (target == null)
             {
-                player.SendChatMessage($"{{FF0000}}Player with hwid {hwid} not found!");
+                player.SendChatMessage($"{{FF0000}}Player with rsid {rsid} not found!");
                 return;
             }
-            
-            if (Misc.BannedPlayers.All(tuple => tuple.Item1 != hwid))
+
+            if (Misc.BannedPlayers.All(id => id != rsid))
             {
-                player.SendChatMessage($"{{FF0000}}Player with hwid {hwid} not banned!");
+                player.SendChatMessage($"{{FF0000}}Player with hwid {rsid} not banned!");
                 return;
             }
-            
+
             // remove banned player from list
-            Misc.BannedPlayers.Remove(new Tuple<ulong,ulong>(player.HardwareIdHash, player.HardwareIdExHash));
-            player.SendChatMessage($"{{00FF00}}Player with hwid {hwid} unbanned!");
-            player.Emit("set_last_command");
+            Misc.BannedPlayers.Remove(rsid);
+            player.SendChatMessage($"{{00FF00}}Player with hwid {rsid} unbanned!");
         }
 
         [Command("addcomponent")]
         public void WeaponComponent(IAltPlayer player, string name)
         {
             player.AddWeaponComponent(player.CurrentWeapon, Alt.Hash(name));
-            player.Emit("set_last_command");
         }
 
         [Command("removecomponent")]
         public void RemoveWeaponComponent(IAltPlayer player, string name)
         {
             player.RemoveWeaponComponent(player.CurrentWeapon, Alt.Hash(name));
-            player.Emit("set_last_command");
         }
 
         [Command("tune")]
@@ -204,17 +230,18 @@ namespace Freeroam_Extended
             }
 
             player.Vehicle.ModKit = 1;
-            player.Vehicle.SetMod((byte)index, (byte)value);
-            player.Emit("set_last_command");
+            player.Vehicle.SetMod((byte) index, (byte) value);
         }
 
         [Command("dm")]
         public void Dm(IAltPlayer player)
         {
-            player.SendChatMessage(player.DmMode ? "{00FF00} Respawning in Death Match Zone disabled!" : "{00FF00}Respawning in Death Match Zone enabled!");
+            player.SendChatMessage(player.DmMode
+                ? "{00FF00} Respawning in Death Match Zone disabled!"
+                : "{00FF00}Respawning in Death Match Zone enabled!");
             player.DmMode = !player.DmMode;
 
-            if(player.DmMode)
+            if (player.DmMode)
             {
                 var weapons = Misc.WhitelistedWeapons;
                 foreach (var weapon in weapons)
@@ -222,18 +249,17 @@ namespace Freeroam_Extended
                     player.GiveWeapon(weapon, 1000, false);
                 }
 
-                var randomSpawnPoint = Misc.AirportSpawnPositions.ElementAt(_random.Next(0, Misc.AirportSpawnPositions.Length));
+                var randomSpawnPoint =
+                    Misc.AirportSpawnPositions.ElementAt(_random.Next(0, Misc.AirportSpawnPositions.Length));
                 player.Spawn(randomSpawnPoint + new Position(_random.Next(0, 10), _random.Next(0, 10), 0));
             }
-
-            player.Emit("set_last_command");
         }
 
         [Command("togglechat")]
         public void ToggleChat(IAltPlayer player, bool state)
         {
             // check if player is operator
-            if (!player.IsAdmin && !Misc.ChatState)
+            if (!player.IsAdmin)
             {
                 player.SendChatMessage("{FF0000} No permission!");
                 return;
@@ -259,7 +285,6 @@ namespace Freeroam_Extended
             }
 
             player.Dimension = dimension;
-            player.Emit("set_last_command");
         }
 
         [Command("clearvehicles")]
@@ -268,9 +293,8 @@ namespace Freeroam_Extended
             // get all vehicles owned by player
             foreach (var veh in player.Vehicles)
             {
-                veh.Remove();
+                veh.Destroy();
             }
-            player.Emit("set_last_command");
         }
 
         [Command("tpallhere")]
@@ -288,7 +312,6 @@ namespace Freeroam_Extended
                 target.Position = player.Position;
                 target.SendChatMessage("{00FF00} You were teleported to " + player.Name + "!");
             }
-            player.Emit("set_last_command");
         }
 
         [Command("tphere")]
@@ -306,9 +329,9 @@ namespace Freeroam_Extended
                 player.SendChatMessage("{FF0000} Player not found!");
                 return;
             }
+
             targetPlayer.Position = player.Position;
             targetPlayer.SendChatMessage("{00FF00} You were teleported to " + player.Name + "!");
-            player.Emit("set_last_command");
         }
 
         [Command("tpto")]
@@ -326,9 +349,9 @@ namespace Freeroam_Extended
                 player.SendChatMessage("{FF0000} Player not found!");
                 return;
             }
+
             player.Position = targetPlayer.Position;
             player.SendChatMessage("{00FF00} You were teleported to " + targetPlayer.Name + "!");
-            player.Emit("set_last_command");
         }
 
         [Command("clearallvehicles")]
@@ -344,8 +367,9 @@ namespace Freeroam_Extended
             {
                 foreach (var veh in Alt.GetAllVehicles())
                 {
-                    veh.Remove();
+                    veh.Destroy();
                 }
+
                 return;
             }
 
@@ -353,9 +377,8 @@ namespace Freeroam_Extended
             foreach (var veh in Alt.GetAllVehicles())
             {
                 // compare squared distance between player and vehicle
-                if (Vector3.DistanceSquared(veh.Position, player.Position) <= distSqr) veh.Remove();
+                if (Vector3.DistanceSquared(veh.Position, player.Position) <= distSqr) veh.Destroy();
             }
-            player.Emit("set_last_command");
         }
 
         [Command("settime")]
@@ -366,6 +389,7 @@ namespace Freeroam_Extended
                 player.SendChatMessage("{FF0000} No permission!");
                 return;
             }
+
             if (hour > 23 || hour < 0)
             {
                 player.SendChatMessage("{FF0000} Invalid hour!");
@@ -376,7 +400,6 @@ namespace Freeroam_Extended
             {
                 p.SetDateTime(0, 0, 0, hour, 0, 0);
             }
-            player.Emit("set_last_command");
         }
 
         [Command("setweather")]
@@ -387,19 +410,21 @@ namespace Freeroam_Extended
                 player.SendChatMessage("{FF0000} No permission!");
                 return;
             }
+
             if (weather > 14)
             {
                 player.SendChatMessage("{FF0000} Invalid weather!");
                 return;
             }
+
             foreach (var p in Alt.GetAllPlayers())
             {
                 p.SetWeather(weather);
             }
+
             Misc.Weather = weather;
-            player.Emit("set_last_command");
         }
-        
+
         [Command("noclip")]
         public void NoClip(IAltPlayer player)
         {
@@ -413,21 +438,178 @@ namespace Freeroam_Extended
             player.Streamed = !player.NoClip;
             player.Visible = !player.NoClip;
             player.SendChatMessage($"{{00FF00}}NoClip is now {(player.NoClip ? "enabled" : "disabled")}!");
-            player.Emit("set_last_command");
+
             player.Emit("noclip", player.NoClip);
         }
 
         [Command("revive")]
         public void Respawn(IAltPlayer player)
         {
-            player.Spawn(player.Position);
+            if (Misc.AdminOverridedSpawnPos is not null) player.Spawn((Position) Misc.AdminOverridedSpawnPos);
+            else player.Spawn(player.Position);
+            player.ClearBloodDamage();
         }
 
         [Command("announce")]
         public void Announce(IAltPlayer player, string header, int time, params string[] body)
         {
+            if (!player.IsAdmin)
+            {
+                player.SendChatMessage("{FF0000} No permission!");
+                return;
+            }
+
             var message = string.Join(" ", body);
             Alt.EmitAllClients("announce", header, message, time);
+        }
+
+        [Command("tpcoords")]
+        public void TpCoords(IAltPlayer player, int x, int y, int z)
+        {
+            if (!player.IsAdmin)
+            {
+                player.SendChatMessage("{FF0000} No permission!");
+                return;
+            }
+
+            player.Position = new Vector3(x, y, z);
+            player.SendChatMessage($"{{00FF00}} You were teleported to {x}, {y}, {z}!");
+        }
+
+        [Command("kick")]
+        public void Kick(IAltPlayer player, int id)
+        {
+            if (!player.IsAdmin)
+            {
+                player.SendChatMessage("{FF0000} No permission!");
+                return;
+            }
+
+            if (player.Id == id)
+            {
+                player.SendChatMessage("{FF0000} You can't kick yourself!");
+                return;
+            }
+
+            var target = Alt.GetAllPlayers().FirstOrDefault(p => p.Id == id);
+            if (target == null)
+            {
+                player.SendChatMessage($"{{FF0000}}Player with id {id} not found!");
+                return;
+            }
+
+            target.Kick("You've been kicked from this server!");
+
+            player.SendChatMessage($"{{00FF00}}Player with id {id} kicked!");
+        }
+
+        [Command("godmode")]
+        public void Godmode(IAltPlayer player, int id)
+        {
+            if (!player.IsAdmin)
+            {
+                player.SendChatMessage("{FF0000} No permission!");
+                return;
+            }
+
+            var target = Alt.GetAllPlayers().FirstOrDefault(p => p.Id == id);
+            if (target == null)
+            {
+                player.SendChatMessage($"{{FF0000}}Player with id {id} not found!");
+                return;
+            }
+
+            target.Invincible = !target.Invincible;
+            target.SendChatMessage(
+                $"{(target.Invincible ? "{00FF00}" : "{FF0000}")}Godmode {(target.Invincible ? "on" : "off")}!");
+
+            if (player.Id != target.Id)
+                player.SendChatMessage($"{{00FF00}}Godmode {(target.Invincible ? "on" : "off")}!");
+        }
+
+        [Command("overridespawnpos")]
+        public void OverrideSpawnPos(IAltPlayer player, bool mode)
+        {
+            if (!player.IsAdmin)
+            {
+                player.SendChatMessage("{FF0000} No permission!");
+                return;
+            }
+
+            if (mode)
+            {
+                var pos = player.Position;
+                Misc.AdminOverridedSpawnPos = pos;
+
+                player.SendChatMessage(
+                    $"{{00FF00}} You're overrided spawn position for all player on {pos.X}, {pos.Y}, {pos.Z}!");
+            }
+            else
+            {
+                Misc.AdminOverridedSpawnPos = null;
+                player.SendChatMessage($"{{00FF00}} You're no longer overrided spawn position!");
+            }
+        }
+
+        [Command("getpos")]
+        public void GetPosition(IAltPlayer player)
+        {
+            var pos = player.Position;
+            player.SendChatMessage($"{{00FF00}} Your position is {pos.X}, {pos.Y}, {pos.Z}!");
+            player.Emit("get_pos");
+        }
+
+        [Command("godmodeall")]
+        public void GodmodeAllPlayers(IAltPlayer player, bool mode)
+        {
+            if (!player.IsAdmin)
+            {
+                player.SendChatMessage("{FF0000} No permission!");
+                return;
+            }
+
+            var targets = Alt.GetAllPlayers().ToList();
+
+            foreach (var target in targets)
+            {
+                target.Invincible = mode;
+                target.SendChatMessage($"{{00FF00}}Godmode for all players is {(mode ? "activated" : "deactivated")}!");
+            }
+        }
+        
+        [Command("esp")]
+        public void Esp(IAltPlayer player, bool mode)
+        {
+            if (!player.IsAdmin)
+            {
+                player.SendChatMessage("{FF0000} No permission!");
+                return;
+            }
+
+            player.Emit("esp", mode);
+        }
+
+        [Command("globalvoice")]
+        public void GlobalVoice(IAltPlayer player)
+        {
+            if (!player.IsAdmin)
+            {
+                player.SendChatMessage("{FF0000} No permission!");
+                return;
+            }
+
+            if (Voice.IsGlobalVoiceEnabled(player))
+            {
+                Voice.EnableGlobalVoice(player);
+                player.SendChatMessage("{00FF00} Global voice enabled!");
+                return;
+            }
+            else
+            {
+                Voice.DisableGlobalVoice(player);
+                player.SendChatMessage("{00FFFF} Global voice disabled!");
+                return;
+            }
         }
     }
 }

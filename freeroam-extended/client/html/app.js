@@ -166,7 +166,44 @@ function addString(text) {
   highlightChat();
 }
 
+function updatePlayersOnline(number) {
+  document.querySelector(".players-online-number").textContent = `${number}`;
+}
+
+function setPlayerId(id) {
+  document.querySelector(".player-id-number").textContent = `${id}`;
+}
+
+function setWeaponsDisabled(disabled) {
+  const el = document.querySelector(".weapons-enabled").children[0];
+
+  if (disabled) {
+    el.classList.remove("weapons-enabled-on");
+    el.classList.add("weapons-enabled-off");
+    el.textContent = "OFF";
+  }
+  else {
+    el.classList.remove("weapons-enabled-off");
+    el.classList.add("weapons-enabled-on");
+    el.textContent = "ON";
+  }
+}
+
+function focusChatInput() {
+  msgInputLine.focus();
+}
+
+function setStreamedEntities(players, vehicles) {
+  document.querySelector(".streamed-in-players").textContent = players
+  document.querySelector(".streamed-in-vehicles").textContent = vehicles
+}
+
 alt.on("addString", (text) => addString(colorify(text)));
 alt.on("addMessage", (name, text) => addString("<b>" + name + ": </b>" + colorify(text)));
 alt.on("openChat", openChat);
 alt.on("closeChat", closeChat);
+alt.on("updatePlayersOnline", updatePlayersOnline);
+alt.on("setPlayerId", setPlayerId);
+alt.on("setWeaponsDisabled", setWeaponsDisabled);
+alt.on("focusChatInput", focusChatInput);
+alt.on("setStreamedEntities", setStreamedEntities)
