@@ -1,9 +1,11 @@
 ﻿using System.Numerics;
 using System.Text.Json;
 using AltV.Net;
+using AltV.Net.Async;
 using AltV.Net.Data;
 using AltV.Net.Enums;
 using AltV.Net.Resources.Chat.Api;
+using Freeroam_Extended.Clothes;
 using Freeroam_Extended.Factories;
 
 namespace Freeroam_Extended
@@ -49,14 +51,14 @@ namespace Freeroam_Extended
             {
                 var target = player.Vehicles.OrderBy(veh => veh.SpawnTime).First();
                 player.Vehicles.Remove(target);
-                target.Remove();
+                target.Destroy();
                 player.SendChatMessage("{FF0000} You can't have more than 3 vehicles. We removed your oldest one!");
             }
 
             if (player.IsInVehicle)
             {
                 player.SendChatMessage("{FF0000} You are already in a vehicle we replaced it for you!");
-                player.Vehicle.Remove();
+                player.Vehicle.Destroy();
                 return;
             }
 
@@ -103,12 +105,37 @@ namespace Freeroam_Extended
             }
         }
 
-        // [Command("model")]
-        // public void ChangeModel(IAltPlayer player, string modelName)
-        // {
-        //     player.Model = Alt.Hash(modelName);
-        //     
-        // }
+        [Command("model")]
+        public void ChangeModel(IAltPlayer player)
+        {
+            if (player.Model == Alt.Hash("mp_m_freemode_01"))
+            {
+                player.Model = Alt.Hash("mp_f_freemode_01");
+            }
+            else
+            {
+                player.Model = Alt.Hash("mp_m_freemode_01");
+            }
+
+            player.RefreshFace();
+
+            player.RefreshClothes();
+            player.SendChatMessage(
+                    $"{{00FF00}}Your model changed");
+        }
+
+        [Command("outfit")]
+        public void Outfit(IAltPlayer player, string outfitUniqueName = "")
+        {
+            if (string.IsNullOrEmpty(outfitUniqueName))
+            {
+                player.RefreshClothes();
+                return;
+            }
+            player.EquipOutfit(Alt.Hash(outfitUniqueName));
+            player.SendChatMessage(
+                    $"{{00FF00}}Your outfit updated");
+        }
 
         [Command("tp")]
         public void Teleport(IAltPlayer player, int id = 0)
@@ -139,7 +166,7 @@ namespace Freeroam_Extended
                 return;
             }
 
-            var target = Alt.GetAllPlayers().FirstOrDefault(p => p.Id == id);
+            var target = (IAltPlayer)Alt.GetAllPlayers().FirstOrDefault(p => p.Id == id);
             if (target == null)
             {
                 player.SendChatMessage($"{{FF0000}}Player with id {id} not found!");
@@ -147,7 +174,7 @@ namespace Freeroam_Extended
             }
 
             target.Kick("You've been banned from this server!");
-            Misc.BannedPlayers.Add(new Tuple<ulong, ulong>(target.HardwareIdHash, target.HardwareIdExHash));
+            Misc.BannedPlayers.Add(target.CloudID);
             string json = JsonSerializer.Serialize(Misc.BannedPlayers);
             File.WriteAllText(@"BannedPlayers.json", json);
 
@@ -155,7 +182,7 @@ namespace Freeroam_Extended
         }
 
         [Command("unban")]
-        public void Unban(IAltPlayer player, ulong hwid)
+        public void Unban(IAltPlayer player, string rsid)
         {
             if (!player.IsAdmin)
             {
@@ -163,22 +190,22 @@ namespace Freeroam_Extended
                 return;
             }
 
-            var target = Misc.BannedPlayers.FirstOrDefault(tuple => tuple.Item1 == hwid);
+            var target = Misc.BannedPlayers.FirstOrDefault(id => id == rsid);
             if (target == null)
             {
-                player.SendChatMessage($"{{FF0000}}Player with hwid {hwid} not found!");
+                player.SendChatMessage($"{{FF0000}}Player with rsid {rsid} not found!");
                 return;
             }
 
-            if (Misc.BannedPlayers.All(tuple => tuple.Item1 != hwid))
+            if (Misc.BannedPlayers.All(id => id != rsid))
             {
-                player.SendChatMessage($"{{FF0000}}Player with hwid {hwid} not banned!");
+                player.SendChatMessage($"{{FF0000}}Player with hwid {rsid} not banned!");
                 return;
             }
 
             // remove banned player from list
-            Misc.BannedPlayers.Remove(new Tuple<ulong, ulong>(player.HardwareIdHash, player.HardwareIdExHash));
-            player.SendChatMessage($"{{00FF00}}Player with hwid {hwid} unbanned!");
+            Misc.BannedPlayers.Remove(rsid);
+            player.SendChatMessage($"{{00FF00}}Player with hwid {rsid} unbanned!");
         }
 
         [Command("addcomponent")]
@@ -232,7 +259,7 @@ namespace Freeroam_Extended
         public void ToggleChat(IAltPlayer player, bool state)
         {
             // check if player is operator
-            if (!player.IsAdmin && !Misc.ChatState)
+            if (!player.IsAdmin)
             {
                 player.SendChatMessage("{FF0000} No permission!");
                 return;
@@ -266,7 +293,7 @@ namespace Freeroam_Extended
             // get all vehicles owned by player
             foreach (var veh in player.Vehicles)
             {
-                veh.Remove();
+                veh.Destroy();
             }
         }
 
@@ -340,7 +367,7 @@ namespace Freeroam_Extended
             {
                 foreach (var veh in Alt.GetAllVehicles())
                 {
-                    veh.Remove();
+                    veh.Destroy();
                 }
 
                 return;
@@ -350,7 +377,7 @@ namespace Freeroam_Extended
             foreach (var veh in Alt.GetAllVehicles())
             {
                 // compare squared distance between player and vehicle
-                if (Vector3.DistanceSquared(veh.Position, player.Position) <= distSqr) veh.Remove();
+                if (Vector3.DistanceSquared(veh.Position, player.Position) <= distSqr) veh.Destroy();
             }
         }
 
@@ -560,6 +587,29 @@ namespace Freeroam_Extended
             }
 
             player.Emit("esp", mode);
+        }
+
+        [Command("globalvoice")]
+        public void GlobalVoice(IAltPlayer player)
+        {
+            if (!player.IsAdmin)
+            {
+                player.SendChatMessage("{FF0000} No permission!");
+                return;
+            }
+
+            if (Voice.IsGlobalVoiceEnabled(player))
+            {
+                Voice.EnableGlobalVoice(player);
+                player.SendChatMessage("{00FF00} Global voice enabled!");
+                return;
+            }
+            else
+            {
+                Voice.DisableGlobalVoice(player);
+                player.SendChatMessage("{00FFFF} Global voice disabled!");
+                return;
+            }
         }
     }
 }

@@ -86,7 +86,7 @@ export class PlayerNametags {
   }
 
   private draw(player: alt.Player, scale: number): void {
-    const fullName = `${player.name} <font family="3">~b~#${player.id}</font>`
+    const fullName = `${player.name} <font family="3">~b~#${player.remoteID}</font>`
     scale *= this.fontSize
 
     const yOffset = 0 - (player.armour > 0 ? 0.0015 : 0)
