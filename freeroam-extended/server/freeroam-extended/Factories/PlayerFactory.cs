@@ -71,9 +71,13 @@ namespace Freeroam_Extended.Factories
                 this.SetHeadOverlayColor(5, 2, 11, 0);
                 this.SetHeadOverlayColor(8, 2, 6, 0);
 
-                this.SetClothes(2, 3, 0, 0);
-                this.HairColor = 61;
-                this.HairHighlightColor = 61;
+                int hairs = Misc.RandomInt(1, 23);
+                int hairsColor = Misc.RandomInt(1, 63);
+                int hairsColor2 = Misc.RandomInt(1, 63);
+
+                this.SetClothes(2, (ushort)hairs, 0, 0);
+                this.HairColor = (byte)hairsColor;
+                this.HairHighlightColor = (byte)hairsColor2;
                 this.SetEyeColor(2);
 
                 float[] featureParams = { -0.78f, 0, 0, -0.07f, 0.03f, 0, 0.07f, -0.44f, 0.07f, 0.02f, -0.95f, -0.74f, -1, -0.09f, -0.57f, 0.02f, -0.1f, -0.19f, -1, -1 };
@@ -102,9 +106,13 @@ namespace Freeroam_Extended.Factories
                 this.SetHeadOverlayColor(5, 2, 32, 0);
                 this.SetHeadOverlayColor(8, 2, 11, 0);
 
-                this.SetClothes(2, 21, 0, 0);
-                this.HairColor = 35;
-                this.HairHighlightColor = 35;
+                int hairs = Misc.RandomInt(1, 22);
+                int hairsColor = Misc.RandomInt(1, 63);
+                int hairsColor2 = Misc.RandomInt(1, 63);
+
+                this.SetClothes(2, (ushort)hairs, 0, 0);
+                this.HairColor = (byte)hairsColor;
+                this.HairHighlightColor = (byte)hairsColor2;
                 this.SetEyeColor(3);
 
                 float[] featureParams = { 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1 };
@@ -128,9 +136,8 @@ namespace Freeroam_Extended.Factories
 
             ulong[] outfits = await ClothesFitService.GetOutfitsBySex(Sex);
 
-            Random rand = new Random();
-            int randomIndex = rand.Next(outfits.Length);
-            ulong randomElement = outfits[randomIndex];
+            int index = Misc.RandomInt(0, outfits.Length - 1);
+            ulong randomElement = outfits[index];
 
             await ClothesFitService.Equip(this, (uint)randomElement);
         }

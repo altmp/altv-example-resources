@@ -277,7 +277,7 @@ export function raycast(
 
   const [, hit, pos,, entity] = native.getShapeTestResult(ray)
   return hit
-    ? { pos: pos, entity }
+    ? { pos, entity }
     : null
 }
 

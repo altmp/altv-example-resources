@@ -198,6 +198,30 @@ function setStreamedEntities(players, vehicles) {
   document.querySelector(".streamed-in-vehicles").textContent = vehicles
 }
 
+function setVoiceConnectionState(state) {
+  const el = document.querySelector(".voice-server-connection-status").children[0];
+  el.classList.remove(".voice-connection-status-connected");
+  el.classList.remove(".voice-connection-status-disconnected");
+  el.classList.remove(".voice-connection-status-connecting");
+
+  let stateText = "Disconnected"
+  switch(state) {
+    case 0:
+      stateText = "Disconnected"
+      el.classList.add(".voice-connection-status-disconnected")
+      break;
+    case 1:
+      stateText = "Connecting"
+      el.classList.add(".voice-connection-status-connecting")
+      break;
+    case 2:
+      stateText = "Connected"
+      el.classList.add(".voice-connection-status-connected")
+      break;
+  }
+  el.textContent = stateText
+}
+
 alt.on("addString", (text) => addString(colorify(text)));
 alt.on("addMessage", (name, text) => addString("<b>" + name + ": </b>" + colorify(text)));
 alt.on("openChat", openChat);
@@ -207,3 +231,4 @@ alt.on("setPlayerId", setPlayerId);
 alt.on("setWeaponsDisabled", setWeaponsDisabled);
 alt.on("focusChatInput", focusChatInput);
 alt.on("setStreamedEntities", setStreamedEntities)
+alt.on("setVoiceConnectionState", setVoiceConnectionState)
