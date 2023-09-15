@@ -34,7 +34,7 @@ body {
 
 .help-keys {
   position: absolute;
-  top: 10em;
+  top: 12em;
   right: 1.5em;
   text-align: right;
 }
@@ -278,6 +278,28 @@ body {
 
 .weapons-enabled-off {
   --bg-color: rgb(235, 91, 86);
+  background: var(--bg-color) !important;
+  box-shadow: 0 0 0.5em var(--bg-color) !important;
+}
+
+.voice-server-connection-status > * {
+  color: rgb(255, 255, 255) !important;
+}
+
+.voice-connection-status-connected {
+  --bg-color: rgb(98, 218, 114);
+  background: var(--bg-color) !important;
+  box-shadow: 0 0 0.5em var(--bg-color) !important;
+}
+
+.voice-connection-status-disconnected {
+  --bg-color: rgb(235, 91, 86);
+  background: var(--bg-color) !important;
+  box-shadow: 0 0 0.5em var(--bg-color) !important;
+}
+
+.voice-connection-status-connecting {
+  --bg-color: rgb(255, 247, 0);
   background: var(--bg-color) !important;
   box-shadow: 0 0 0.5em var(--bg-color) !important;
 }

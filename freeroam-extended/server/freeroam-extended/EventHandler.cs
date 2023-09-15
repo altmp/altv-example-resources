@@ -135,7 +135,6 @@ namespace Freeroam_Extended
         [AsyncScriptEvent(ScriptEventType.PlayerDead)]
         public async Task OnPlayerDead(IAltPlayer player, IEntity killer, uint weapon)
         {
-            if (killer is not IAltPlayer killerPlayer) return;
             var spawnPointPool = player.DmMode ? Misc.AirportSpawnPositions : Misc.SpawnPositions;
 
             var randomSpawnPoint = spawnPointPool.ElementAt(_random.Next(0, spawnPointPool.Length));
@@ -146,6 +145,7 @@ namespace Freeroam_Extended
                 StatsHandler.StatsData.PlayerDeaths++;
             }
 
+            if (killer is not IAltPlayer killerPlayer) return;
             if (!Misc.BlacklistedWeapons.Contains(weapon)) return;
             Alt.Core.LogColored(
                 $"~r~ Banned Player: {killerPlayer.Name} ({killerPlayer.Id}) for using illegal weapon!");

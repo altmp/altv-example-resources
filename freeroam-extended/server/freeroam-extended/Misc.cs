@@ -5,6 +5,7 @@ namespace Freeroam_Extended
 {
     public static class Misc
     {
+        public static Random random = new Random();
         public static HashSet<uint> BlacklistedWeapons = new()
         {
             125959754, // Compact Grenade Launcher
@@ -324,6 +325,12 @@ namespace Freeroam_Extended
         {
             var allResources = Alt.GetAllResources();
             return allResources.Count(x => x.Name == resourceName) > 0;
+        }
+
+        public static int RandomInt(int min, int max)
+        {
+            int randomNumber = random.Next(min, max + 1);
+            return randomNumber;
         }
     }
 }

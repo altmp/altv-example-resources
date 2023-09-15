@@ -6,6 +6,7 @@ import { toggleNoclip } from "./noclip"
 import { playerData } from "./playerdata"
 import { view } from "./view"
 import { KeyCode, Permission, PermissionState } from "altv-enums"
+import type { VoiceConnectionState } from "alt-client"
 
 alt.on("connectionComplete", () => {
   setTimeout(() => {
@@ -115,4 +116,8 @@ alt.onServer("esp", (state: boolean) => {
 
   //   }
   // })
+})
+
+alt.on("voiceConnection", (state: alt.VoiceConnectionState) => {
+  view.emit("setVoiceConnectionState", state)
 })
