@@ -15,6 +15,8 @@ if (window.alt === undefined) {
 }
 
 function colorify(text) {
+  if (text && typeof text === 'string') text = text.replace(/[<>]/g, '');
+  
   let matches = [];
   let m = null;
   let curPos = 0;
