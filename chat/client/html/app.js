@@ -9,15 +9,28 @@ let msgInputLine = null;
 
 if (window.alt === undefined) {
   window.alt = {
-    emit: () => {},
-    on: () => {},
+    emit: () => { },
+    on: () => { },
   };
+}
+
+function escapeString(str) {
+  if (typeof str !== "string") return str;
+
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 function colorify(text) {
   let matches = [];
   let m = null;
   let curPos = 0;
+
+  text = escapeString(text);
 
   do {
     m = /\{[A-Fa-f0-9]{3}\}|\{[A-Fa-f0-9]{6}\}/g.exec(text.substr(curPos));

@@ -9,14 +9,25 @@ let msgInputLine = null;
 
 if (window.alt === undefined) {
   window.alt = {
-    emit: () => {},
-    on: () => {},
+    emit: () => { },
+    on: () => { },
   };
 }
 
+function escapeString(str) {
+  if (typeof str !== "string") return str;
+
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function colorify(text) {
-  if (text && typeof text === 'string') text = text.replace(/[<>]/g, '');
-  
+  text = escapeString(text);
+
   let matches = [];
   let m = null;
   let curPos = 0;
@@ -207,7 +218,7 @@ function setVoiceConnectionState(state) {
   el.classList.remove(".voice-connection-status-connecting");
 
   let stateText = "Disconnected"
-  switch(state) {
+  switch (state) {
     case 0:
       stateText = "Disconnected"
       el.classList.add(".voice-connection-status-disconnected")
