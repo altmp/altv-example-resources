@@ -132,18 +132,13 @@ export function drawDMZone(
   centerX: number,
   centerY: number,
   radius: number,
-  count: number,
 ): void {
-  const steps = 2 * Math.PI / count
-  for (let i = 0; i < count; i++) {
-    const blipX = radius * Math.cos(steps * i) + centerX
-    const blipY = radius * Math.sin(steps * i) + centerY
-
-    const blip = new alt.PointBlip(blipX, blipY, 0)
-    blip.sprite = 310
-    blip.shortRange = true
-    native.setBlipHiddenOnLegend(blip.scriptID, true)
-  }
+  const blip = new alt.RadiusBlip(centerX, centerY, 0, radius);
+  blip.sprite = 10;
+  blip.shortRange = true;
+  blip.color = 5;
+  blip.isHiddenOnLegend = false;
+  blip.name = "DM zone";
 }
 
 let adminMessageEveryTick: number | null = null

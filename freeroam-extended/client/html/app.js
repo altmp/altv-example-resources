@@ -236,7 +236,7 @@ function setVoiceConnectionState(state) {
 }
 
 alt.on("addString", (text) => addString(colorify(text)));
-alt.on("addMessage", (name, text) => addString("<b>" + name + ": </b>" + colorify(text)));
+alt.on("addMessage", (name, text) => addString("<b>" + colorify(name) + ": </b>" + colorify(text)));
 alt.on("openChat", openChat);
 alt.on("closeChat", closeChat);
 alt.on("updatePlayersOnline", updatePlayersOnline);

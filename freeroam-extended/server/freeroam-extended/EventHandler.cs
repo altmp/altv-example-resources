@@ -28,8 +28,13 @@ namespace Freeroam_Extended
 #endif
                 }
 
-                altPlayer.EventCount++;
-                if (altPlayer.EventCount > 100) altPlayer.Kick("Event count exceeded");
+                if (altPlayer.EventCount > 100)
+                {
+                    altPlayer.Kick("Event count exceeded");
+                    return;
+                }
+                
+                altPlayer.IncrementEventCount();
             };
         }
 
@@ -38,18 +43,21 @@ namespace Freeroam_Extended
         [AsyncScriptEvent(ScriptEventType.PlayerConnect)]
         public async Task OnPlayerConnect(IAltPlayer player, string reason)
         {
-            string cloudId = await player.RequestCloudId();
-            if (cloudId == "invalid")
+            string cloudId = "";
+
+            try
+            {
+                cloudId = await player.RequestCloudId();
+            }
+            catch (Exception e)
             {
                 player.Kick("Authorization error");
                 AltAsync.Log(
-                    $"HWID: {player.HardwareIdHash}, RS ID: {cloudId}. Tried to join the server with invalid RS ID.");
-                return;
+                    $"HWID: {player.HardwareIdHash}. Tried to join the server with invalid RS ID: {e}");
             }
-
             player.CloudID = cloudId;
             
-            if (Misc.BannedPlayers.Contains(player.CloudID))
+            if (PlayerController.IsBanned(player.CloudID))
             {
                 player.Kick("You're banned from this server!");
                 AltAsync.Log(
@@ -57,57 +65,48 @@ namespace Freeroam_Extended
                 return;
             }
 
-            if (Misc.Operators.Contains(cloudId))
-                player.IsAdmin = true;
+            if (PlayerController.PlayerData.TryGetValue(player.CloudID, out var data))
+            {
+                player.Data = data;
+            }
 
             // select random entry from SpawnPoints
             var randomSpawnPoint = Misc.AdminOverridedSpawnPos is not null
                 ? Misc.AdminOverridedSpawnPos
                 : Misc.SpawnPositions.ElementAt(_random.Next(0, Misc.SpawnPositions.Length));
+            
             player.Spawn((Position)randomSpawnPoint + new Position(_random.Next(0, 10), _random.Next(0, 10), 0));
             player.Model = (uint)PedModel.FreemodeMale01;
             player.SetDateTime(DateTime.UtcNow);
             player.SetWeather(Misc.Weather);
 
-            player.Emit("draw_dmzone", Misc.DMPos.X, Misc.DMPos.Y, Misc.DMRadius, 150);
-
-            if (player.IsAdmin)
-            {
-                player.Emit("set_chat_state", true);
-            }
-            else
-            {
-                player.Emit("set_chat_state", Misc.ChatState);
-            }
+            player.Emit("draw_dmzone", Misc.DMPos.X, Misc.DMPos.Y, Misc.DMRadius);
             
-            lock (StatsHandler.StatsData)
+            lock (StatsController.StatsData)
             {
-                StatsHandler.StatsData.PlayerConnections++;
-                if (!Misc.UniquePlayers.Contains(player.CloudID))
-                {
-                    StatsHandler.StatsData.UniquePlayers++;
-                    Misc.UniquePlayers.Add(player.CloudID);
-                    File.WriteAllText(@"UniquePlayers.json", JsonSerializer.Serialize(Misc.UniquePlayers));
-                }
+                StatsController.StatsData.PlayerConnections++;
             }
 
-            Voice.AddPlayer(player);
+            StatsController.AddUniquePlayer(player.CloudID);
+            
+            VoiceController.AddPlayer(player);
+            if (player.Data.Muted) VoiceController.MutePlayer(player);
 
             if (Misc.IsResourceLoaded("c_clothesfit"))
             {
                 await ClothesFitService.InitPlayer(player);
             }
 
-            player.RefreshFace();
-            await player.RefreshClothes();
+            AppearanceController.RefreshFace(player);
+            await AppearanceController.RefreshClothes(player);
         }
 
         [ScriptEvent(ScriptEventType.VehicleDestroy)]
         public void OnVehicleDestroy(IAltVehicle target)
         {
-            lock (StatsHandler.StatsData)
+            lock (StatsController.StatsData)
             {
-                StatsHandler.StatsData.VehiclesDestroyed++;
+                StatsController.StatsData.VehiclesDestroyed++;
             }
 
             target.Owner.SendChatMessage("Your Vehicle got destroyed. We removed it for you!");
@@ -117,7 +116,7 @@ namespace Freeroam_Extended
         [ScriptEvent(ScriptEventType.PlayerDisconnect)]
         public void OnPlayerDisconnect(IAltPlayer player, string reason)
         {
-            Voice.RemovePlayer(player);
+            VoiceController.RemovePlayer(player);
 
             var vehicles = player.Vehicles;
 
@@ -137,77 +136,55 @@ namespace Freeroam_Extended
         {
             var spawnPointPool = player.DmMode ? Misc.AirportSpawnPositions : Misc.SpawnPositions;
 
-            var randomSpawnPoint = spawnPointPool.ElementAt(_random.Next(0, spawnPointPool.Length));
+            var randomSpawnPoint = Misc.AdminOverridedSpawnPos ?? spawnPointPool.ElementAt(_random.Next(0, spawnPointPool.Length));
             player.Spawn(randomSpawnPoint + new Position(_random.Next(0, 10), _random.Next(0, 10), 0));
 
-            lock (StatsHandler.StatsData)
+            lock (StatsController.StatsData)
             {
-                StatsHandler.StatsData.PlayerDeaths++;
+                StatsController.StatsData.PlayerDeaths++;
             }
 
             if (killer is not IAltPlayer killerPlayer) return;
             if (!Misc.BlacklistedWeapons.Contains(weapon)) return;
-            Alt.Core.LogColored(
-                $"~r~ Banned Player: {killerPlayer.Name} ({killerPlayer.Id}) for using illegal weapon!");
-            Misc.BannedPlayers.Add(killerPlayer.CloudID);
-            string json = JsonSerializer.Serialize(Misc.BannedPlayers);
-            await File.WriteAllTextAsync(@"BannedPlayers.json", json);
-            killerPlayer.Kick("You're banned from this server!");
+
+            var name = killerPlayer.Serialize();
+            PlayerController.Ban(killerPlayer);
+            ChatController.BroadcastAdmins($"Banned player {name} for using illegal weapon!");
         }
 
-        [AsyncScriptEvent(ScriptEventType.ConsoleCommand)]
-        public async Task OnConsoleCommand(string name, string[] args)
+        [ScriptEvent(ScriptEventType.ConsoleCommand)]
+        public void OnConsoleCommand(string name, string[] args)
         {
-            var playerPool = Alt.GetAllPlayers();
             switch (name)
             {
                 case "op":
+                {
                     if (args.Length is > 1 or 0)
                     {
                         Alt.Log("Usage: op <ID>");
                         break;
                     }
 
-                    var playerOp = playerPool.FirstOrDefault(x => x.Id == int.Parse(args[0]));
-                    if (playerOp is not IAltPlayer playerOpAlt) return;
-
-
-                    if (Misc.Operators.Any(id => id == playerOpAlt.CloudID))
-                    {
-                        Alt.Log($"Id {args[0]} already is an operator!");
-                        break;
-                    }
-
-                    Misc.Operators.Add(playerOpAlt.CloudID);
-                    string json = JsonSerializer.Serialize(Misc.Operators);
-                    await File.WriteAllTextAsync(@"Operators.json", json);
-
-                    await playerOpAlt.EmitAsync("set_chat_state", true);
-                    playerOpAlt.IsAdmin = true;
+                    var player = (IAltPlayer)Alt.GetPlayerById(uint.Parse(args[0]));
+                    PlayerController.Op(player, null);
+                    Alt.Log("Given operator permissions to " + player.Serialize());
                     break;
+                }
 
 
                 case "deop":
+                {
                     if (args.Length is > 1 or 0)
                     {
                         Alt.Log("Usage: deop <ID>");
                         break;
                     }
 
-                    var playerDeOp = playerPool.FirstOrDefault(x => x.Id == int.Parse(args[0]));
-                    if (playerDeOp is not IAltPlayer playerDeOpAlt) return;
-
-                    if (!Misc.Operators.Any(id =>
-                            id == playerDeOpAlt.CloudID))
-                    {
-                        AltAsync.Log($"Id {args[0]} is not an operator!");
-                        break;
-                    }
-
-                    Misc.Operators.Remove(playerDeOpAlt.CloudID);
-                    await playerDeOpAlt.EmitAsync("set_chat_state", Misc.ChatState);
-                    playerDeOpAlt.IsAdmin = false;
+                    var player = (IAltPlayer)Alt.GetPlayerById(uint.Parse(args[0]));
+                    PlayerController.Deop(player, null);
+                    Alt.Log("Removed operator permissions from " + player.Serialize());
                     break;
+                }
             }
         }
 
@@ -215,16 +192,13 @@ namespace Freeroam_Extended
         public async Task OnWeaponDamage(IAltPlayer player, IEntity target, uint weapon, ushort damage,
             Position shotOffset, BodyPart bodyPart)
         {
+            if (!player.EnableWeaponUsage) return;
+            
             if (!Misc.BlacklistedWeapons.Contains(weapon) || player is not { } damagePlayer) return;
 
-            Alt.Core.LogColored(
-                $"~r~ Banned Player: {damagePlayer.Name} ({damagePlayer.Id}) for using illegal weapon!");
-            //Misc.BannedPlayers.Add(<ulong, ulong>(damagePlayer.HardwareIdHash, damagePlayer.HardwareIdExHash));
-            Misc.BannedPlayers.Add(damagePlayer.CloudID);
-            string json = JsonSerializer.Serialize(Misc.BannedPlayers);
-            await File.WriteAllTextAsync(@"BannedPlayers.json", json);
-
-            player.Kick("You're banned from this server!");
+            var name = player.Serialize();
+            PlayerController.Ban(player);
+            ChatController.BroadcastAdmins($"Banned player {name} for using illegal weapon!");
         }
 
         [ScriptEvent(ScriptEventType.ColShape)]
@@ -256,39 +230,19 @@ namespace Freeroam_Extended
             return false;
         }
 
-        [ClientEvent("chat:message")]
-        public void OnChatMessage(IAltPlayer player, params string[] args)
-        {
-            var message = string.Join("", args);
-            if (args.Length == 0 || message.Length == 0) return;
-
-            if (args[0].StartsWith("/")) return;
-            if (!Misc.ChatState && !player.IsAdmin)
-            {
-                player.SendChatMessage("{FF0000}Chat is disabled!");
-                return;
-            }
-
-            foreach (var p in Alt.GetAllPlayers())
-            {
-                p.SendChatMessage(
-                    $"{(player.IsAdmin ? "{008736}" : "{FFFFFF}")} <b>{player.Name}({player.Id})</b>: {{FFFFFF}}{message}");
-            }
-        }
-
         [ClientEvent("tp_to_waypoint")]
         public void TeleportToWaypoint(IAltPlayer player, int x, int y, int z)
         {
             if (!player.IsAdmin)
             {
-                player.SendChatMessage("{FF0000} No permission!");
+                player.SendChatMessage(ChatConstants.NoPermissions);
                 return;
             }
-
+            
             if (player.IsInVehicle) player.Vehicle.Position = new Vector3(x, y, z);
             else player.Position = new Vector3(x, y, z);
 
-            player.SendChatMessage($"{{00FF00}} You were teleported to waypoint on {x}, {y}, {z}!");
+            player.SendChatMessage(ChatConstants.SuccessPrefix + $"You were teleported to waypoint on {x}, {y}, {z}!");
         }
         
         [ClientEvent("tp_to_coords")]
@@ -296,7 +250,7 @@ namespace Freeroam_Extended
         {
             if (!player.IsAdmin)
             {
-                player.SendChatMessage("{FF0000} No permission!");
+                player.SendChatMessage(ChatConstants.NoPermissions);
                 return;
             }
 
