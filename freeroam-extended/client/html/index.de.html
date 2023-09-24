@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>alt:V Chat</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <div class="stress-test-label">
+      Public Stress Test - v15. Powered by Avoro.eu
+    </div>
+    <div class="info">
+      <div class="players-online">
+        Spieler online <div class="info-number players-online-number">xxxx</div>
+      </div> 
+      <div class="player-id">
+        Deine ID <div class="info-number player-id-number">xxxx</div>
+      </div>
+      <div class="weapons-enabled">
+        Waffen <div class="info-number weapons-enabled-on">ON</div>
+      </div>
+      <div class="voice-server-connection-status">
+        Sprachchat <div class="info-number voice-connection-status-connected">Connected</div>
+      </div>
+      <div class="streamed-in">
+        Streamed Spieler <div class="info-number streamed-in-players">0</div>
+      </div>
+      <div class="streamed-in">
+        Streamed Fahrzeuge <div class="info-number streamed-in-vehicles">0</div>
+      </div>
+    </div>
+    <div class="help-keys">
+      <ol>
+        <li><span class="help-keys-command">F2:</span> HUD umschalten</li>
+        <li><span class="help-keys-command">T / Eingabe:</span> Chat öffnen</li>
+
+        <li><span class="help-keys-command">/tp</span> &lt;1 bis 22&gt; (Teleport)</li>
+        <li><span class="help-keys-command">/model</span> (wechselt zwischen männlichem und weiblichen Model)</li>
+        <li><span class="help-keys-command">/outfit [outfit_name]</span> (Ändert Outfit zufällig oder auf gegebenen Wert)</li>
+        <li><span class="help-keys-command">/veh</span> &lt;modelName&gt; (Erstellt ein Fahrzeug)</li>
+        <li><span class="help-keys-command">/clearvehicles</span> (Löscht deine Fahrzeuge)</li>
+        <li><span class="help-keys-command">/tune</span> &lt;index> &lt;value&gt; (Fahrzeug Tuning)</li>
+        <li><span class="help-keys-command">/weapons</span> (Gibt dir alle Waffen)</li>
+        <li><span class="help-keys-command">/addcomponent</span> &lt;name&gt; (Waffen Komponenten hinzufügen)</li>
+        <li><span class="help-keys-command">/removecomponent</span> &lt;name&gt; (Waffen Kompontent entfernen)</li>
+        <li><span class="help-keys-command">/dm</span> ((De)Aktiviert den Respawn in der DM Zone)</li>
+        <li><span class="help-keys-command">/revive</span> (Wiederbeleben des Spielers)</li>
+      </ol>
+    </div>
+    <div class="content">
+      <div class="chatbox">
+        <div class="msglist">
+          <div class="messages"></div>
+        </div>
+        <div class="msginput">
+          <form id="message">
+            <input type="text" spellcheck="false" />
+          </form>
+        </div>
+      </div>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>

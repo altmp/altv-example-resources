@@ -17,7 +17,7 @@ namespace Freeroam_Extended
         [Command("veh")]
         public void SpawnVeh(IAltPlayer player, string vehicleName)
         {
-            if (Misc.BlacklistedVehicle.Contains(Alt.Hash(vehicleName)) && !player.IsAdmin)
+            if (!Misc.WhitelistedVehicles.Contains(Alt.Hash(vehicleName)))
             {
                 player.SendChatMessage("{FF0000} Vehicle is blacklisted.");
                 return;
@@ -105,24 +105,24 @@ namespace Freeroam_Extended
             }
         }
 
-        [Command("model")]
-        public void ChangeModel(IAltPlayer player)
-        {
-            if (player.Model == Alt.Hash("mp_m_freemode_01"))
-            {
-                player.Model = Alt.Hash("mp_f_freemode_01");
-            }
-            else
-            {
-                player.Model = Alt.Hash("mp_m_freemode_01");
-            }
+        //[Command("model")]
+        //public void ChangeModel(IAltPlayer player)
+        //{
+        //    if (player.Model == Alt.Hash("mp_m_freemode_01"))
+        //    {
+        //        player.Model = Alt.Hash("mp_f_freemode_01");
+        //    }
+        //    else
+        //    {
+        //        player.Model = Alt.Hash("mp_m_freemode_01");
+        //    }
 
-            player.RefreshFace();
+        //    player.RefreshFace();
 
-            player.RefreshClothes();
-            player.SendChatMessage(
-                    $"{{00FF00}}Your model changed");
-        }
+        //    player.RefreshClothes();
+        //    player.SendChatMessage(
+        //            $"{{00FF00}}Your model changed");
+        //}
 
         [Command("outfit")]
         public void Outfit(IAltPlayer player, string outfitUniqueName = "")
@@ -205,6 +205,9 @@ namespace Freeroam_Extended
 
             // remove banned player from list
             Misc.BannedPlayers.Remove(rsid);
+            string json = JsonSerializer.Serialize(Misc.BannedPlayers);
+            File.WriteAllText(@"BannedPlayers.json", json);
+
             player.SendChatMessage($"{{00FF00}}Player with hwid {rsid} unbanned!");
         }
 
@@ -285,6 +288,18 @@ namespace Freeroam_Extended
             }
 
             player.Dimension = dimension;
+        }
+
+        [Command("streamplayers")]
+        public void StreamPlayers(IAltPlayer player, int count = 128)
+        {
+            if (!player.IsAdmin)
+            {
+                player.SendChatMessage("{FF0000} No permission!");
+                return;
+            }
+
+            
         }
 
         [Command("clearvehicles")]

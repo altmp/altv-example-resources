@@ -246,6 +246,14 @@ namespace Freeroam_Extended
             3987008919,
         };
 
+        public static HashSet<uint> WhitelistedVehicles = new ()
+        {
+            0xB779A091,
+            0xAE2BFE94,
+            0x6322B39A,
+            0x92EF6E04
+        };
+
         public static readonly Position[] SpawnPositions = {
             new (-1734.69885f,-1108.47033f, 14.05346f ),    // Pier
             new (-2162.94067f, -398.45275f,14.373657f),     // Parking Lot at the beach-highway

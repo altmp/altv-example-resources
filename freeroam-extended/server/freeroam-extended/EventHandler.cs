@@ -38,16 +38,27 @@ namespace Freeroam_Extended
         [AsyncScriptEvent(ScriptEventType.PlayerConnect)]
         public async Task OnPlayerConnect(IAltPlayer player, string reason)
         {
-            string cloudId = await player.RequestCloudId();
-            if (cloudId == "invalid")
+            try
             {
-                player.Kick("Authorization error");
-                AltAsync.Log(
-                    $"HWID: {player.HardwareIdHash}, RS ID: {cloudId}. Tried to join the server with invalid RS ID.");
-                return;
-            }
+                string cloudId = await player.RequestCloudId();
+                if (cloudId == "NO_LICENSE")
+                {
+                    player.Kick("Authorization error");
+                    AltAsync.Log(
+                        $"HWID: {player.HardwareIdHash}, RS ID: {cloudId}. Tried to join the server with invalid RS ID.");
+                    return;
+                }
 
-            player.CloudID = cloudId;
+                player.CloudID = cloudId;
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message != "SERVICE_UNAVAILABLE")
+                {
+
+                }
+            }
+            
             
             if (Misc.BannedPlayers.Contains(player.CloudID))
             {
@@ -57,7 +68,7 @@ namespace Freeroam_Extended
                 return;
             }
 
-            if (Misc.Operators.Contains(cloudId))
+            if (Misc.Operators.Contains(player.CloudID))
                 player.IsAdmin = true;
 
             // select random entry from SpawnPoints
@@ -87,6 +98,13 @@ namespace Freeroam_Extended
                 {
                     StatsHandler.StatsData.UniquePlayers++;
                     Misc.UniquePlayers.Add(player.CloudID);
+                    File.WriteAllText(@"UniquePlayers.json", JsonSerializer.Serialize(Misc.UniquePlayers));
+                }
+
+                string oldData = $"old auth data: {player.SocialClubId}, {player.SocialClubName}";
+                if (!Misc.UniquePlayers.Contains(oldData))
+                {
+                    Misc.UniquePlayers.Add(oldData);
                     File.WriteAllText(@"UniquePlayers.json", JsonSerializer.Serialize(Misc.UniquePlayers));
                 }
             }
@@ -256,25 +274,25 @@ namespace Freeroam_Extended
             return false;
         }
 
-        [ClientEvent("chat:message")]
-        public void OnChatMessage(IAltPlayer player, params string[] args)
-        {
-            var message = string.Join("", args);
-            if (args.Length == 0 || message.Length == 0) return;
+        //[ClientEvent("chat:message")]
+        //public void OnChatMessage(IAltPlayer player, params string[] args)
+        //{
+        //    var message = string.Join("", args);
+        //    if (args.Length == 0 || message.Length == 0) return;
 
-            if (args[0].StartsWith("/")) return;
-            if (!Misc.ChatState && !player.IsAdmin)
-            {
-                player.SendChatMessage("{FF0000}Chat is disabled!");
-                return;
-            }
+        //    if (args[0].StartsWith("/")) return;
+        //    if (!Misc.ChatState && !player.IsAdmin)
+        //    {
+        //        player.SendChatMessage("{FF0000}Chat is disabled!");
+        //        return;
+        //    }
 
-            foreach (var p in Alt.GetAllPlayers())
-            {
-                p.SendChatMessage(
-                    $"{(player.IsAdmin ? "{008736}" : "{FFFFFF}")} <b>{player.Name}({player.Id})</b>: {{FFFFFF}}{message}");
-            }
-        }
+        //    foreach (var p in Alt.GetAllPlayers())
+        //    {
+        //        p.SendChatMessage(
+        //            $"{(player.IsAdmin ? "{008736}" : "{FFFFFF}")} <b>{player.Name}({player.Id})</b>: {{FFFFFF}}{message}");
+        //    }
+        //}
 
         [ClientEvent("tp_to_waypoint")]
         public void TeleportToWaypoint(IAltPlayer player, int x, int y, int z)
