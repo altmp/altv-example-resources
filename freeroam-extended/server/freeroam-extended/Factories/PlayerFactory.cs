@@ -10,7 +10,7 @@ namespace Freeroam_Extended.Factories
     public partial interface IAltPlayer : IPlayer
     {
         public IList<AltVehicle> Vehicles { get; set; }
-        public DateTime LastVehicleSpawn { get; set; } 
+        public DateTime LastCommandUse { get; set; } 
         public bool GhostMode { get; set; }
         public bool EnableWeaponUsage { get; set; }
         public bool DmMode { get; set; }
@@ -37,7 +37,7 @@ namespace Freeroam_Extended.Factories
     public partial class AltPlayer : AsyncPlayer, IAltPlayer
     {
         public IList<AltVehicle> Vehicles { get; set; }
-        public DateTime LastVehicleSpawn { get; set; }
+        public DateTime LastCommandUse { get; set; }
         public bool GhostMode { get; set; }
         public bool EnableWeaponUsage { get; set; }
         public bool DmMode { get; set; }

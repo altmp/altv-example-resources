@@ -21,11 +21,8 @@ namespace Freeroam_Extended
                 var altPlayer = (IAltPlayer)player;
                 if (name != "chat:message" && !altPlayer.IsAdmin)
                 {
-#if RELEASE
                     Alt.Log($"{altPlayer.Name} banned for illegal event: {name}");
-                    player.Kick("You are not allowed to use this Event.");
-                    Misc.BannedPlayers.Add(altPlayer.CloudID);
-#endif
+                    PlayerController.Ban(altPlayer);
                 }
 
                 if (altPlayer.EventCount > 100)

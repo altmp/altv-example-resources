@@ -56,9 +56,9 @@ namespace Freeroam_Extended
                 return;
             }
 
-            if (player.LastVehicleSpawn.AddSeconds(10) > DateTime.Now)
+            if (player.LastCommandUse.AddSeconds(10) > DateTime.Now)
             {
-                player.SendChatMessage(ChatConstants.ErrorPrefix + "You have to wait 10s before spawning a new vehicle!");
+                player.SendChatMessage(ChatConstants.ErrorPrefix + "You have to wait 10s before using this!");
                 return;
             }
 
@@ -85,7 +85,7 @@ namespace Freeroam_Extended
             var spawnedVeh = (AltVehicle) Alt.CreateVehicle(Alt.Hash(vehicleName),
                 player.Position + new Position(1, 0, 0), new Rotation(0, 0, player.Rotation.Yaw));
             player.SetIntoVehicle(spawnedVeh, 1);
-            player.LastVehicleSpawn = DateTime.Now;
+            player.LastCommandUse = DateTime.Now;
             player.Vehicles.Add(spawnedVeh);
             spawnedVeh.Owner = player;
         }
@@ -102,24 +102,44 @@ namespace Freeroam_Extended
         }
 
         // TODO fix in core
-        // [Command("model")]
-        // public async Task ChangeModel(IAltPlayer player)
-        // {
-        //     if (player.Model == Alt.Hash("mp_m_freemode_01"))
-        //     {
-        //         player.Model = Alt.Hash("mp_f_freemode_01");
-        //     }
-        //     else
-        //     {
-        //         player.Model = Alt.Hash("mp_m_freemode_01");
-        //     }
-        //     player.Spawn(player.Position);
-        //
-        //     // AppearanceController.RefreshFace(player);
-        //     // await AppearanceController.RefreshClothes(player);
-        //     
-        //     player.SendChatMessage(ChatConstants.SuccessPrefix + $"Your model was changed");
-        // }
+        [Command("model")]
+        public async Task ChangeModel(IAltPlayer player)
+        {
+            if (player.LastCommandUse.AddSeconds(10) > DateTime.Now)
+            {
+                player.SendChatMessage(ChatConstants.ErrorPrefix + "You have to wait 10s before using this!");
+                return;
+            }
+            player.LastCommandUse = DateTime.Now;
+
+            player.Streamed = false;
+
+            try
+            {
+                if (player.Model == Alt.Hash("mp_m_freemode_01"))
+                {
+                    player.Model = Alt.Hash("mp_f_freemode_01");
+                }
+                else
+                {
+                    player.Model = Alt.Hash("mp_m_freemode_01");
+                }
+
+                AppearanceController.RefreshFace(player);
+                await AppearanceController.RefreshClothes(player);
+
+                player.SendChatMessage(ChatConstants.SuccessPrefix + $"Your model was changed");
+
+                await Task.Delay(1000);
+            }
+            finally
+            {
+                if (player.Exists)
+                {
+                    player.Streamed = true;
+                }
+            }
+        }
 
         [Command("outfit")]
         public async Task Outfit(IAltPlayer player, string outfitUniqueName = "")
