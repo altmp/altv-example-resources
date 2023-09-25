@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using AltV.Net;
 using AltV.Net.Elements.Entities;
 
@@ -38,18 +39,16 @@ internal class IdGenerator
 internal static class ClothesFitService
 {
     private static readonly IdGenerator _idGen = new();
-    private static readonly Dictionary<long, TaskCompletionSource<object>> _tasks = new();
+    private static readonly ConcurrentDictionary<long, TaskCompletionSource<object>> _tasks = new();
 
     static ClothesFitService()
     {
         Alt.OnServer("clothes.resp", (long id, string type, object result) =>
         {
-            if (!_tasks.TryGetValue(id, out var tcs))
+            if (!_tasks.TryRemove(id, out var tcs))
             {
                 return;
             }
-
-            _tasks.Remove(id);
 
             if (type == "error")
             {
@@ -98,7 +97,7 @@ internal static class ClothesFitService
     {
         var tcs = new TaskCompletionSource<object>();
         var id = _idGen.GetNextId();
-        _tasks.Add(id, tcs);
+        _tasks.TryAdd(id, tcs);
         Alt.Emit("clothes.req", null, "getoutfits", id, sex);
         var result = await tcs.Task;
         return ((object[]) result).Select(Convert.ToUInt64).ToArray();
@@ -108,7 +107,7 @@ internal static class ClothesFitService
     {
         var tcs = new TaskCompletionSource<object>();
         var id = _idGen.GetNextId();
-        _tasks.Add(id, tcs);
+        _tasks.TryAdd(id, tcs);
         Alt.Emit("clothes.req", player, eventName, id, args);
         return tcs.Task;
     }
