@@ -58,3 +58,6 @@ alt.setInterval(() => {
 
   view.emit("setStreamedEntities", players, vehicles)
 }, 500)
+
+await alt.loadModelAsync(alt.hash("mp_m_freemode_01"));
+await alt.loadModelAsync(alt.hash("mp_f_freemode_01"));

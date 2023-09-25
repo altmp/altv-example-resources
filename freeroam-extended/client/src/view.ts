@@ -18,4 +18,10 @@ class View extends alt.WebView {
   }
 }
 
-export const view = new View("http://resource/html/index.html")
+const locale = alt.getLocale();
+
+let viewUrl = "http://resource/html/index.html"
+if (locale === "de") {
+  viewUrl = "http://resource/html/index.de.html"
+}
+export const view = new View(viewUrl)
