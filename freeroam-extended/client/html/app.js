@@ -9,12 +9,25 @@ let msgInputLine = null;
 
 if (window.alt === undefined) {
   window.alt = {
-    emit: () => {},
-    on: () => {},
+    emit: () => { },
+    on: () => { },
   };
 }
 
+function escapeString(str) {
+  if (typeof str !== "string") return str;
+
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function colorify(text) {
+  text = escapeString(text);
+
   let matches = [];
   let m = null;
   let curPos = 0;
@@ -205,7 +218,7 @@ function setVoiceConnectionState(state) {
   el.classList.remove(".voice-connection-status-connecting");
 
   let stateText = "Disconnected"
-  switch(state) {
+  switch (state) {
     case 0:
       stateText = "Disconnected"
       el.classList.add(".voice-connection-status-disconnected")
@@ -223,7 +236,7 @@ function setVoiceConnectionState(state) {
 }
 
 alt.on("addString", (text) => addString(colorify(text)));
-alt.on("addMessage", (name, text) => addString("<b>" + name + ": </b>" + colorify(text)));
+alt.on("addMessage", (name, text) => addString("<b>" + colorify(name) + ": </b>" + colorify(text)));
 alt.on("openChat", openChat);
 alt.on("closeChat", closeChat);
 alt.on("updatePlayersOnline", updatePlayersOnline);

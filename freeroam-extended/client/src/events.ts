@@ -16,23 +16,23 @@ alt.on("connectionComplete", () => {
   }, 1000)
 })
 
+alt.on("localMetaChange", (key: string, newValue: any) => {
+  if (key == "godmode")
+    native.setEntityInvincible(alt.Player.local, newValue);
+})
+
 alt.onServer("airport_state", setWeaponsUsage)
 
 alt.onServer("chat:message", chat.pushMessage)
 
 alt.onServer("noclip", toggleNoclip)
 
-alt.onServer("set_chat_state", (state: boolean) => {
-  playerData.chatState = state
-})
-
 alt.onServer("draw_dmzone", (
   centerX: number,
   centerY: number,
-  radius: number,
-  count: number,
+  radius: number
 ) => {
-  drawDMZone(centerX, centerY, radius, count)
+  drawDMZone(centerX, centerY, radius)
 })
 
 alt.onServer("announce", (header: string, body: string, time: number) => {
@@ -84,9 +84,9 @@ alt.on("keyup", (key) => {
 })
 
 alt.onServer("get_pos", () => {
-  const state = alt.getPermissionState(Permission.ClipboardAccess)
+  const state = alt.getPermissionState(Permission.CLIPBOARD_ACCESS)
 
-  if (state !== PermissionState.Allowed) {
+  if (state !== PermissionState.ALLOWED) {
     alt.log("get_pos clipboard access is not allowed, state:", state)
     return
   }

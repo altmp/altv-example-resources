@@ -53,8 +53,7 @@ view.on("chatloaded", () => {
 })
 
 view.on("chatmessage", (text: string) => {
-  if (playerData.chatState)
-    alt.emitServer("chat:message", text)
+  alt.emitServer("chat:message", text)
 
   alt.toggleGameControls(true)
   view.unfocus()
@@ -65,4 +64,4 @@ view.on("chatmessage", (text: string) => {
   }, 200)
 })
 
-pushLine("<b>alt:V Multiplayer has started</b>")
+pushLine("alt:V Multiplayer has started")

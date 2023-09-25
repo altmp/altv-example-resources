@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -9,8 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AltV.Net.Async" Version="15.0.170-dev" />
-    <PackageReference Include="AltV.Net.Resources.Chat.Api" Version="15.0.169-dev" />
+    <PackageReference Include="AltV.Net.Async" Version="15.0.174-dev" />
+    <PackageReference Include="AltV.Net.Resources.Chat.Api" Version="15.0.174-dev" />
   </ItemGroup>
+
 
 </Project>
