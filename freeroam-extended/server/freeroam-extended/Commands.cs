@@ -62,19 +62,18 @@ namespace Freeroam_Extended
                 return;
             }
 
+            if (player.IsInVehicle)
+            {
+                player.SendChatMessage(ChatConstants.ErrorPrefix + "You are already in a vehicle!");
+                return;
+            }
+
             if (player.Vehicles.Count >= 3)
             {
                 var target = player.Vehicles.OrderBy(veh => veh.SpawnTime).First();
                 player.Vehicles.Remove(target);
                 target.Destroy();
                 player.SendChatMessage(ChatConstants.ErrorPrefix + "You can't have more than 3 vehicles. We removed your oldest one!");
-            }
-
-            if (player.IsInVehicle)
-            {
-                player.SendChatMessage(ChatConstants.ErrorPrefix + "You are already in a vehicle we replaced it for you!");
-                player.Vehicle.Destroy();
-                return;
             }
 
             lock (StatsController.StatsData)
