@@ -24,6 +24,7 @@ let tickHandle = undefined;
 
 alt.on("gameEntityCreate", (entity) => {
     const rmlElement = document.createElement("button");
+    rmlElement.entityType = entity.type;
     rmlElement.entityID = entity.remoteID;
     rmlElement.addClass("nametag");
     rmlElement.addClass("hide");
@@ -82,7 +83,7 @@ alt.on("keyup", (key) => {
 });
 
 function printCoordinates(rmlElement, eventArgs) {
-    const entity = alt.Entity.getByID(rmlElement.entityID);
+    const entity = alt.BaseObject.getByID(rmlElement.entityType, rmlElement.entityID);
     alt.log("Entity Position", "X", entity.pos.x, "Y", entity.pos.y, "Z", entity.pos.z);
 }
 
