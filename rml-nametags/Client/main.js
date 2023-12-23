@@ -24,15 +24,15 @@ let tickHandle = undefined;
 
 alt.on("gameEntityCreate", (entity) => {
     const rmlElement = document.createElement("button");
-    rmlElement.id = entity.id.toString();
+    rmlElement.entityID = entity.remoteID;
     rmlElement.addClass("nametag");
     rmlElement.addClass("hide");
 
     if (entity instanceof alt.Player) {
         if (showPlayerIds && !showPlayerNames)
-            rmlElement.innerRML = `ID: ${entity.id}`;
+            rmlElement.innerRML = `ID: ${entity.remoteID}`;
         else if (showPlayerIds && showPlayerNames)
-            rmlElement.innerRML = `ID: ${entity.id} | Name: ${entity.name}`;
+            rmlElement.innerRML = `ID: ${entity.remoteID} | Name: ${entity.name}`;
         else if (!showPlayerIds && showPlayerNames)
             rmlElement.innerRML = `Name: ${entity.name}`;
         else {
@@ -40,7 +40,7 @@ alt.on("gameEntityCreate", (entity) => {
             return;
         }
     } else if (entity instanceof alt.Vehicle && showVehicleIds)
-        rmlElement.innerRML = `ID: ${entity.id}`;
+        rmlElement.innerRML = `ID: ${entity.remoteID}`;
     else {
         rmlElement.destroy();
         return;
@@ -82,7 +82,7 @@ alt.on("keyup", (key) => {
 });
 
 function printCoordinates(rmlElement, eventArgs) {
-    const entity = alt.Entity.getByID(parseInt(rmlElement.id));
+    const entity = alt.Entity.getByID(rmlElement.entityID);
     alt.log("Entity Position", "X", entity.pos.x, "Y", entity.pos.y, "Z", entity.pos.z);
 }
 
