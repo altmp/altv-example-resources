@@ -83,7 +83,7 @@ alt.on("keyup", (key) => {
 });
 
 function printCoordinates(rmlElement, eventArgs) {
-    const entity = alt.BaseObject.getByID(rmlElement.entityType, rmlElement.entityID);
+    const entity = alt.BaseObject.getByRemoteID(rmlElement.entityType, rmlElement.entityID);
     alt.log("Entity Position", "X", entity.pos.x, "Y", entity.pos.y, "Z", entity.pos.z);
 }
 
