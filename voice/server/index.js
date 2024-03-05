@@ -1,5 +1,5 @@
 import * as alt from "alt-server";
-import * as chat from "chat";
+import * as chat from "alt:chat";
 
 // list of voice ranges in meter
 const rangeArray = [5, 10, 20];

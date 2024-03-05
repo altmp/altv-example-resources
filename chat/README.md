@@ -47,7 +47,7 @@ package.json
 **Serverside**
 
 ```
-import * as chat from 'chat';
+import * as chat from 'alt:chat';
 
 // Uses the chat resource to register a command.
 // Sends a chat message to the player with their position information.

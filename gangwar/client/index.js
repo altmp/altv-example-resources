@@ -1,6 +1,6 @@
 import * as alt from "alt-client";
 import * as game from "natives";
-import * as chat from "chat";
+import * as chat from "alt:chat";
 
 let myTeam = null;
 
