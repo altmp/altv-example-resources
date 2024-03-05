@@ -1,5 +1,5 @@
 import * as alt from "alt-server";
-import * as chat from "chat";
+import * as chat from "alt:chat";
 
 const spawns = [
   { x: -695.1956176757812, y: 83.94725036621094, z: 55.85205078125 },
