@@ -30,8 +30,6 @@ function colorify(text) {
   let m = null;
   let curPos = 0;
 
-  text = escapeString(text);
-
   do {
     m = /\{[A-Fa-f0-9]{3}\}|\{[A-Fa-f0-9]{6}\}/g.exec(text.substr(curPos));
 
@@ -180,7 +178,7 @@ function addString(text) {
   highlightChat();
 }
 
-alt.on("addString", (text) => addString(colorify(text)));
-alt.on("addMessage", (name, text) => addString("<b>" + name + ": </b>" + colorify(text)));
+alt.on("addString", (text) => addString(colorify(escapeString(text))));
+alt.on("addMessage", (name, text) => addString("<b>" + escapeString(name) + ": </b>" + colorify(escapeString(text))));
 alt.on("openChat", openChat);
 alt.on("closeChat", closeChat);
