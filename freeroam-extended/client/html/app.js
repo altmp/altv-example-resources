@@ -26,8 +26,6 @@ function escapeString(str) {
 }
 
 function colorify(text) {
-  text = escapeString(text);
-
   let matches = [];
   let m = null;
   let curPos = 0;
@@ -235,8 +233,8 @@ function setVoiceConnectionState(state) {
   el.textContent = stateText
 }
 
-alt.on("addString", (text) => addString(colorify(text)));
-alt.on("addMessage", (name, text) => addString("<b>" + colorify(name) + ": </b>" + colorify(text)));
+alt.on("addString", (text) => addString(colorify(escapeString(text))));
+alt.on("addMessage", (name, text) => addString("<b>" + colorify(escapeString(name)) + ": </b>" + colorify(escapeString(text))));
 alt.on("openChat", openChat);
 alt.on("closeChat", closeChat);
 alt.on("updatePlayersOnline", updatePlayersOnline);
