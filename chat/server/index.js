@@ -38,7 +38,7 @@ alt.onClient(CHAT_MESSAGE_EVENT, (player, msg) => {
     if (msg.length > 0) {
       alt.log("[chat:msg] " + player.name + ": " + msg);
 
-      alt.emitAllClients(CHAT_MESSAGE_EVENT, player.name, msg.replace(/</g, "&lt;").replace(/'/g, "&#39").replace(/"/g, "&#34"));
+      alt.emitAllClients(CHAT_MESSAGE_EVENT, player.name, msg);
     }
   }
 });
