@@ -134,8 +134,6 @@ window.addEventListener("load", () => {
       }
     }
   });
-
-  alt.emit("chatloaded");
 });
 
 function saveBuffer() {

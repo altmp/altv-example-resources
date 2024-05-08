@@ -1,9 +1,6 @@
 import * as alt from "alt-client";
 import { CHAT_MESSAGE_EVENT } from "../shared/index.js";
 
-let buffer = [];
-
-let loaded = false;
 let opened = false;
 
 const view = new alt.WebView("http://resource/client/html/index.html");
@@ -16,14 +13,6 @@ function addMessage(name, text) {
   }
 }
 
-view.on("chatloaded", () => {
-  for (const msg of buffer) {
-    addMessage(msg.name, msg.text);
-  }
-
-  loaded = true;
-});
-
 view.on("chatmessage", (text) => {
   alt.emitServer(CHAT_MESSAGE_EVENT, text);
 
@@ -32,38 +21,28 @@ view.on("chatmessage", (text) => {
   view.unfocus();
 });
 
-export function pushMessage(name, text) {
-  if (!loaded) {
-    buffer.push({ name, text });
-  } else {
-    addMessage(name, text);
-  }
-}
-
 export function pushLine(text) {
-  pushMessage(null, text);
+  addMessage(null, text);
 }
 
-alt.onServer(CHAT_MESSAGE_EVENT, pushMessage);
+alt.onServer(CHAT_MESSAGE_EVENT, addMessage);
 
 alt.on("keyup", (key) => {
-  if (loaded) {
-    if (!opened && key === 0x54 && alt.gameControlsEnabled()) {
-      opened = true;
-      view.emit("openChat", false);
-      alt.toggleGameControls(false);
-      view.focus();
-    } else if (!opened && key === 0xbf && alt.gameControlsEnabled()) {
-      opened = true;
-      view.emit("openChat", true);
-      alt.toggleGameControls(false);
-      view.focus();
-    } else if (opened && key == 0x1b) {
-      opened = false;
-      view.emit("closeChat");
-      alt.toggleGameControls(true);
-      view.unfocus();
-    }
+  if (!opened && key === 0x54 && alt.gameControlsEnabled()) {
+    opened = true;
+    view.emit("openChat", false);
+    alt.toggleGameControls(false);
+    view.focus();
+  } else if (!opened && key === 0xbf && alt.gameControlsEnabled()) {
+    opened = true;
+    view.emit("openChat", true);
+    alt.toggleGameControls(false);
+    view.focus();
+  } else if (opened && key == 0x1b) {
+    opened = false;
+    view.emit("closeChat");
+    alt.toggleGameControls(true);
+    view.unfocus();
   }
 });
 

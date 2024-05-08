@@ -6,7 +6,6 @@ import { toggleNoclip } from "./noclip"
 import { playerData } from "./playerdata"
 import { view } from "./view"
 import { KeyCode, Permission, PermissionState } from "altv-enums"
-import type { VoiceConnectionState } from "alt-client"
 
 alt.on("connectionComplete", () => {
   setTimeout(() => {
@@ -23,7 +22,7 @@ alt.on("localMetaChange", (key: string, newValue: any) => {
 
 alt.onServer("airport_state", setWeaponsUsage)
 
-alt.onServer("chat:message", chat.pushMessage)
+alt.onServer("chat:message", chat.pushLine)
 
 alt.onServer("noclip", toggleNoclip)
 
@@ -40,8 +39,6 @@ alt.onServer("announce", (header: string, body: string, time: number) => {
 })
 
 alt.on("keyup", (key) => {
-  if (!chat.chatData.loaded) return
-
   switch (key) {
     case KeyCode.F2: {
       playerData.areNametagsVisible = !playerData.areNametagsVisible
