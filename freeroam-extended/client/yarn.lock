@@ -2,25 +2,25 @@
 # yarn lockfile v1
 
 
-"@altv/types-client@^2.9.7":
-  version "2.9.7"
-  resolved "https://registry.yarnpkg.com/@altv/types-client/-/types-client-2.9.7.tgz#9082db1af8dbd7f04bc5f33e8ad67adcf6d9afba"
-  integrity sha512-VCuo56pzGLJedu6oiesAoKtFc7O5ZhAHH7W/WOX1dGU+PXWIM0B6OYbYuIOr6AOLwTCVTv+QpUrKgkN+38WCyA==
+"@altv/types-client@^16.2.2":
+  version "16.2.2"
+  resolved "https://registry.yarnpkg.com/@altv/types-client/-/types-client-16.2.2.tgz#bd1c7b6a32420269e683808564d46413b0613b51"
+  integrity sha512-LH8j7zY8hg1+UoQyXeGsao+H58Wg55AVjM7xM+fUT4HXux5YCZbNIIWd/FvOL91/1gct5/WEnHXveCrmOUNhtw==
 
-"@altv/types-natives@^1.5.4":
-  version "1.5.4"
-  resolved "https://registry.npmjs.org/@altv/types-natives/-/types-natives-1.5.4.tgz"
-  integrity sha512-N4jtJ4f8KFOCi0sxlVvTWF7I7Nz/ylq136sIJMpsHIcBWIlysWF6zdJFdBW5bkquDGWgY8aBYPQ4TU+ayQhukw==
+"@altv/types-natives@^16.2.0":
+  version "16.2.0"
+  resolved "https://registry.yarnpkg.com/@altv/types-natives/-/types-natives-16.2.0.tgz#ec36f6204e982daab039ad5a71a5544ec101195d"
+  integrity sha512-kZ6Or14I9DLPPbSAEEDxS+Pt+Efv1lsJSCFeYemnmoQEJtVT/XbCjkwYUd9HHzbcxkyAB87DVn1toQrAjYCSxg==
 
-"@altv/types-server@^3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@altv/types-server/-/types-server-3.0.1.tgz#83b41032cab2522cc62ffc6441c5fef08440229e"
-  integrity sha512-dVEGQUCj/IiFAw2oC1jQ3Iiacqtk5ciA2BNXJIETFcY2tz0uVaNMFAszR4B4xNBctWnXY12RDCJRrrvcxrPTMg==
+"@altv/types-server@^16.2.1":
+  version "16.2.1"
+  resolved "https://registry.yarnpkg.com/@altv/types-server/-/types-server-16.2.1.tgz#55e59bdd4e9ca648f9c15d3705fabb55d9913ccf"
+  integrity sha512-Cm1gcPPtaO/cUmdfwTw9p61bIe6tL9F0MVJDy1Y+2QPERtZDBoqiUfYLKwT7AOXMyF3scG6kX/fkpwZels9d8A==
 
-"@altv/types-shared@^1.6.5":
-  version "1.6.5"
-  resolved "https://registry.yarnpkg.com/@altv/types-shared/-/types-shared-1.6.5.tgz#f3cd941a2706065e284cd0b053936fc0d0856024"
-  integrity sha512-gOil0Is/T26XCAJ+96H3qEjq7zLc9sG7vGp14UVZD09Vn0ClxUx3EG1xapJcobUuJHUd1uI24j1ODSzZ/pSMtA==
+"@altv/types-shared@^16.2.1":
+  version "16.2.1"
+  resolved "https://registry.yarnpkg.com/@altv/types-shared/-/types-shared-16.2.1.tgz#29367dec28a5efdc4d1ca73c2fc445ff048e6154"
+  integrity sha512-qQ6z58dqwmAV5UcDh5nWBaieOuhDaXNgzj63XJ3MJiR6z7ShI4onZszzEX9ALaLGdakPupWs+0pm/MJV7diZQQ==
 
 "@esbuild/linux-loong64@0.14.53":
   version "0.14.53"
@@ -201,10 +201,10 @@ ajv@^6.10.0, ajv@^6.12.4:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-altv-esbuild@^0.4.3:
-  version "0.4.3"
-  resolved "https://registry.npmjs.org/altv-esbuild/-/altv-esbuild-0.4.3.tgz"
-  integrity sha512-Hm+gxHReGy32xv4ZYb8KC1kDZRXIn9mmXZv9/3pkohbtidL5Km7zJe2cYUAaQv97KN5L0RoQmoQB6785AEYAYg==
+altv-esbuild@^0.7.2:
+  version "0.7.2"
+  resolved "https://registry.yarnpkg.com/altv-esbuild/-/altv-esbuild-0.7.2.tgz#cd6826ac5944c49a57cfcd09249a50247909aabd"
+  integrity sha512-wWtEb1uIfosRjEePnu+vOQ2dDlrg1NEjrKILJpWB6FF/0BYIwflCjR8mCwprU/WaERbpHTyL7nqoRS7pIVyYCQ==
 
 ansi-regex@^5.0.1:
   version "5.0.1"
@@ -1766,10 +1766,10 @@ typed-array-length@^1.0.4:
     for-each "^0.3.3"
     is-typed-array "^1.1.9"
 
-typescript@^4.9.5:
-  version "4.9.5"
-  resolved "https://registry.npmjs.org/typescript/-/typescript-4.9.5.tgz"
-  integrity sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==
+typescript@^5.4.5:
+  version "5.4.5"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.4.5.tgz#42ccef2c571fdbd0f6718b1d1f5e6e5ef006f611"
+  integrity sha512-vcI4UpRgg81oIRUFwR0WSIHKt11nJ7SAVlYNIu+QpqeyXP+gpQJy/Z4+F0aGxSE4MqwjyXvW/TzgkLAx2AGHwQ==
 
 unbox-primitive@^1.0.2:
   version "1.0.2"
