@@ -4,13 +4,13 @@
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
-    "@altv/types-client": "^2.9.7",
-    "@altv/types-natives": "^1.5.4",
-    "@altv/types-server": "^3.0.1",
-    "@altv/types-shared": "^1.6.5",
+    "@altv/types-client": "^16.2.2",
+    "@altv/types-natives": "^16.2.0",
+    "@altv/types-server": "^16.2.1",
+    "@altv/types-shared": "^16.2.1",
     "@typescript-eslint/eslint-plugin": "^5.50.0",
     "@typescript-eslint/parser": "^5.50.0",
-    "altv-esbuild": "^0.4.3",
+    "altv-esbuild": "^0.7.2",
     "concurrently": "^7.3.0",
     "esbuild": "^0.14.53",
     "eslint": "^8.33.0",
@@ -18,7 +18,7 @@
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.1.1",
-    "typescript": "^4.9.5"
+    "typescript": "^5.4.5"
   },
   "scripts": {
     "build:client": "node --es-module-specifier-resolution=node build.js",

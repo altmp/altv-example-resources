@@ -5,7 +5,7 @@ import * as chat from "./chat"
 import { toggleNoclip } from "./noclip"
 import { playerData } from "./playerdata"
 import { view } from "./view"
-import { KeyCode, Permission, PermissionState } from "altv-enums"
+import { KeyCode, Permission } from "altv-enums"
 
 alt.on("connectionComplete", () => {
   setTimeout(() => {
@@ -81,10 +81,8 @@ alt.on("keyup", (key) => {
 })
 
 alt.onServer("get_pos", () => {
-  const state = alt.getPermissionState(Permission.CLIPBOARD_ACCESS)
-
-  if (state !== PermissionState.ALLOWED) {
-    alt.log("get_pos clipboard access is not allowed, state:", state)
+  if (!alt.getPermissionState(Permission.CLIPBOARD_ACCESS)) {
+    alt.log("get_pos clipboard access is not allowed")
     return
   }
 
