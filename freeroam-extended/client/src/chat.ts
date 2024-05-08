@@ -3,16 +3,8 @@ import { playerData } from "./playerdata"
 import { view } from "./view"
 
 export const chatData = {
-  loaded: false,
   opened: false,
 }
-
-interface IBufferItem {
-  name: string | null
-  text: string
-}
-
-const buffer: IBufferItem[] = []
 
 export function toggleChat(): void {
   view.isVisible = !view.isVisible
@@ -25,15 +17,8 @@ function addMessage(name: string | null, text: string) {
     view.emit("addString", text)
 }
 
-export function pushMessage(name: string | null, text: string): void {
-  if (!chatData.loaded)
-    buffer.push({ name, text })
-  else
-    addMessage(name, text)
-}
-
 export function pushLine(text: string): void {
-  pushMessage(null, text)
+  addMessage(null, text)
 }
 
 alt.on("windowFocusChange", (state) => {
@@ -43,13 +28,6 @@ alt.on("windowFocusChange", (state) => {
   alt.nextTick(() => {
     view.emit("focusChatInput")
   })
-})
-
-view.on("chatloaded", () => {
-  for (const msg of buffer)
-    addMessage(msg.name, msg.text)
-
-  chatData.loaded = true
 })
 
 view.on("chatmessage", (text: string) => {
