@@ -10,18 +10,16 @@ namespace Freeroam_Extended.Factories
     public partial interface IAltPlayer : IPlayer
     {
         public IList<AltVehicle> Vehicles { get; set; }
-        public DateTime LastVehicleSpawn { get; set; } 
+        public DateTime LastVehicleSpawn { get; set; }
         public bool GhostMode { get; set; }
         public bool EnableWeaponUsage { get; set; }
         public bool DmMode { get; set; }
         public bool NoClip { get; set; }
         public bool IsAdmin { get; }
-        
+
         public int EventCount { get; }
         void ResetEventCount();
         void IncrementEventCount();
-        
-        public string CloudID { get; set; }
         public long OutfitHash { get; set; }
         public uint Sex { get; }
         public PlayerData Data { get; set; }
@@ -44,8 +42,6 @@ namespace Freeroam_Extended.Factories
         public bool NoClip { get; set; }
 
         public bool IsAdmin => Data.Operator;
-        
-        public string CloudID { get; set; }
         public long OutfitHash { get; set; }
         public uint Sex => this.Model switch
         {
@@ -56,12 +52,12 @@ namespace Freeroam_Extended.Factories
 
         private int _eventCount;
         public int EventCount => _eventCount;
-        
+
         public void ResetEventCount()
         {
             Interlocked.Exchange(ref _eventCount, 0);
         }
-        
+
         public void IncrementEventCount()
         {
             Interlocked.Increment(ref _eventCount);
@@ -79,7 +75,7 @@ namespace Freeroam_Extended.Factories
             return this.Name + " [" + this.Id + "]";
         }
     }
-    
+
     public class AltPlayerFactory : IEntityFactory<IPlayer>
     {
         public IPlayer Create(ICore core, IntPtr entityPointer, uint id)

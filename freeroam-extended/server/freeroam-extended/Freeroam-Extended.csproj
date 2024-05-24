@@ -9,8 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AltV.Net.Async" Version="15.0.174-dev" />
-    <PackageReference Include="AltV.Net.Resources.Chat.Api" Version="15.0.174-dev" />
+    <PackageReference Include="AltV.Net.Async" Version="16.1.0-dev.6" />
+    <PackageReference Include="AltV.Net.Resources.Chat.Api" Version="16.1.0-dev.6" />
   </ItemGroup>
 
 
