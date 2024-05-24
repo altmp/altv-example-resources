@@ -33,7 +33,7 @@ namespace Freeroam_Extended
                     altPlayer.Kick("Event count exceeded");
                     return;
                 }
-                
+
                 altPlayer.IncrementEventCount();
             };
         }
@@ -43,29 +43,15 @@ namespace Freeroam_Extended
         [AsyncScriptEvent(ScriptEventType.PlayerConnect)]
         public async Task OnPlayerConnect(IAltPlayer player, string reason)
         {
-            string cloudId = "";
-
-            try
-            {
-                cloudId = await player.RequestCloudId();
-            }
-            catch (Exception e)
-            {
-                player.Kick("Authorization error");
-                AltAsync.Log(
-                    $"HWID: {player.HardwareIdHash}. Tried to join the server with invalid RS ID: {e}");
-            }
-            player.CloudID = cloudId;
-            
-            if (PlayerController.IsBanned(player.CloudID))
+            if (PlayerController.IsBanned(player.CloudId))
             {
                 player.Kick("You're banned from this server!");
                 AltAsync.Log(
-                    $"RS ID: {player.CloudID}. Tried to join the server with a ban.");
+                    $"RS ID: {player.CloudId}. Tried to join the server with a ban.");
                 return;
             }
 
-            if (PlayerController.PlayerData.TryGetValue(player.CloudID, out var data))
+            if (PlayerController.PlayerData.TryGetValue(player.CloudId, out var data))
             {
                 player.Data = data;
             }
@@ -74,21 +60,21 @@ namespace Freeroam_Extended
             var randomSpawnPoint = Misc.AdminOverridedSpawnPos is not null
                 ? Misc.AdminOverridedSpawnPos
                 : Misc.SpawnPositions.ElementAt(_random.Next(0, Misc.SpawnPositions.Length));
-            
+
             player.Spawn((Position)randomSpawnPoint + new Position(_random.Next(0, 10), _random.Next(0, 10), 0));
             player.Model = (uint)PedModel.FreemodeMale01;
             player.SetDateTime(DateTime.UtcNow);
             player.SetWeather(Misc.Weather);
 
             player.Emit("draw_dmzone", Misc.DMPos.X, Misc.DMPos.Y, Misc.DMRadius);
-            
+
             lock (StatsController.StatsData)
             {
                 StatsController.StatsData.PlayerConnections++;
             }
 
-            StatsController.AddUniquePlayer(player.CloudID);
-            
+            StatsController.AddUniquePlayer(player.CloudId);
+
             VoiceController.AddPlayer(player);
             if (player.Data.Muted) VoiceController.MutePlayer(player);
 
@@ -193,7 +179,7 @@ namespace Freeroam_Extended
             Position shotOffset, BodyPart bodyPart)
         {
             if (!player.EnableWeaponUsage) return;
-            
+
             if (!Misc.BlacklistedWeapons.Contains(weapon) || player is not { } damagePlayer) return;
 
             var name = player.Serialize();
@@ -238,13 +224,13 @@ namespace Freeroam_Extended
                 player.SendChatMessage(ChatConstants.NoPermissions);
                 return;
             }
-            
+
             if (player.IsInVehicle) player.Vehicle.Position = new Vector3(x, y, z);
             else player.Position = new Vector3(x, y, z);
 
             player.SendChatMessage(ChatConstants.SuccessPrefix + $"You were teleported to waypoint on {x}, {y}, {z}!");
         }
-        
+
         [ClientEvent("tp_to_coords")]
         public void TeleportToCoords(IAltPlayer player, int x, int y, int z)
         {

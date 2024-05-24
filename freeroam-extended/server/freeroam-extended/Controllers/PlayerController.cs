@@ -9,7 +9,7 @@ public static class PlayerController
 {
     private static readonly string BannedPlayersFile = "BannedPlayers.json";
     private static readonly string PlayerDataFile = "PlayersData.json";
-    
+
     public static HashSet<string> Banned = new();
     public static Dictionary<string, PlayerData> PlayerData = new();
 
@@ -28,7 +28,7 @@ public static class PlayerController
                 Alt.LogError(e.ToString());
             }
         }
-        
+
         if (File.Exists(BannedPlayersFile))
         {
             var json = File.ReadAllText(BannedPlayersFile);
@@ -52,10 +52,10 @@ public static class PlayerController
     public static void Ban(IAltPlayer player)
     {
         player.Kick("You are banned!");
-        Banned.Add(player.CloudID);
+        Banned.Add(player.CloudId);
         SaveBanned();
     }
-    
+
     public static bool IsBanned(string cloudId)
     {
         return Banned.Contains(cloudId);
@@ -68,7 +68,7 @@ public static class PlayerController
 
     private static void ApplyPlayerData(IAltPlayer player)
     {
-        PlayerData[player.CloudID] = player.Data;
+        PlayerData[player.CloudId] = player.Data;
         player.SetLocalMetaData("operator", player.Data.Operator);
         if (player.Data.Muted) VoiceController.MutePlayer(player);
         else VoiceController.UnmutePlayer(player);

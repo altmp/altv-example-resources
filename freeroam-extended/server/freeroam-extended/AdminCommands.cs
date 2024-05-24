@@ -30,7 +30,7 @@ namespace Freeroam_Extended
                 player.SendChatMessage(ChatConstants.NoPermissions);
                 return;
             }
-            
+
             if (args.Length < 1)
             {
                 SendVehListHelp(player);
@@ -43,12 +43,12 @@ namespace Freeroam_Extended
                     VehicleController.UpdateState(false);
                     ChatController.BroadcastAdmins($"Vehicle list was changed to blacklist by {player.Serialize()}");
                     break;
-                
+
                 case "mode" when args.Length > 1 && args[1] == "whitelist":
                     VehicleController.UpdateState(true);
                     ChatController.BroadcastAdmins($"Vehicle list was changed to whitelist by {player.Serialize()}");
                     break;
-                
+
                 case "allow" when args.Length > 1:
                     if (!Enum.IsDefined(typeof(VehicleModel), Alt.Hash(args[1])))
                     {
@@ -58,7 +58,7 @@ namespace Freeroam_Extended
                     VehicleController.Allow(args[1]);
                     ChatController.BroadcastAdmins($"Vehicle {args[1]} was {(VehicleController.IsWhitelist ? "added to whitelist" : "removed from blacklist")} by {player.Serialize()}");
                     break;
-                
+
                 case "block" when args.Length > 1:
                     if (!Enum.IsDefined(typeof(VehicleModel), Alt.Hash(args[1])))
                     {
@@ -68,22 +68,22 @@ namespace Freeroam_Extended
                     VehicleController.Block(args[1]);
                     ChatController.BroadcastAdmins($"Vehicle {args[1]} was {(VehicleController.IsWhitelist ? "removed from whitelist" : "added to blacklist")} by {player.Serialize()}");
                     break;
-                
+
                 case "clear":
                     VehicleController.Clear();
                     ChatController.BroadcastAdmins($"Vehicle list was cleared by {player.Serialize()}");
                     break;
-                
+
                 case "list":
                     player.SendChatMessage($"{(VehicleController.IsWhitelist ? "Whitelisted" : "Blacklisted")} vehicles: {string.Join(", ", VehicleController.List)}");
                     break;
-                
-                default:    
+
+                default:
                     SendVehListHelp(player);
                     break;
             }
         }
-        
+
         #region Punishments
         [Command("ban")]
         public void Ban(IAltPlayer player, int id)
@@ -110,7 +110,7 @@ namespace Freeroam_Extended
             PlayerController.Ban(target);
             ChatController.BroadcastAdmins($"Player {name} was banned by {player.Serialize()}!");
         }
-        
+
         [Command("kick")]
         public void Kick(IAltPlayer player, int id)
         {
@@ -138,7 +138,7 @@ namespace Freeroam_Extended
 
             ChatController.BroadcastAdmins($"Player {name} was kicked by {player.Serialize()}!");
         }
-        
+
         [Command("mutelist")]
         public void Mutelist(IAltPlayer player)
         {
@@ -153,20 +153,20 @@ namespace Freeroam_Extended
             foreach (var p in Alt.GetAllPlayers())
             {
                 if (p is not IAltPlayer target || !target.Data.Muted) continue;
-                muted.Add(target.CloudID + " - " + target.Serialize());
-                found.Add(target.CloudID);
+                muted.Add(target.CloudId + " - " + target.Serialize());
+                found.Add(target.CloudId);
             }
-            
+
             foreach (var (key, value) in PlayerController.PlayerData)
             {
                 if (!value.Muted) continue;
                 if (found.Contains(key)) continue;
                 muted.Add(key + " - Offline");
             }
-            
+
             player.SendChatMessage("Muted players: " + string.Join(", ", muted));
         }
-        
+
         [Command("mute")]
         public void Mute(IAltPlayer player, int id)
         {
@@ -190,7 +190,7 @@ namespace Freeroam_Extended
             }
             PlayerController.Mute(target, player);
         }
-        
+
         [Command("unmute")]
         public void Unmute(IAltPlayer player, int id)
         {
@@ -222,7 +222,7 @@ namespace Freeroam_Extended
 
             player.Dimension = dimension;
         }
-        
+
         [Command("tpallhere")]
         public void TpAllHere(IAltPlayer player)
         {
@@ -248,7 +248,7 @@ namespace Freeroam_Extended
                 player.SendChatMessage(ChatConstants.NoPermissions);
                 return;
             }
-            
+
             var targetPlayer = (IAltPlayer)Alt.GetPlayerById((uint) target);
             if (targetPlayer == null)
             {
@@ -279,7 +279,7 @@ namespace Freeroam_Extended
             player.Position = targetPlayer.Position;
             player.SendChatMessage(ChatConstants.SuccessPrefix + "You were teleported to " + targetPlayer.Serialize() + "!");
         }
-        
+
         [Command("tpcoords")]
         public void TpCoords(IAltPlayer player, int x, int y, int z)
         {
@@ -293,7 +293,7 @@ namespace Freeroam_Extended
             player.SendChatMessage(ChatConstants.SuccessPrefix + $"You were teleported to {x}, {y}, {z}!");
         }
         #endregion
-        
+
         #region World state
         [Command("settime")]
         public void SetTime(IAltPlayer player, int hour)
@@ -314,10 +314,10 @@ namespace Freeroam_Extended
             {
                 p.SetDateTime(0, 0, 0, hour, 0, 0);
             }
-            
+
             ChatController.BroadcastAdmins($"{player.Serialize()} set time to {hour}");
         }
-        
+
         [Command("togglechat")]
         public void ToggleChat(IAltPlayer player)
         {
@@ -326,11 +326,11 @@ namespace Freeroam_Extended
                 player.SendChatMessage(ChatConstants.NoPermissions);
                 return;
             }
-            
+
             ChatController.ChatState = !ChatController.ChatState;
             player.SendChatMessage(ChatConstants.SuccessPrefix + "Chat is now " + (ChatController.ChatState ? "enabled" : "disabled") + "!");
         }
-        
+
         [Command("overridespawnpos")]
         public void OverrideSpawnPos(IAltPlayer player, bool mode)
         {
@@ -354,7 +354,7 @@ namespace Freeroam_Extended
                 player.SendChatMessage(ChatConstants.ErrorPrefix + $"You reset overridden spawn position!");
             }
         }
-        
+
         [Command("godmodeall")]
         public void GodmodeAllPlayers(IAltPlayer player, bool mode)
         {
@@ -391,7 +391,7 @@ namespace Freeroam_Extended
 
             player.Emit("noclip", player.NoClip);
         }
-        
+
         [Command("godmode")]
         public void Godmode(IAltPlayer player, int id = 0)
         {
@@ -418,7 +418,7 @@ namespace Freeroam_Extended
             if (player.Id != target.Id)
                 player.SendChatMessage(msg);
         }
-        
+
         // [Command("esp")]
         // public void Esp(IAltPlayer player, bool mode)
         // {
@@ -430,7 +430,7 @@ namespace Freeroam_Extended
         //
         //     player.Emit("esp", mode);
         // }
-        
+
         [Command("globalvoice")]
         public void GlobalVoice(IAltPlayer player)
         {
@@ -468,7 +468,7 @@ namespace Freeroam_Extended
             var message = string.Join(" ", body);
             Alt.EmitAllClients("announce", header.Replace("_", " "), message, time);
         }
-        
+
         [Command("clearallvehicles")]
         public void ClearAllVehicles(IAltPlayer player, int distance = 0)
         {
@@ -477,7 +477,7 @@ namespace Freeroam_Extended
                 player.SendChatMessage(ChatConstants.NoPermissions);
                 return;
             }
-            
+
             var distSqr = distance * distance;
             foreach (var altVehicle in Alt.GetAllVehicles())
             {
@@ -488,7 +488,7 @@ namespace Freeroam_Extended
                     {
                         veh.Owner.SendChatMessage(ChatConstants.ErrorPrefix + "Your vehicle was removed!");
                     }
-                    
+
                     veh.Destroy();
                 }
             }
